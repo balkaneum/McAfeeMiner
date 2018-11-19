@@ -1,11 +1,11 @@
 {
-  "name": "Safex1ClickMiner",
-  "description": "Safex 1 Click Mining App Blockchain proof of work Safex Cash",
+  "name": "McAfee1ClickMiner",
+  "description": "McAfee 1 Click Mining App Blockchain proof of work Safex Cash",
   "version": "v0.0.1",
   "homepage": ".",
   "repository": {
     "type": "git",
-    "url": "https://github.com/safex/safex_miner"
+    "url": "https://github.com/balkaneum/McAfeeMiner"
   },
   "author": {
     "name": "Safex Developers",
@@ -20,7 +20,7 @@
     }
   ],
   "license": "LicenseRef-LICENSE",
-  "bugs": "https://github.com/safex/safex_miner/issues",
+  "bugs": "https://github.com/balkaneum/McAfeeMiner/issues",
   "keywords": [
     "safex cash",
     "safex mining app",
@@ -66,7 +66,7 @@
     "make-all-installers": "npm run build && electron-builder build -ml && electron-builder build -w --x64 --ia32"
   },
   "build": {
-    "appId": "com.electron.safex_1_click_mining_app",
+    "appId": "com.electron.mcafee_1_click_mining_app",
     "extends": null,
     "files": [
       "**/*",
