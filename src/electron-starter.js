@@ -55,10 +55,10 @@ function createWindow() {
   if (os.platform() !== "win32") {
     const template = [
       {
-        label: "Safex 1 Click Mining App",
+        label: "McAfee 1 Click Mining App",
         submenu: [
           {
-            label: "About Safex 1 Click Mining App",
+            label: "About McAfee 1 Click Mining App",
             selector: "orderFrontStandardAboutPanel:"
           },
           { type: "separator" },
@@ -104,7 +104,7 @@ function createWindow() {
 require("electron-context-menu")({
   prepend: (params, browserWindow) => [
     {
-      label: "Safex 1 Click Mining App"
+      label: "McAfee 1 Click Mining App"
     }
   ],
   shouldShowMenu: (event, params) => params.mediaType !== "image",
