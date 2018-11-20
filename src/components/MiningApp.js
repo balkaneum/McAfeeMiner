@@ -396,6 +396,7 @@ export default class MiningApp extends React.Component {
               <option>safex.cryptominingpools.net:3333</option>
               <option>safex.luckypool.io:3366</option>
               <option>safex.xmining.pro:3333</option>
+              <option>mcafee.safex.io:1111</option>
             </select>
 
             <div className="options">
