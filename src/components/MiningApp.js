@@ -27,6 +27,17 @@ export default class MiningApp extends React.Component {
       modal_active: false,
       instructions_modal_active: false,
       instructions_lang: "english",
+      pools_list: [
+        'pool.safexnews.net:1111',
+        'safex.cool-pool.net:3333',
+        'safex.cnpools.space:3333',
+        'safex.cnpools.space:1111',
+        'safex.cryptominingpools.net:3333',
+        'safex.luckypool.io:3366',
+        'safex.xmining.pro:3333',
+        'safex.xmining.pro:3333',
+        'mcafee.safex.io:1111'
+      ],
       jsonConfig: {
         algo: "cryptonight/2",
         api: {
@@ -310,6 +321,13 @@ export default class MiningApp extends React.Component {
         </option>
       );
     }
+    cores_options.reverse();
+
+    const pools_list = this.state.pools_list.map((pool, index) => (
+      <option key={index} value={pool}>
+        {pool}
+      </option>
+    ));
 
     return (
       <div className="mining-app-wrap">
@@ -389,14 +407,7 @@ export default class MiningApp extends React.Component {
               id="pool"
               disabled={this.state.active ? "disabled" : ""}
             >
-              <option>pool.safexnews.net:1111</option>
-              <option>safex.cool-pool.net:3333</option>
-              <option>safex.cnpools.space:3333</option>
-              <option>safex.cnpools.space:1111</option>
-              <option>safex.cryptominingpools.net:3333</option>
-              <option>safex.luckypool.io:3366</option>
-              <option>safex.xmining.pro:3333</option>
-              <option>mcafee.safex.io:1111</option>
+              {pools_list}
             </select>
 
             <div className="options">
