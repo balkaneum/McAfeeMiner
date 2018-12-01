@@ -28,15 +28,14 @@ export default class MiningApp extends React.Component {
       instructions_modal_active: false,
       instructions_lang: "english",
       pools_list: [
+        'mcafee.safex.io:1111',
         'pool.safexnews.net:1111',
         'safex.cool-pool.net:3333',
         'safex.cnpools.space:3333',
         'safex.cnpools.space:1111',
         'safex.cryptominingpools.net:3333',
         'safex.luckypool.io:3366',
-        'safex.xmining.pro:3333',
-        'safex.xmining.pro:3333',
-        'mcafee.safex.io:1111'
+        'safex.xmining.pro:3333'
       ],
       jsonConfig: {
         algo: "cryptonight/2",
@@ -178,7 +177,6 @@ export default class MiningApp extends React.Component {
   handleSubmit(e) {
     e.preventDefault();
     var user_wallet = e.target.user_wallet;
-    var pool = e.target.pool;
     let inputValue = e.target.user_wallet.value;
 
     if (user_wallet.value !== "") {

@@ -284,7 +284,7 @@ header p {
   font-size: 24px;
   font-weight: 600;
   font-family: "Avenir Bold";
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
   background: linear-gradient(#ffffda 10%, #76541c 65%);
   -webkit-background-clip: text;
