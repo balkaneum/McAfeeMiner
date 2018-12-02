@@ -49,9 +49,10 @@ header p {
 
 /* Main */
 .main {
+  position: relative;
   z-index: 2;
   width: 100%;
-  top: 115px;
+  top: 0;
   text-align: center;
   animation-delay: 0.3s;
 }
@@ -352,18 +353,18 @@ header p {
 }
 
 /* Footer */
-footer {
+.main footer {
   position: absolute;
   right: 15px;
-  bottom: 15px;
+  bottom: -10px;
   text-align: right;
   animation-delay: 0.8s;
   z-index: 2;
 }
-footer a {
+.main footer a {
   display: inline-block;
 }
-footer p {
+.main footer p {
   font-family: "Rift Soft", Helvetica, Arial, sans-serif;
   color: #1caacb;
   text-transform: uppercase;
@@ -373,7 +374,7 @@ footer p {
   position: relative;
   right: -5px;
 }
-footer h3 {
+.main footer h3 {
   font-family: "Rift Soft", Helvetica, Arial, sans-serif;
   color: #1caacb;
   margin: 0;
@@ -383,10 +384,10 @@ footer h3 {
   right: -5px;
   font-weight: 600;
 }
-footer a:hover {
+.main footer a:hover {
   cursor: pointer;
 }
-footer img {
+.main footer img {
   width: 130px;
 }
 

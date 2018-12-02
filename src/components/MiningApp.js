@@ -475,13 +475,13 @@ export default class MiningApp extends React.Component {
             <p className="blue-text">hashrate:</p>
             <p className="white-text">{this.state.hashrate} H/s</p>
           </div>
-        </div>
 
-        <footer className="animated fadeIn">
-          <a onClick={this.footerLink} title="Visit Safex site">
-            <img src="images/powered.png" alt="Powered by Safex" />
-          </a>
-        </footer>
+          <footer className="animated fadeIn">
+            <a onClick={this.footerLink} title="Visit Safex site">
+              <img src="images/powered.png" alt="Powered by Safex" />
+            </a>
+          </footer>
+        </div>
 
         <div className={this.state.modal_active ? "modal active" : "modal"}>
           <span className="close" onClick={this.closeModal}>
