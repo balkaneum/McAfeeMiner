@@ -63,8 +63,10 @@ typings/
 node_modules/
 build/
 dist/
+temp/
 .DS_Store
 .idea/
 /build
 package-lock.json
 release-builds/
+.new
