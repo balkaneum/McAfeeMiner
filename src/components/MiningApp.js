@@ -1,10 +1,8 @@
 import React from 'react';
 import packageJson from "../../package";
-import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 const { shell } = window.require('electron')
 const xmrigCpu = window.require('node-xmrig-cpu');
-const sa = window.require('safex-addressjs');
 const fileDownload = window.require('js-file-download');
 const safex = window.require('safex-nodejs-libwallet');
 const { dialog } = window.require('electron').remote;
@@ -12,7 +10,6 @@ const path = window.require('path');
 
 import {
   verify_safex_address,
-  structureSafexKeys,
   openBalanceAlert,
   closeBalanceAlert,
   openSendCashPopup,
@@ -30,10 +27,9 @@ import InstructionsModal from './partials/InstructionsModal';
 export default class MiningApp extends React.Component {
   constructor(props) {
     super(props);
-
     this.miner = null;
-
     this.state = {
+      //mining settings
       active: false,
       starting: false,
       stopping: false,
@@ -59,37 +55,6 @@ export default class MiningApp extends React.Component {
         'safex.luckypool.io:3366',
         'safex.xmining.pro:3333'
       ],
-      
-      //balance 
-      balance: 0,
-      unlocked_balance: 0,
-      tokens: 0,
-      unlocked_tokens: 0,
-      balance_wallet: '',
-      balance_view_key: '',
-      balance_spend_key: '',
-      balance_check: false,
-      balance_alert: '',
-      balance_alert_text: '',
-      send_cash: false,
-      send_token: false,
-      tick_handle: null,
-
-      //wallet state settings
-      wallet_sync: false,
-      wallet_being_created: false,
-      create_new_wallet_modal: false,
-      open_from_existing_modal: false,
-      create_from_keys_modal: false,
-      wallet: {},
-      wallet_loaded: false,
-      wallet_exists: false,
-      mining_address: '',
-      wallet_password: '',
-      wallet_path: '',
-      spend_key: '',
-      view_key: '',
-
       jsonConfig: {
         "algo": "cryptonight/2",
         "api": {
@@ -127,27 +92,65 @@ export default class MiningApp extends React.Component {
         "threads": null,
         "user-agent": null,
         "watch": false
-      }
+      },
+      
+      //balance settings
+      balance: 0,
+      unlocked_balance: 0,
+      tokens: 0,
+      unlocked_tokens: 0,
+      balance_wallet: '',
+      balance_view_key: '',
+      balance_spend_key: '',
+      balance_check: false,
+      balance_alert: '',
+      balance_alert_text: '',
+      send_cash: false,
+      send_token: false,
+      tick_handle: null,
+
+      //wallet state settings
+      wallet: {},
+      wallet_sync: false,
+      wallet_being_created: false,
+      create_new_wallet_modal: false,
+      open_from_existing_modal: false,
+      create_from_keys_modal: false,
+      wallet_loaded: false,
+      wallet_exists: false,
+      mining_address: '',
+      wallet_password: '',
+      wallet_path: '',
+      spend_key: '',
+      view_key: ''
     };
 
+    //mining functions
     this.openInfoPopup = this.openInfoPopup.bind(this);
-    this.openModal = this.openModal.bind(this);
     this.openInstructionsModal = this.openInstructionsModal.bind(this);
-    this.openBalanceModal = this.openBalanceModal.bind(this);
-    this.closeModal = this.closeModal.bind(this);
     this.inputValidate = this.inputValidate.bind(this);
     this.checkInputValueLenght = this.checkInputValueLenght.bind(this);
     this.checkInputValuePrefix = this.checkInputValuePrefix.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.startMining = this.startMining.bind(this);
-    this.startBalanceCheck = this.startBalanceCheck.bind(this);
     this.stopMining = this.stopMining.bind(this);
     this.checkStatus = this.checkStatus.bind(this);
-    this.newWallet = this.newWallet.bind(this);
+
+    //UI functions
+    this.openModal = this.openModal.bind(this);
+    this.closeModal = this.closeModal.bind(this);
     this.footerLink = this.footerLink.bind(this);
-    this.exportWallet = this.exportWallet.bind(this);
+
+    //balance functions
+    this.openBalanceModal = this.openBalanceModal.bind(this);
+    this.startBalanceCheck = this.startBalanceCheck.bind(this);
     this.setOpenBalanceAlert = this.setOpenBalanceAlert.bind(this);
     this.setCloseBalanceAlert = this.setCloseBalanceAlert.bind(this);
+
+    //wallet functions
+    this.create_new_wallet = this.create_new_wallet.bind(this);
+    this.open_from_wallet_file = this.open_from_wallet_file.bind(this);
+    this.create_new_wallet_from_keys = this.create_new_wallet_from_keys.bind(this);
     this.setOpenSendCash = this.setOpenSendCash.bind(this);
     this.setOpenSendTokens = this.setOpenSendTokens.bind(this);
     this.setCloseSendPopup = this.setCloseSendPopup.bind(this);
@@ -157,11 +160,7 @@ export default class MiningApp extends React.Component {
     this.openFromExistingModal = this.openFromExistingModal.bind(this);
     this.openCreateFromKeysModal = this.openCreateFromKeysModal.bind(this);
     this.closeWallet = this.closeWallet.bind(this);
-
-    //wallet functions
-    this.create_new_wallet = this.create_new_wallet.bind(this);
-    this.open_from_wallet_file = this.open_from_wallet_file.bind(this);
-    this.create_new_wallet_from_keys = this.create_new_wallet_from_keys.bind(this);
+    this.exportWallet = this.exportWallet.bind(this);
   }
 
   //first step select wallet path, if exists, set password
@@ -746,22 +745,6 @@ export default class MiningApp extends React.Component {
       hashrate: this.miner.getStatus().split(' ')[2]
     });
     console.log(this.miner.getStatus(), this.state.hashrate);
-  }
-
-  newWallet() {
-    const seed = sa.sc_reduce32(sa.rand_32());
-    const keys = sa.create_address(seed);
-    const pubkey = sa.pubkeys_to_string(keys.spend.pub, keys.view.pub);
-
-    localStorage.setItem('wallet', JSON.stringify(keys));
-
-    this.setState(() => ({
-      exported: false,
-      new_wallet_generated: true,
-      new_wallet: pubkey,
-      spendkey_sec: keys.spend.sec,
-      viewkey_sec: keys.view.sec,
-    }));
   }
 
   exportWallet() {
