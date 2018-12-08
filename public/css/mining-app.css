@@ -488,7 +488,8 @@ header p {
   transition: all 0.2s ease-in;
 }
 .modal button:hover {
-  box-shadow: 0 0 25px 0 rgba(195, 164, 113, 0.6) !important;
+  -webkit-box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
+  box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
   color: #ffffce;
 }
 .modal button:active {
@@ -529,6 +530,7 @@ header p {
 .modal input:hover,
 .modal input:active,
 .modal input:focus {
+  -webkit-box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
   box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
 }
 .modal textarea::-webkit-input-placeholder,
@@ -614,7 +616,8 @@ header p {
   transition: all 0.2s ease-out;
 }
 .modal .save-btn:hover {
-  box-shadow: 0 0 30px 0 rgba(200, 14, 75, 1) !important;
+  -webkit-box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
+  box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
   color: #fff;
 }
 .modal .save-btn.green {
@@ -623,7 +626,8 @@ header p {
   margin-right: 0;
 }
 .modal .save-btn.green:hover {
-  box-shadow: 0 0 30px 0 rgba(14, 200, 193, 0.5) !important;
+  -webkit-box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
+  box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
   color: #fff;
 }
 .modal .copy-btn {
@@ -731,6 +735,7 @@ header p {
   color: #000;
 }
 .instructions-modal .lang-bts-wrap button.active:hover {
+  -webkit-box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
   box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
 }
 .instructions-modal p img {
@@ -840,7 +845,8 @@ header p {
   border: 2px solid #0ec8c1;
 }
 .balance-modal .lang-bts-wrap button.active:hover {
-  box-shadow: 0 0 30px 0 rgba(14, 200, 193, 0.5) !important;
+  -webkit-box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
+  box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
 }
 .balance-modal p img {
   position: relative;
