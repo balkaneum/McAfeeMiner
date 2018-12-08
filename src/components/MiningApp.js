@@ -961,21 +961,27 @@ export default class MiningApp extends React.Component {
                 <textarea placeholder="Safex Wallet Address" name="selected_balance_address"
                   value={this.state.balance_wallet} rows="2" readOnly />
 
+                <label htmlFor="spend_key">Private Spend Key</label>
+                <input type="text" name="spend_key" value={this.state.spend_key} />
+
+                <label htmlFor="view_key">Private View Key</label>
+                <input type="text" name="view_key" value={this.state.view_key} />
+                
                 <div className="groups-wrap">
                   <div className="form-group">
-                    <label htmlFor="balance">Balance</label>
+                    <label htmlFor="balance">Pending Balance</label>
                     <input type="text" placeholder="Balance" name="balance"
                       value={this.state.balance} readOnly />
-                    <label htmlFor="unlocked_balance">Unlocked Balance</label>
+                    <label htmlFor="unlocked_balance">Available Balance</label>
                     <input type="text" placeholder="Unlocked balance" name="unlocked_balance"
                       value={this.state.unlocked_balance} readOnly />
                     <button onClick={this.setOpenSendCash}>Send Cash</button>
                   </div>
 
                   <div className="form-group">
-                    <label htmlFor="tokens">Tokens</label>
+                    <label htmlFor="tokens">Pending Tokens</label>
                     <input type="text" placeholder="Tokens" value={this.state.tokens} readOnly />
-                    <label htmlFor="unlocked_tokens">Unlocked Tokens</label>
+                    <label htmlFor="unlocked_tokens">Available Tokens</label>
                     <input type="text" placeholder="Unlocked Tokens" name="unlocked_tokens"
                       value={this.state.unlocked_tokens} readOnly />
                     <button onClick={this.setOpenSendTokens}>Send Tokens</button>

@@ -18,7 +18,7 @@ export default class OpenExistingWalletModal extends React.Component {
 
                             <button type="submit" className="button-shine new-wallet-btn">
                                 Open Wallet File
-                        </button>
+                            </button>
                         </form>
                     </div>
 
