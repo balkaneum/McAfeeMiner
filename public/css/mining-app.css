@@ -194,6 +194,9 @@ header p {
   text-align-last: center;
   height: 30px;
 }
+.main form .pool-url:hover {
+  cursor: pointer;
+}
 .main form .pool-url:focus {
   outline: none;
 }
@@ -245,6 +248,9 @@ header p {
   text-align-last: center;
   width: auto;
   height: 30px;
+}
+.main form #cpuUsage:hover {
+  cursor: pointer;
 }
 .main form .input-group p {
   font-family: "Avenir Bold", sans-serif;
