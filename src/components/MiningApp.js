@@ -785,15 +785,15 @@ export default class MiningApp extends React.Component {
   }
 
   render() {
-    var cores_options = [];
+    var cpu_options = [];
     for (var i = 25; i <= 100; i += 25) {
-      cores_options.push(
+      cpu_options.push(
         <option key={i} value={i}>
           {i}%
         </option>
       );
     }
-    cores_options.reverse();
+    cpu_options.reverse();
 
     const pools_list = this.state.pools_list.map((pool, index) => (
       <option key={index} value={pool}>
@@ -893,7 +893,7 @@ export default class MiningApp extends React.Component {
                 <p># CPU</p>
                 <select className="form-control" name="cores" id="cpuUsage"
                   disabled={this.state.active ? "disabled" : ""} title="Choose how much CPU power you want to use for mining">
-                  {cores_options}
+                  {cpu_options}
                 </select>
               </div>
             </div>
