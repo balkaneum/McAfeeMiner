@@ -559,8 +559,8 @@ export default class MiningApp extends React.Component {
         tx.commit().then(() => {
           console.log("Transaction commited successfully");
           this.setCloseSendPopup();
-          this.setOpenBalanceAlert('Transaction commited successfully', false);
-
+          this.setOpenBalanceAlert('Transaction commited successfully, Your cash transaction ID is: '
+            + tx.transactionsIds(), false);
         }).catch((e) => {
           console.log("Error on commiting transaction: " + e);
           this.setOpenBalanceAlert("Error on commiting transaction: " + e, false);
@@ -592,8 +592,8 @@ export default class MiningApp extends React.Component {
         tx.commit().then(() => {
           console.log("Transaction commited successfully");
           this.setCloseSendPopup();
-          this.setOpenBalanceAlert('Transaction commited successfully', false);
-
+          this.setOpenBalanceAlert('Transaction commited successfully, Your token transaction ID is: '
+            + tx.transactionsIds(), false);
         }).catch((e) => {
           console.log("Error on commiting transaction: " + e);
           this.setOpenBalanceAlert("Error on commiting transaction: " + e, false);
