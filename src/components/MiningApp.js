@@ -783,7 +783,7 @@ export default class MiningApp extends React.Component {
     cpu_options.reverse();
 
     const pools_list = this.state.pools_list.map((pools_list, index) => (
-      <option key={index} value={index}>
+      <option key={index} value={pools_list} id={index}>
         {pools_list}
       </option>
     ));
