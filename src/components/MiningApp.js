@@ -389,23 +389,21 @@ export default class MiningApp extends React.Component {
         balance_wallet: wallet.address()
       }));
 
-      const nextTick = () => {
-        if (this.state.wallet_loaded) {
-          this.setState(() => ({
-            balance: Math.floor(parseFloat(wallet.balance()) / 100000000) / 100,
-            unlocked_balance: Math.floor(parseFloat(wallet.unlockedBalance()) / 100000000) / 100,
-            tokens: Math.floor(parseFloat(wallet.tokenBalance()) / 100000000) / 100,
-            unlocked_tokens: Math.floor(parseFloat(wallet.unlockedTokenBalance()) / 100000000) / 100,
-          }));
-          console.log("balance: " + Math.floor(parseFloat(wallet.balance()) / 100000000) / 100);
-          console.log("unlocked balance: " + Math.floor(parseFloat(wallet.unlockedBalance()) / 100000000) / 100);
-          console.log("token balance: " + Math.floor(parseFloat(wallet.tokenBalance()) / 100000000) / 100);
-          console.log("unlocked token balance: " + Math.floor(parseFloat(wallet.unlockedTokenBalance()) / 100000000) / 100);
-          console.log("blockchain height" + wallet.blockchainHeight());
-          console.log('connected: ' + wallet.connected());
+      if (this.state.wallet_loaded) {
+        this.setState(() => ({
+          balance: Math.floor(parseFloat(wallet.balance()) / 100000000) / 100,
+          unlocked_balance: Math.floor(parseFloat(wallet.unlockedBalance()) / 100000000) / 100,
+          tokens: Math.floor(parseFloat(wallet.tokenBalance()) / 100000000) / 100,
+          unlocked_tokens: Math.floor(parseFloat(wallet.unlockedTokenBalance()) / 100000000) / 100,
+        }));
+        console.log("balance: " + Math.floor(parseFloat(wallet.balance()) / 100000000) / 100);
+        console.log("unlocked balance: " + Math.floor(parseFloat(wallet.unlockedBalance()) / 100000000) / 100);
+        console.log("token balance: " + Math.floor(parseFloat(wallet.tokenBalance()) / 100000000) / 100);
+        console.log("unlocked token balance: " + Math.floor(parseFloat(wallet.unlockedTokenBalance()) / 100000000) / 100);
+        console.log("blockchain height" + wallet.blockchainHeight());
+        console.log('connected: ' + wallet.connected());
 
-          this.state.tick_handle = setTimeout(nextTick, 10000);
-        }
+        // this.state.tick_handle = setTimeout(nextTick, 10000);
       }
 
       var lastHeight = 0;
@@ -428,12 +426,20 @@ export default class MiningApp extends React.Component {
           }));
         }
         if (height - lastHeight > 60) {
-          this.setOpenBalanceAlert('Please wait while blockchain is being updated, height ' + height, true);
+          this.setOpenBalanceAlert('Please wait while blockchain is being updated, height ' + height, false);
           console.log('wallet synchronized: ' + wallet.synchronized())
           console.log("blockchain updated, height: " + height);
           console.log('balance ' + wallet.balance());
           lastHeight = height;
         }
+
+        this.setState(() => ({
+          balance: Math.floor(parseFloat(wallet.balance()) / 100000000) / 100,
+          unlocked_balance: Math.floor(parseFloat(wallet.unlockedBalance()) / 100000000) / 100,
+          tokens: Math.floor(parseFloat(wallet.tokenBalance()) / 100000000) / 100,
+          unlocked_tokens: Math.floor(parseFloat(wallet.unlockedTokenBalance()) / 100000000) / 100,
+        }));
+
       });
 
       wallet.on('refreshed', () => {
@@ -441,9 +447,59 @@ export default class MiningApp extends React.Component {
         console.log('wallet synchronized: ' + wallet.synchronized())
         this.setState(() => ({
           modal_close_disabled: false,
-          balance_alert_close_disabled: false
+          balance_alert_close_disabled: false,
+          balance: Math.floor(parseFloat(wallet.balance()) / 100000000) / 100,
+          unlocked_balance: Math.floor(parseFloat(wallet.unlockedBalance()) / 100000000) / 100,
+          tokens: Math.floor(parseFloat(wallet.tokenBalance()) / 100000000) / 100,
+          unlocked_tokens: Math.floor(parseFloat(wallet.unlockedTokenBalance()) / 100000000) / 100,
         }));
 
+        wallet.store()
+          .then(() => {
+            console.log("Wallet stored");
+          })
+          .catch((e) => {
+            console.log("Unable to store wallet: " + e)
+          });
+        wallet.off('refreshed');
+      });
+
+      wallet.on('unconfirmedMoneyReceived', (tx, amount) => {
+        console.log("UNCONFIRMEDMONEYRECEIVED");
+        this.state.balance = Math.floor(parseFloat(wallet.balance()) / 100000000) / 100;
+      });
+
+      wallet.on('moneyReceived', (tx, amount) => {
+        console.log("MONEYRECEIVED");
+        this.state.unlocked_balance = Math.floor(parseFloat(wallet.unlockedBalance()) / 100000000) / 100
+      });
+
+      wallet.on('unconfirmedTokenReceived', (tx, amount) => {
+        console.log("UNCONFIRMEDTOKENRECEIVED");
+        this.setState({
+          tokens: Math.floor(parseFloat(wallet.tokenBalance()) / 100000000) / 100
+        });
+      });
+
+      wallet.on('tokenReceived', (tx, amount) => {
+        console.log("TOKENRECEIVED");
+        this.state.unlocked_tokens = Math.floor(parseFloat(wallet.unlockedTokenBalance()) / 100000000) / 100
+      });
+
+      wallet.on('moneySpent', (tx, amount) => {
+        console.log("moneySpent");
+        this.state.unlocked_balance = Math.floor(parseFloat(wallet.unlockedBalance()) / 100000000) / 100;
+        this.state.balance = Math.floor(parseFloat(wallet.balance()) / 100000000) / 100;
+      });
+
+      wallet.on('tokenSpent', (tx, amount) => {
+        console.log("tokenSpent");
+        this.state.tokens = Math.floor(parseFloat(wallet.tokenBalance()) / 100000000) / 100;
+        this.state.unlocked_tokens = Math.floor(parseFloat(wallet.unlockedTokenBalance()) / 100000000) / 100;
+      });
+
+      wallet.on('updated', () => {
+        console.log("UPDATED");
         wallet.store()
           .then(() => {
             console.log("Wallet stored");
@@ -453,7 +509,7 @@ export default class MiningApp extends React.Component {
           })
       });
 
-      nextTick();
+      //nextTick();
     }
   }
 
@@ -561,6 +617,8 @@ export default class MiningApp extends React.Component {
           this.setCloseSendPopup();
           this.setOpenBalanceAlert('Transaction commited successfully, Your cash transaction ID is: '
             + tx.transactionsIds(), false);
+          this.state.balance = Math.floor(parseFloat(this.state.wallet.balance()) / 100000000) / 100;
+          this.state.unlocked_balance = Math.floor(parseFloat(this.state.wallet.unlockedBalance()) / 100000000) / 100;
         }).catch((e) => {
           console.log("Error on commiting transaction: " + e);
           this.setOpenBalanceAlert("Error on commiting transaction: " + e, false);
@@ -587,13 +645,15 @@ export default class MiningApp extends React.Component {
         'amount': amount,
         'tx_type': 1 // token transaction
       }).then((tx) => {
-        console.log("Cash transaction created: " + tx.transactionsIds());
+        console.log("Token transaction created: " + tx.transactionsIds());
 
         tx.commit().then(() => {
           console.log("Transaction commited successfully");
           this.setCloseSendPopup();
           this.setOpenBalanceAlert('Transaction commited successfully, Your token transaction ID is: '
             + tx.transactionsIds(), false);
+          this.state.tokens = Math.floor(parseFloat(this.state.wallet.tokenBalance()) / 100000000) / 100;
+          this.state.unlocked_tokens = Math.floor(parseFloat(this.state.wallet.unlockedTokenBalance()) / 100000000) / 100;
         }).catch((e) => {
           console.log("Error on commiting transaction: " + e);
           this.setOpenBalanceAlert("Error on commiting transaction: " + e, false);
@@ -697,7 +757,7 @@ export default class MiningApp extends React.Component {
         this.openInfoPopup('Please enter valid address');
       }
     } else {
-      this.openInfoPopup('Please enter valid address');
+      this.openInfoPopup('Please load the wallet file');
     }
   }
 
