@@ -418,7 +418,7 @@ export default class MiningApp extends React.Component {
             modal_close_disabled: false,
             balance_alert_close_disabled: false
           }));
-          this.setCloseBalanceAlert()
+          this.setCloseBalanceAlert();
         } else {
           this.setState(() => ({
             wallet_sync: wallet.synchronized(),
@@ -439,7 +439,6 @@ export default class MiningApp extends React.Component {
           tokens: Math.floor(parseFloat(wallet.tokenBalance()) / 100000000) / 100,
           unlocked_tokens: Math.floor(parseFloat(wallet.unlockedTokenBalance()) / 100000000) / 100,
         }));
-
       });
 
       wallet.on('refreshed', () => {
@@ -457,6 +456,7 @@ export default class MiningApp extends React.Component {
         wallet.store()
           .then(() => {
             console.log("Wallet stored");
+            this.setCloseBalanceAlert();
           })
           .catch((e) => {
             console.log("Unable to store wallet: " + e)
