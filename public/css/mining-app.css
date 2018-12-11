@@ -151,7 +151,7 @@ header p {
 .main form input:hover,
 .main form input:active,
 .main form input:focus {
-  box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
+  box-shadow: 0 0 15px 0 rgba(255, 214, 22, 0.8) !important;
 }
 .main form input::-webkit-input-placeholder {
   /* Chrome/Opera/Safari */
@@ -196,6 +196,7 @@ header p {
 }
 .main form .pool-url:hover {
   cursor: pointer;
+  box-shadow: 0 0 20px 0 rgba(255, 214, 22, 0.8) !important;
 }
 .main form .pool-url:focus {
   outline: none;
@@ -251,6 +252,7 @@ header p {
 }
 .main form #cpuUsage:hover {
   cursor: pointer;
+  box-shadow: 0 0 18px 0 rgba(255, 214, 22, 0.8) !important;
 }
 .main form .input-group p {
   font-family: "Avenir Bold", sans-serif;
