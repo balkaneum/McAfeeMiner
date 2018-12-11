@@ -3,9 +3,7 @@
   display: table;
   border: 1px solid #dfc983;
   border-radius: 8px;
-  background: url(../images/info-bg.png);
-  background-size: 100% 100%;
-  background-repeat: repeat-y;
+  background: transparent;
   color: #fff;
   text-transform: uppercase;
   font-size: 17px;
