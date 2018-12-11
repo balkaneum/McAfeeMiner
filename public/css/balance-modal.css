@@ -125,8 +125,6 @@
   -webkit-transition: all 0.2s ease-in;
   -moz-transition: all 0.2s ease-in;
   transition: all 0.2s ease-in;
-  -webkit-filter: grayscale(1);
-  filter: grayscale(1);
 }
 .balance-modal .btns-wrap button:hover img {
   -webkit-filter: grayscale(0);
