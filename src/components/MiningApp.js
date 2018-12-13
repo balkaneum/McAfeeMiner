@@ -24,6 +24,14 @@ import OpenExistingWalletModal from './partials/OpenExistingWalletModal';
 import CreateFromKeysModal from './partials/CreateFromKeysModal';
 import InstructionsModal from './partials/InstructionsModal';
 
+// Testnet conf
+// let net = 'testnet';
+// let daemonHostPort = '192.168.1.22:29393';
+
+// Mainnet conf
+let net = 'mainnet';
+let daemonHostPort = 'rpc.safex.io:17402';
+
 export default class MiningApp extends React.Component {
   constructor(props) {
     super(props);
@@ -116,7 +124,6 @@ export default class MiningApp extends React.Component {
       wallet_connected: false,
       blockchain_height: 0,
       wallet_sync: false,
-      wallet_refresh: false,
       wallet_being_created: false,
       create_new_wallet_modal: false,
       open_from_existing_modal: false,
@@ -152,6 +159,9 @@ export default class MiningApp extends React.Component {
     this.setOpenBalanceAlert = this.setOpenBalanceAlert.bind(this);
     this.setCloseBalanceAlert = this.setCloseBalanceAlert.bind(this);
     this.rescanBalance = this.rescanBalance.bind(this);
+    this.roundBalanceAmount = this.roundBalanceAmount.bind(this);
+    this.refreshCallback = this.refreshCallback.bind(this);
+    this.updatedCallback = this.updatedCallback.bind(this);
 
     //wallet functions
     this.create_new_wallet = this.create_new_wallet.bind(this);
@@ -194,8 +204,8 @@ export default class MiningApp extends React.Component {
           var args = {
             'path': filepath,
             'password': pass,
-            'network': 'mainnet',
-            'daemonAddress': 'rpc.safex.io:17402',
+            'network': net,
+            'daemonAddress': daemonHostPort,
           }
           this.setOpenBalanceAlert('Please wait while your wallet file is loaded', true);
 
@@ -245,8 +255,8 @@ export default class MiningApp extends React.Component {
             var args = {
               'path': filepath,
               'password': pass1,
-              'network': 'mainnet',
-              'daemonAddress': 'rpc.safex.io:17402',
+              'network': net,
+              'daemonAddress': daemonHostPort,
             }
             if (!safex.walletExists(filepath)) {
               this.setState(() => ({
@@ -266,9 +276,9 @@ export default class MiningApp extends React.Component {
                     view_key: wallet.secretViewKey(),
                     modal_close_disabled: false
                   });
-                  console.log('wallet address  ' + wallet.address());
-                  console.log('wallet view private key  ' + wallet.secretViewKey());
-                  console.log('wallet spend private key  ' + wallet.secretSpendKey());
+                  console.log('wallet address  ' + this.state.mining_address);
+                  console.log('wallet spend private key  ' + this.state.spend_key);
+                  console.log('wallet view private key  ' + this.state.view_key);
                   this.closeModal();
                 })
                 .catch((err) => {
@@ -309,7 +319,7 @@ export default class MiningApp extends React.Component {
 
     if (safex_address !== '' || view_key !== '' || spend_key !== '' || pass1 !== '' || pass2 !== '') {
       if (pass1 !== '' && pass2 !== '' && pass1 === pass2) {
-        if (verify_safex_address(spend_key, view_key, safex_address)) {
+        if (net == 'testnet' || verify_safex_address(spend_key, view_key, safex_address)) {
           if (this.state.wallet_loaded) {
             this.closeWallet();
           }
@@ -319,8 +329,8 @@ export default class MiningApp extends React.Component {
               var args = {
                 'path': this.state.wallet_path,
                 'password': pass1,
-                'network': 'mainnet',
-                'daemonAddress': 'rpc.safex.io:17402',
+                'network': net,
+                'daemonAddress': daemonHostPort,
                 'restoreHeight': 0,
                 'addressString': safex_address,
                 'viewKeyString': view_key,
@@ -344,9 +354,9 @@ export default class MiningApp extends React.Component {
                       view_key: wallet.secretViewKey(),
                       modal_close_disabled: false
                     });
-                    console.log('wallet address  ' + wallet.address());
-                    console.log('wallet view private key  ' + wallet.secretViewKey());
-                    console.log('wallet spend private key  ' + wallet.secretSpendKey());
+                    console.log('wallet address  ' + this.state.mining_address);
+                    console.log('wallet spend private key  ' + this.state.spend_key);
+                    console.log('wallet view private key  ' + this.state.view_key);
                     this.closeModal();
                   })
                   .catch((err) => {
@@ -386,208 +396,127 @@ export default class MiningApp extends React.Component {
     }
   }
 
+  updatedCallback() {
+    console.log("UPDATED");
+    this.state.wallet.store()
+      .then(() => {
+        console.log("Wallet stored");
+      })
+      .catch((e) => {
+        console.log("Unable to store wallet: " + e)
+      })
+  }
+
+  refreshCallback() {
+    console.log("wallet refreshed");
+    let wallet = this.state.wallet;
+    this.setState(() => ({
+      modal_close_disabled: false,
+      balance_alert_close_disabled: false,
+      balance: this.roundBalanceAmount(wallet.balance()),
+      unlocked_balance: this.roundBalanceAmount(wallet.unlockedBalance()),
+      tokens: this.roundBalanceAmount(wallet.tokenBalance()),
+      unlocked_tokens: this.roundBalanceAmount(wallet.unlockedTokenBalance()),
+      blockchain_height: wallet.blockchainHeight(),
+      wallet_connected: wallet.connected() === "connected"
+    }));
+
+    wallet.store()
+      .then(() => {
+        console.log("Wallet stored");
+      })
+      .catch((e) => {
+        console.log("Unable to store wallet: " + e);
+        this.setOpenBalanceAlert("Unable to store wallet: " + e, false);
+      });
+    wallet.off('refreshed');
+    wallet.on('updated', this.updatedCallback);
+  }
+
   startBalanceCheck() {
     if (this.state.wallet_loaded) {
-      console.log(this.state.wallet)
+      let wallet = this.state.wallet;
+      console.log("daemon blockchain height: " + wallet.daemonBlockchainHeight());
+      console.log("blockchain height: " + wallet.blockchainHeight());
 
-      var wallet = this.state.wallet;
       this.setState(() => ({
         balance_wallet: wallet.address()
       }));
 
       if (this.state.wallet_loaded) {
         this.setState(() => ({
-          wallet_connected: wallet.connected(),
+          wallet_connected: wallet.connected() === "connected",
           blockchain_height: wallet.blockchainHeight(),
-          balance: Math.floor(parseFloat(wallet.balance()) / 100000000) / 100,
-          unlocked_balance: Math.floor(parseFloat(wallet.unlockedBalance()) / 100000000) / 100,
-          tokens: Math.floor(parseFloat(wallet.tokenBalance()) / 100000000) / 100,
-          unlocked_tokens: Math.floor(parseFloat(wallet.unlockedTokenBalance()) / 100000000) / 100,
+          balance: this.roundBalanceAmount(wallet.balance()),
+          unlocked_balance: this.roundBalanceAmount(wallet.unlockedBalance()),
+          tokens: this.roundBalanceAmount(wallet.tokenBalance()),
+          unlocked_tokens: this.roundBalanceAmount(wallet.unlockedTokenBalance())
         }));
-        console.log("balance: " + Math.floor(parseFloat(wallet.balance()) / 100000000) / 100);
-        console.log("unlocked balance: " + Math.floor(parseFloat(wallet.unlockedBalance()) / 100000000) / 100);
-        console.log("token balance: " + Math.floor(parseFloat(wallet.tokenBalance()) / 100000000) / 100);
-        console.log("unlocked token balance: " + Math.floor(parseFloat(wallet.unlockedTokenBalance()) / 100000000) / 100);
+
+        console.log("balance: " + this.roundBalanceAmount(wallet.balance()));
+        console.log("unlocked balance: " + this.roundBalanceAmount(wallet.unlockedBalance()));
+        console.log("token balance: " + this.roundBalanceAmount(wallet.tokenBalance()));
+        console.log("unlocked token balance: " + this.roundBalanceAmount(wallet.unlockedTokenBalance()));
         console.log("blockchain height " + wallet.blockchainHeight());
         console.log('connected: ' + wallet.connected());
-
-        // this.state.tick_handle = setTimeout(nextTick, 10000);
       }
 
       var lastHeight = 0;
       console.log("balance address: " + wallet.address());
-      console.log("seed: " + wallet.seed());
+
+      this.setState(() => ({
+        wallet_sync: false,
+      }));
 
       wallet.on('newBlock', (height) => {
-        let synchronized = wallet.synchronized();
-        if (synchronized) {
-          this.setState(() => ({
-            wallet_sync: synchronized,
-            modal_close_disabled: false,
-            balance_alert_close_disabled: false,
-            balance: Math.floor(parseFloat(wallet.balance()) / 100000000) / 100,
-            unlocked_balance: Math.floor(parseFloat(wallet.unlockedBalance()) / 100000000) / 100,
-            tokens: Math.floor(parseFloat(wallet.tokenBalance()) / 100000000) / 100,
-            unlocked_tokens: Math.floor(parseFloat(wallet.unlockedTokenBalance()) / 100000000) / 100,
-          }));
+        let syncedHeight = wallet.daemonBlockchainHeight() - height < 10;
+        if (syncedHeight) {
+          console.log("syncedHeight up to date...");
+          if (wallet.synchronized()) {
+            console.log("newBlock wallet synchronized, setting state...");
+            this.setState(() => ({
+              wallet_sync: true,
+              modal_close_disabled: false,
+              balance_alert_close_disabled: false,
+              balance: this.roundBalanceAmount(wallet.balance()),
+              unlocked_balance: this.roundBalanceAmount(wallet.unlockedBalance()),
+              tokens: this.roundBalanceAmount(wallet.tokenBalance()),
+              unlocked_tokens: this.roundBalanceAmount(wallet.unlockedTokenBalance()),
+              blockchain_height: wallet.blockchainHeight()
+            }));
+          }
+          this.setCloseBalanceAlert();
         } else {
-          this.setState(() => ({
-            wallet_sync: synchronized,
-            modal_close_disabled: true,
-          }));
-        }
-
-        if (height - lastHeight > 60) {
-          this.setOpenBalanceAlert('Please wait while blockchain is being updated, height ' + height, false);
-          console.log('wallet synchronized: ' + synchronized)
-          console.log("blockchain updated, height: " + height);
-          lastHeight = height;
-          this.setState(() => ({
-            blockchain_height: height
-          }));
+          if (height - lastHeight > 1000) {
+            this.setOpenBalanceAlert('Please wait while blockchain is being updated, height ' + height, false);
+            console.log("blockchain updated, height: " + height);
+            lastHeight = height;
+          }
         }
       });
 
-      wallet.on('refreshed', () => {
-        console.log("wallet refreshed");
-        console.log('wallet synchronized: ' + wallet.synchronized())
-        this.setState(() => ({
-          modal_close_disabled: false,
-          balance_alert_close_disabled: false,
-          balance: Math.floor(parseFloat(wallet.balance()) / 100000000) / 100,
-          unlocked_balance: Math.floor(parseFloat(wallet.unlockedBalance()) / 100000000) / 100,
-          tokens: Math.floor(parseFloat(wallet.tokenBalance()) / 100000000) / 100,
-          unlocked_tokens: Math.floor(parseFloat(wallet.unlockedTokenBalance()) / 100000000) / 100,
-        }));
-
-        wallet.store()
-          .then(() => {
-            console.log("Wallet stored");
-            this.setCloseBalanceAlert();
-          })
-          .catch((e) => {
-            console.log("Unable to store wallet: " + e);
-            this.setOpenBalanceAlert("Unable to store wallet: " + e, false);
-          });
-        wallet.off('refreshed');
-      });
-
-      wallet.on('unconfirmedMoneyReceived', (tx, amount) => {
-        console.log("UNCONFIRMEDMONEYRECEIVED");
-        this.state.balance = Math.floor(parseFloat(wallet.balance()) / 100000000) / 100;
-      });
-
-      wallet.on('moneyReceived', (tx, amount) => {
-        console.log("MONEYRECEIVED");
-        this.state.unlocked_balance = Math.floor(parseFloat(wallet.unlockedBalance()) / 100000000) / 100
-      });
-
-      wallet.on('unconfirmedTokenReceived', (tx, amount) => {
-        console.log("UNCONFIRMEDTOKENRECEIVED");
-        this.setState({
-          tokens: Math.floor(parseFloat(wallet.tokenBalance()) / 100000000) / 100
-        });
-      });
-
-      wallet.on('tokenReceived', (tx, amount) => {
-        console.log("TOKENRECEIVED");
-        this.state.unlocked_tokens = Math.floor(parseFloat(wallet.unlockedTokenBalance()) / 100000000) / 100
-      });
-
-      wallet.on('moneySpent', (tx, amount) => {
-        console.log("moneySpent");
-        this.state.unlocked_balance = Math.floor(parseFloat(wallet.unlockedBalance()) / 100000000) / 100;
-        this.state.balance = Math.floor(parseFloat(wallet.balance()) / 100000000) / 100;
-      });
-
-      wallet.on('tokenSpent', (tx, amount) => {
-        console.log("tokenSpent");
-        this.state.tokens = Math.floor(parseFloat(wallet.tokenBalance()) / 100000000) / 100;
-        this.state.unlocked_tokens = Math.floor(parseFloat(wallet.unlockedTokenBalance()) / 100000000) / 100;
-      });
-
-      wallet.on('updated', () => {
-        console.log("UPDATED");
-        wallet.store()
-          .then(() => {
-            console.log("Wallet stored");
-          })
-          .catch((e) => {
-            console.log("Unable to store wallet: " + e)
-          })
-      });
-
-      //nextTick();
+      wallet.on('refreshed', this.refreshCallback);
     }
   }
 
   rescanBalance() {
     var wallet = this.state.wallet;
     var lastHeight = 0;
-    wallet.setRefreshFromBlockHeight(0);
+    console.log("Starting blockchain rescan...");
+    wallet.off('updated');
+    wallet.on('refreshed', this.refreshCallback);
+    wallet.rescanBlockchainAsync();
+    console.log("Blockchain rescan called...");
 
     this.setState(() => ({
-      wallet_refresh: true,
-      modal_close_disabled: true,
-      blockchain_height: wallet.blockchainHeight(),
+      blockchain_height: wallet.blockchainHeight()
     }));
 
-    this.setOpenBalanceAlert('Refreshing, please wait ', true);
+    this.setOpenBalanceAlert('Rescaning, please wait ', true);
+  }
 
-    wallet.on('newBlock', (height) => {
-      let synchronized = wallet.synchronized();
-      if (synchronized) {
-        this.setState(() => ({
-          wallet_sync: synchronized,
-          modal_close_disabled: false,
-          balance_alert_close_disabled: false,
-          balance: Math.floor(parseFloat(wallet.balance()) / 100000000) / 100,
-          unlocked_balance: Math.floor(parseFloat(wallet.unlockedBalance()) / 100000000) / 100,
-          tokens: Math.floor(parseFloat(wallet.tokenBalance()) / 100000000) / 100,
-          unlocked_tokens: Math.floor(parseFloat(wallet.unlockedTokenBalance()) / 100000000) / 100,
-        }));
-        this.setCloseBalanceAlert();
-      } else {
-        this.setState(() => ({
-          wallet_sync: synchronized,
-          modal_close_disabled: true
-        }));
-      }
-
-      if (height - lastHeight > 60) {
-        this.setOpenBalanceAlert('Please wait while blockchain is being updated, height ' + height, false);
-        console.log('wallet synchronized: ' + synchronized)
-        console.log("blockchain updated, height: " + height);
-        lastHeight = height;
-      }
-    });
-
-    wallet.on('refreshed', () => {
-      console.log("wallet refreshed");
-      console.log('wallet synchronized: ' + wallet.synchronized())
-      this.setState(() => ({
-        modal_close_disabled: false,
-        balance_alert_close_disabled: false,
-        balance: Math.floor(parseFloat(wallet.balance()) / 100000000) / 100,
-        unlocked_balance: Math.floor(parseFloat(wallet.unlockedBalance()) / 100000000) / 100,
-        tokens: Math.floor(parseFloat(wallet.tokenBalance()) / 100000000) / 100,
-        unlocked_tokens: Math.floor(parseFloat(wallet.unlockedTokenBalance()) / 100000000) / 100,
-      }));
-
-      wallet.store()
-        .then(() => {
-          console.log("Wallet stored");
-          this.setState(() => ({
-            wallet_refresh: false,
-            modal_close_disabled: false
-          }));
-          this.setCloseBalanceAlert();
-        })
-        .catch((e) => {
-          console.log("Unable to store wallet: " + e)
-        });
-      wallet.off('refreshed');
-    });
+  roundBalanceAmount(balance) {
+    return Math.floor(parseFloat(balance) / 100000000) / 100;
   }
 
   openInfoPopup(message) {
@@ -1099,7 +1028,7 @@ export default class MiningApp extends React.Component {
                       {this.state.blockchain_height}
                     </span>
                   </button>
-                  <button className="button-shine refresh" onClick={this.rescanBalance} title="Refresh">
+                  <button className="button-shine refresh" onClick={this.rescanBalance} title="Rescan blockchain from scratch">
                     <img src="images/refresh.png" alt="refresh" />
                   </button>
                 </div>

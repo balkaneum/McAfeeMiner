@@ -5,7 +5,7 @@
   padding: 15px;
 }
 .balance-modal h3 {
-  margin: 0 0 25px;
+  margin: 10px 0;
   font-size: 20px;
   text-transform: initial;
 }
@@ -143,6 +143,7 @@
 .balance-modal .btns-wrap .blockheight {
   margin-left: 15px;
   min-width: 75px;
+  text-align: left;
 }
 .balance-modal .btns-wrap .blockheight img {
   -webkit-filter: grayscale(0);
@@ -169,6 +170,7 @@
 }
 .balance-modal .btns-wrap .refresh {
   margin-left: 15px;
+  text-align: left;
 }
 .balance-modal .btns-wrap .refresh img {
   max-height: 18px;
