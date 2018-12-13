@@ -409,6 +409,7 @@ export default class MiningApp extends React.Component {
     this.state.wallet.store()
       .then(() => {
         console.log("Wallet stored");
+        this.setCloseBalanceAlert();
       })
       .catch((e) => {
         console.log("Unable to store wallet: " + e)
@@ -537,17 +538,16 @@ export default class MiningApp extends React.Component {
           blockchain_height: wallet.blockchainHeight(),
           wallet_connected: wallet.connected() === "connected"
         }));
+        this.setCloseBalanceAlert();
 
         wallet.store()
           .then(() => {
             console.log("Wallet stored");
-            this.setCloseBalanceAlert();
           })
           .catch((e) => {
             console.log("Unable to store wallet: " + e);
             this.setOpenBalanceAlert("Unable to store wallet: " + e, 'balance_alert', false);
           });
-
         wallet.on('newBlock', this.newBlockCallback);
         wallet.on('updated', this.updatedCallback);
       }, 1000);
@@ -927,7 +927,7 @@ export default class MiningApp extends React.Component {
               <img src="images/line-left.png" alt="Line Left" />
               <input type="text" value={this.state.mining_address} placeholder="Open or create your Wallet File"
                 name="user_wallet" id="user_wallet" readOnly
-                disabled={this.state.active ? "disabled" : ""} 
+                disabled={this.state.active || this.state.stopping ? "disabled" : ""} 
                 title={this.state.mining_address === '' ? "Your Safex Address will be shown here" : "Your Safex Address"}/>
               <img src="images/line-right.png" alt="Line Right" />
             </div>
