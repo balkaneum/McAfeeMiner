@@ -218,7 +218,8 @@ export default class MiningApp extends React.Component {
                 mining_address: wallet.address(),
                 spend_key: wallet.secretSpendKey(),
                 view_key: wallet.secretViewKey(),
-                modal_close_disabled: false
+                modal_close_disabled: false,
+                mining_info_text: ""
               });
               this.closeModal();
               console.log("wallet loaded " + this.state.wallet_loaded)
@@ -241,7 +242,7 @@ export default class MiningApp extends React.Component {
 
     const pass1 = e.target.pass1.value;
     const pass2 = e.target.pass2.value;
-    console.log(e.target.pass1.value);
+    console.log("new wallet password " + e.target.pass1.value);
 
     if (pass1 !== '' || pass2 !== '') {
       if (pass1 === pass2) {
@@ -275,7 +276,8 @@ export default class MiningApp extends React.Component {
                     mining_address: wallet.address(),
                     spend_key: wallet.secretSpendKey(),
                     view_key: wallet.secretViewKey(),
-                    modal_close_disabled: false
+                    modal_close_disabled: false,
+                    mining_info_text: ""
                   });
                   console.log('wallet address  ' + this.state.mining_address);
                   console.log('wallet spend private key  ' + this.state.spend_key);
@@ -354,7 +356,8 @@ export default class MiningApp extends React.Component {
                       mining_address: wallet.address(),
                       spend_key: wallet.secretSpendKey(),
                       view_key: wallet.secretViewKey(),
-                      modal_close_disabled: false
+                      modal_close_disabled: false,
+                      mining_info_text: ""
                     });
                     console.log('wallet address  ' + this.state.mining_address);
                     console.log('wallet spend private key  ' + this.state.spend_key);
