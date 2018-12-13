@@ -940,7 +940,9 @@ export default class MiningApp extends React.Component {
               <img src="images/line-right.png" alt="Line Right" />
             </div>
 
-            <select className="button-shine pool-url" name="pool" id="pool" disabled={this.state.active ? "disabled" : ""} title="Choose the pool you want to connect to">
+            <select className="button-shine pool-url" name="pool" id="pool" 
+              disabled={this.state.active || this.state.stopping ? "disabled" : ""} 
+              title="Choose the pool you want to connect to">
               {pools_list}
             </select>
 
@@ -948,7 +950,8 @@ export default class MiningApp extends React.Component {
               <div className="input-group">
                 <p># CPU</p>
                 <select className="button-shine form-control" name="cores" id="cpuUsage"
-                  disabled={this.state.active ? "disabled" : ""} title="Choose how much CPU power you want to use for mining">
+                  disabled={this.state.active || this.state.stopping ? "disabled" : ""}
+                  title="Choose how much CPU power you want to use for mining">
                   {cpu_options}
                 </select>
               </div>
