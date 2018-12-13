@@ -140,9 +140,6 @@ export default class MiningApp extends React.Component {
     //mining functions
     this.openInfoPopup = this.openInfoPopup.bind(this);
     this.openInstructionsModal = this.openInstructionsModal.bind(this);
-    this.inputValidate = this.inputValidate.bind(this);
-    this.checkInputValueLenght = this.checkInputValueLenght.bind(this);
-    this.checkInputValuePrefix = this.checkInputValuePrefix.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.startMining = this.startMining.bind(this);
     this.stopMining = this.stopMining.bind(this);
@@ -219,7 +216,7 @@ export default class MiningApp extends React.Component {
                 spend_key: wallet.secretSpendKey(),
                 view_key: wallet.secretViewKey(),
                 modal_close_disabled: false,
-                mining_info_text: ""
+                mining_info: false
               });
               this.closeModal();
               console.log("wallet loaded " + this.state.wallet_loaded)
@@ -277,7 +274,7 @@ export default class MiningApp extends React.Component {
                     spend_key: wallet.secretSpendKey(),
                     view_key: wallet.secretViewKey(),
                     modal_close_disabled: false,
-                    mining_info_text: ""
+                    mining_info: false
                   });
                   console.log('wallet address  ' + this.state.mining_address);
                   console.log('wallet spend private key  ' + this.state.spend_key);
@@ -357,7 +354,7 @@ export default class MiningApp extends React.Component {
                       spend_key: wallet.secretSpendKey(),
                       view_key: wallet.secretViewKey(),
                       modal_close_disabled: false,
-                      mining_info_text: ""
+                      mining_info: false
                     });
                     console.log('wallet address  ' + this.state.mining_address);
                     console.log('wallet spend private key  ' + this.state.spend_key);
@@ -721,88 +718,37 @@ export default class MiningApp extends React.Component {
     }));
   }
 
-  inputValidate(inputValue) {
-    let inputRegex = /^[a-zA-Z0-9]/;
-    return inputRegex.test(inputValue);
-  }
-
-  checkInputValueLenght(inputValue) {
-    let inputValueLength = inputValue.length;
-
-    if (inputValueLength <= 95) {
-      console.log('Safex hash address length is too short');
-      this.openInfoPopup('Address length is too short');
-      return false;
-    } else if (inputValueLength >= 105) {
-      console.log('Safex hash address length is too long');
-      this.openInfoPopup('Address length is too long');
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-  checkInputValuePrefix(inputValue) {
-    let userInputValue = inputValue;
-
-    if (userInputValue.startsWith("SFXt") || userInputValue.startsWith("Safex")) {
-      if (!userInputValue.startsWith("SFXts") || !userInputValue.startsWith("SFXti")) {
-        return true;
-      } else {
-        console.log('Suffix is invalid');
-        return false;
-      }
-    } else {
-      console.log('Suffix is invalid');
-      return false;
-    }
-  }
-
   handleSubmit(e) {
     e.preventDefault();
-    var user_wallet = e.target.user_wallet;
-    let inputValue = e.target.user_wallet.value;
 
-    if (user_wallet.value !== '') {
-      if (this.inputValidate(inputValue))
-        if (this.checkInputValueLenght(inputValue)) {
-          if (this.checkInputValuePrefix(inputValue)) {
-            if (this.state.active) {
-              this.setState(() => ({
-                active: false,
-                stopping: true
-              }));
-              this.openInfoPopup('Stopping miner...');
-              setTimeout(() => {
-                this.setState(() => ({
-                  mining_info: false,
-                  mining_info_text: '',
-                  stopping: false
-                }));
-              }, 5000);
-              this.stopMining();
-            } else {
-              this.setState(() => ({
-                active: true,
-                starting: true
-              }));
-              this.openInfoPopup('Starting miner...');
-              setTimeout(() => {
-                this.setState(() => ({
-                  starting: false
-                }));
-                this.openInfoPopup('Mining in progress');
-              }, 12000);
-              this.startMining();
-            }
-          } else {
-            this.openInfoPopup('Your address must start with Safex or SFXt');
-          }
-        } else {
-          console.log('Address length is not valid')
-        }
-      else {
-        this.openInfoPopup('Please enter valid address');
+    if (this.state.wallet_loaded) {
+      if (this.state.active) {
+        this.setState(() => ({
+          active: false,
+          stopping: true
+        }));
+        this.openInfoPopup('Stopping miner...');
+        setTimeout(() => {
+          this.setState(() => ({
+            mining_info: false,
+            mining_info_text: '',
+            stopping: false
+          }));
+        }, 5000);
+        this.stopMining();
+      } else {
+        this.setState(() => ({
+          active: true,
+          starting: true
+        }));
+        this.openInfoPopup('Starting miner...');
+        setTimeout(() => {
+          this.setState(() => ({
+            starting: false
+          }));
+          this.openInfoPopup('Mining in progress');
+        }, 12000);
+        this.startMining();
       }
     } else {
       this.openInfoPopup('Please load the wallet file');
