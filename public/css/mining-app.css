@@ -91,6 +91,10 @@ header p {
 .modal-btn:active {
   box-shadow: none !important;
 }
+.modal-btn[disabled] img {
+  -webkit-filter: grayscale(1) invert(100%);
+  filter: grayscale(1) invert(100%);
+}
 .modal-btn img {
   max-height: 23px;
   -webkit-transition: all 0.2s ease-in;
