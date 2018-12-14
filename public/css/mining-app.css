@@ -91,6 +91,9 @@ header p {
 .modal-btn:active {
   box-shadow: none !important;
 }
+.modal-btn[disabled]:hover {
+  cursor: initial;
+}
 .modal-btn[disabled] img {
   -webkit-filter: grayscale(1) invert(70%);
   filter: grayscale(1) invert(70%);
