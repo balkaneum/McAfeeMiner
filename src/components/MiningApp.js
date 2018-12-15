@@ -957,20 +957,20 @@ export default class MiningApp extends React.Component {
           <div className="btns-wrap">
             <button className="modal-btn" 
               onClick={this.openCreateWalletModal}
-              title={this.state.wallet_loaded ? "Create New Wallet File (wallet file is loaded)" : "Create New Wallet File" }
-              disabled={this.state.wallet_loaded ? "disabled" : ""}>
+              title="Create New Wallet File"
+              disabled={this.state.wallet_loaded || this.state.active || this.state.stopping  ? "disabled" : ""}>
               <img src="images/new-wallet.png" alt="new-wallet" />
             </button>
             <button className="modal-btn" 
               onClick={this.openFromExistingModal}
-              title={this.state.wallet_loaded ? "Open Wallet File (wallet file is loaded)" : "Open Wallet File"}
-              disabled={this.state.wallet_loaded ? "disabled" : ""}>
+              title="Open Wallet File"
+              disabled={this.state.wallet_loaded || this.state.active || this.state.stopping  ? "disabled" : ""}>
               <img src="images/open-logo.png" alt="open-logo" />
             </button>
             <button className="modal-btn" 
               onClick={this.openCreateFromKeysModal}
-              title={this.state.wallet_loaded ? "Create New Wallet From Keys (wallet file is loaded)" : "Create New Wallet From Keys"}
-              disabled={this.state.wallet_loaded ? "disabled" : ""}>
+              title="Create New Wallet From Keys"
+              disabled={this.state.wallet_loaded || this.state.active || this.state.stopping ? "disabled" : ""}>
               <img src="images/create-from-keys.png" alt="open-logo" />
             </button>
             <button className="modal-btn" 
