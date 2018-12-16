@@ -29,11 +29,11 @@ export default class CreateFromKeysModal extends React.Component {
                                 </div>
                             </div>
 
-                            <label htmlFor="spendkey">Safex Address Private Spendkey</label>
-                            <input name="spendkey" placeholder="Private Spendkey" />
+                            <label htmlFor="spendkey">Secret Spend Key (Sec, Private) </label>
+                            <input name="spendkey" placeholder="Secret Spendkey" />
 
-                            <label htmlFor="viewkey">Safex Address Private Viewkey</label>
-                            <input name="viewkey" placeholder="Private Viewkey" />
+                            <label htmlFor="viewkey">Secret View Key (Sec, Private)</label>
+                            <input name="viewkey" placeholder="Secret Viewkey" />
 
                             <button type="submit" className="button-shine new-wallet-btn">
                                 Create Wallet From Keys

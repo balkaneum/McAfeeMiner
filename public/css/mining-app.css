@@ -354,13 +354,19 @@ header p {
   color: #dfc983;
   text-transform: uppercase;
   visibility: hidden;
+  opacity: 0;
   min-height: 18px;
   margin-bottom: 0;
   font-size: 13px;
   line-height: 1;
+  transition: all ease 0.2s;
+  -o-transition: all ease 0.2s;
+  -moz-transition: all ease 0.2s;
+  -webkit-transition: all ease 0.2s;
 }
 .mining-info.active {
   visibility: visible;
+  opacity: 1;
 }
 
 /* Bottom blocks */
