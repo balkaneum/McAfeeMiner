@@ -29,6 +29,23 @@
   display: inline-block;
   z-index: -1;
 }
+/* header {
+  text-align: center;
+  width: 100%;
+  z-index: 1;
+  margin: -30px 0 25px;
+  position: relative;
+}
+header p {
+  color: #fff;
+  position: absolute;
+  top: -20px;
+  left: 15px;
+  margin-bottom: 0;
+}
+header p.fadeIn {
+  animation-delay: .8s;
+} */
 
 header {
   text-align: center;
@@ -38,14 +55,36 @@ header {
   position: relative;
   animation-delay: 0.3s;
 }
+header .close {
+  position: absolute;
+  top: -5px;
+  right: 15px;
+  color: #fff;
+  opacity: 1;
+  font-size: 19px;
+  font-family: "Brandon Grotesque Bold", Helvetica, Arial,sans-serif;
+}
+header .close.fadeIn {
+  animation-delay: .8s;
+}
+header .close:focus,
+header .close:hover {
+  color: #fff;
+  opacity: 1;
+}
+header img.fadeIn {
+  animation-delay: .3s;
+}
 header p {
   color: #fff;
   position: absolute;
   top: -5px;
-  right: 15px;
+  left: 15px;
   margin-bottom: 0;
-  animation-delay: 0.8s;
 }
+header p.fadeIn {
+  animation-delay: .8s;
+} 
 
 /* Main */
 .main {
@@ -53,7 +92,9 @@ header p {
   z-index: 2;
   width: 100%;
   top: 0;
-  text-align: center;
+  text-align: center; 
+}
+.main.fadeIn {
   animation-delay: 0.3s;
 }
 .btns-wrap {
@@ -196,7 +237,7 @@ header p {
 }
 .main form .pool-url {
   background: rgba(10, 26, 45, 0.5);
-  padding: 7px 10px 6px;
+  padding: 6px 10px;
   color: #fff;
   border-radius: 8px;
   width: 350px;
@@ -206,6 +247,8 @@ header p {
   border: 1px solid #dfc983;
   text-align-last: center;
   height: 30px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
 }
 .main form .pool-url:hover {
   cursor: pointer;
@@ -412,8 +455,10 @@ header p {
   right: 15px;
   bottom: -15px;
   text-align: right;
-  animation-delay: 0.8s;
   z-index: 2;
+}
+.main footer.fadeIn {
+  animation-delay: 0.8s;
 }
 .main footer a {
   display: inline-block;
