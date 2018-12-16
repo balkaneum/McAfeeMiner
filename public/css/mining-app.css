@@ -29,6 +29,23 @@
   display: inline-block;
   z-index: -1;
 }
+/* header {
+  text-align: center;
+  width: 100%;
+  z-index: 1;
+  margin: -30px 0 25px;
+  position: relative;
+}
+header p {
+  color: #fff;
+  position: absolute;
+  top: -20px;
+  left: 15px;
+  margin-bottom: 0;
+}
+header p.fadeIn {
+  animation-delay: .8s;
+} */
 
 header {
   text-align: center;
@@ -38,14 +55,36 @@ header {
   position: relative;
   animation-delay: 0.3s;
 }
+header .close {
+  position: absolute;
+  top: -5px;
+  right: 15px;
+  color: #fff;
+  opacity: 1;
+  font-size: 19px;
+  font-family: "Brandon Grotesque Bold", Helvetica, Arial,sans-serif;
+}
+header .close.fadeIn {
+  animation-delay: .8s;
+}
+header .close:focus,
+header .close:hover {
+  color: #fff;
+  opacity: 1;
+}
+header img.fadeIn {
+  animation-delay: .3s;
+}
 header p {
   color: #fff;
   position: absolute;
-  top: 0;
-  right: 15px;
+  top: -5px;
+  left: 15px;
   margin-bottom: 0;
-  animation-delay: 0.8s;
 }
+header p.fadeIn {
+  animation-delay: .8s;
+} 
 
 /* Main */
 .main {
@@ -53,12 +92,30 @@ header p {
   z-index: 2;
   width: 100%;
   top: 0;
-  text-align: center;
+  text-align: center; 
+}
+.main.fadeIn {
   animation-delay: 0.3s;
 }
-.new-wallet-btn {
-  border-radius: 15px;
-  background: url(../images/new_wallet.png) no-repeat top left / cover;
+.btns-wrap {
+  margin-bottom: 8px;
+  text-align: center;
+}
+.modal-btn {
+  padding: 0 0 0 12px;
+  z-index: 3;
+  background-color: transparent;
+  border: 0px;
+}
+.modal-btn:first-of-type {
+  padding: 0;
+}
+.modal-btn:hover {
+  cursor: pointer;
+}
+.balance-wallet-btn {
+  border-radius: 7px;
+  background-color: transparent;
   color: #fff;
   font-size: 12px;
   font-weight: 700;
@@ -67,46 +124,39 @@ header p {
   line-height: 1.2;
   position: relative;
   border: 0px none;
-  margin: 0px 0 5px 30px;
-  padding: 0;
-  width: 131px;
-  height: 30px;
-  -webkit-transition: all 0.3s ease-in;
-  -moz-transition: all 0.3s ease-in;
-  transition: all 0.3s ease-in;
 }
-.new-wallet-btn span {
-  font-family: "Avenir Bold";
-  color: #000;
-  font-size: 14px;
-  letter-spacing: 0.5px;
-  position: relative;
-  top: 1.5px;
-  text-transform: uppercase;
-  -webkit-transition: all 0.3s ease-in;
-  -moz-transition: all 0.3s ease-in;
-  transition: all 0.3s ease-in;
+.modal-btn:hover img {
+  -webkit-filter: grayscale(0);
+  filter: grayscale(0);
 }
-.new-wallet-btn:hover {
-  box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
-}
-.new-wallet-btn:hover span {
-  color: #ffffce;
-}
-.new-wallet-btn:active {
+.modal-btn:active {
   box-shadow: none !important;
+}
+.modal-btn[disabled]:hover {
+  cursor: initial;
+}
+.modal-btn[disabled] img {
+  -webkit-filter: grayscale(1) invert(70%);
+  filter: grayscale(1) invert(70%);
+}
+.modal-btn img {
+  max-height: 23px;
+  -webkit-transition: all 0.2s ease-in;
+  -moz-transition: all 0.2s ease-in;
+  transition: all 0.2s ease-in;
+  -webkit-filter: grayscale(1);
+  filter: grayscale(1);
 }
 .instructions-btn {
   background: transparent;
   border: 0px none;
   font-weight: 600;
-  font-size: 20px;
-  padding: 0px 10px;
+  font-size: 23px;
+  padding: 0 0 0 12px;
   line-height: 1;
-  color: #fff;
+  color: #c8c8c8;
   position: relative;
-  top: 3px;
-  opacity: 0.5;
+  top: 4px;
 }
 .instructions-btn:hover {
   color: #dfc983;
@@ -149,7 +199,13 @@ header p {
 .main form input:hover,
 .main form input:active,
 .main form input:focus {
-  box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
+  box-shadow: 0 0 15px 0 rgba(255, 214, 22, 0.8) !important;
+}
+.main form input[disabled] {
+  color: rgba(255,255,255,.5);
+}
+.main form input[disabled]:hover {
+  box-shadow: none !important;
 }
 .main form input::-webkit-input-placeholder {
   /* Chrome/Opera/Safari */
@@ -181,7 +237,7 @@ header p {
 }
 .main form .pool-url {
   background: rgba(10, 26, 45, 0.5);
-  padding: 7px 10px 6px;
+  padding: 6px 10px;
   color: #fff;
   border-radius: 8px;
   width: 350px;
@@ -191,9 +247,22 @@ header p {
   border: 1px solid #dfc983;
   text-align-last: center;
   height: 30px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+.main form .pool-url:hover {
+  cursor: pointer;
+  box-shadow: 0 0 20px 0 rgba(255, 214, 22, 0.8) !important;
 }
 .main form .pool-url:focus {
   outline: none;
+}
+.main form .pool-url[disabled] {
+  color: rgba(255,255,255,.5);
+}
+.main form .pool-url[disabled]:hover {
+  box-shadow: none !important;
+  cursor: initial;
 }
 .options {
   display: flex;
@@ -243,6 +312,25 @@ header p {
   text-align-last: center;
   width: auto;
   height: 30px;
+  transition: all ease 0.3s;
+  -o-transition: all ease 0.3s;
+  -moz-transition: all ease 0.3s;
+  -webkit-transition: all ease 0.3s;
+}
+.main form #cpuUsage:hover {
+  cursor: pointer;
+  box-shadow: 0 0 20px 0 rgba(255, 214, 22, 0.8) !important;
+}
+.main form #cpuUsage:focus {
+  outline: none;
+  border: 1px solid #dfc983;
+}
+.main form #cpuUsage[disabled] {
+  color: rgba(255,255,255,.5);
+}
+.main form #cpuUsage[disabled]:hover {
+  box-shadow: none !important;
+  cursor: initial;
 }
 .main form .input-group p {
   font-family: "Avenir Bold", sans-serif;
@@ -279,6 +367,9 @@ header p {
   -moz-transition: all 0.2s ease-in;
   transition: all 0.2s ease-in;
 }
+.submit[disabled]:hover {
+  cursor: pointer;
+}
 .submit span {
   position: relative;
   top: 3.5px;
@@ -306,13 +397,19 @@ header p {
   color: #dfc983;
   text-transform: uppercase;
   visibility: hidden;
+  opacity: 0;
   min-height: 18px;
   margin-bottom: 0;
   font-size: 13px;
   line-height: 1;
+  transition: all ease 0.2s;
+  -o-transition: all ease 0.2s;
+  -moz-transition: all ease 0.2s;
+  -webkit-transition: all ease 0.2s;
 }
 .mining-info.active {
   visibility: visible;
+  opacity: 1;
 }
 
 /* Bottom blocks */
@@ -356,10 +453,12 @@ header p {
 .main footer {
   position: absolute;
   right: 15px;
-  bottom: -10px;
+  bottom: -15px;
   text-align: right;
-  animation-delay: 0.8s;
   z-index: 2;
+}
+.main footer.fadeIn {
+  animation-delay: 0.8s;
 }
 .main footer a {
   display: inline-block;
@@ -384,305 +483,26 @@ header p {
   right: -5px;
   font-weight: 600;
 }
+.main footer a {
+  display: inline-block;
+}
 .main footer a:hover {
   cursor: pointer;
 }
+.main footer a:hover img {
+  opacity: 1;
+}
 .main footer img {
   width: 130px;
+  opacity: 0.7;
+  transition: all ease 0.3s;
+  -o-transition: all ease 0.3s;
+  -moz-transition: all ease 0.3s;
+  -webkit-transition: all ease 0.3s;
 }
 
-/* Modal */
-.backdrop {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.6);
-  z-index: 10001;
-  opacity: 0;
-  visibility: hidden;
-  transition: all ease 0.3s;
-  -o-transition: all ease 0.3s;
-  -moz-transition: all ease 0.3s;
-  -webkit-transition: all ease 0.3s;
-}
-.backdrop.active {
-  visibility: visible;
-  opacity: 1;
-}
-.modal {
-  background: rgba(0, 0, 0, 0.5);
-  display: table;
-  border: 1px solid #dfc983;
-  border-radius: 8px;
-  color: #fff;
-  text-transform: uppercase;
-  font-size: 17px;
-  padding: 15px;
-  width: 560px;
-  visibility: hidden;
-  opacity: 0;
-  transition: all ease 0.3s;
-  -o-transition: all ease 0.3s;
-  -moz-transition: all ease 0.3s;
-  -webkit-transition: all ease 0.3s;
-  margin: auto;
-  text-align: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  z-index: 100002;
-}
-.modal.active {
-  visibility: visible;
-  opacity: 1;
-}
-.modal:hover {
-  outline: 0px none;
-  -webkit-box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
-  box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
-  border: 1px solid #dfc983;
-}
-.modal button {
-  border-radius: 7px;
-  background-color: transparent;
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1.26px;
-  line-height: 1.2;
-  position: relative;
-  border: 2px solid #dfc983;
-  margin: 0;
-  padding: 6px 12px 5px;
-  -webkit-transition: all 0.2s ease-in;
-  -moz-transition: all 0.2s ease-in;
-  transition: all 0.2s ease-in;
-}
-.modal button:hover {
-  box-shadow: 0 0 25px 0 rgba(195, 164, 113, 0.6) !important;
-  color: #ffffce;
-}
-.modal button:active {
-  box-shadow: none !important;
-}
-.modal .form-group {
-  margin-bottom: 0;
-  margin-top: 5px;
-}
-.modal label {
-  width: 100%;
-  text-transform: capitalize;
-  font-size: 14px;
-  margin-bottom: 0;
-}
-.modal textarea {
-  display: inline-block;
-  border: 0px none;
-  border-radius: 5px;
-  padding: 5px 10px;
-  margin: 0;
-  font-size: 14px;
-  background: url(../images/input-bg.png) repeat-y top left;
-  background-size: 100% 100%;
-  color: #fff;
-  width: 528px;
-  max-width: 528px;
-  max-height: 90px;
-  text-align: center;
-  transition: all ease 0.3s;
-  -o-transition: all ease 0.3s;
-  -moz-transition: all ease 0.3s;
-  -webkit-transition: all ease 0.3s;
-}
-.modal textarea:hover,
-.modal textarea:active,
-.modal textarea:focus {
-  box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
-}
-.modal textarea::-webkit-input-placeholder {
-  /* Chrome/Opera/Safari */
-  opacity: 1;
-  color: #fff;
-  font-size: 14px;
-  text-transform: uppercase;
-}
-.modal textarea::-moz-placeholder {
-  /* Firefox 19+ */
-  opacity: 1;
-  color: #fff;
-  font-size: 14px;
-  text-transform: uppercase;
-}
-.modal textarea:-moz-placeholder {
-  /* Firefox 18- */
-  opacity: 1;
-  color: #fff;
-  font-size: 14px;
-  text-transform: uppercase;
-}
-.modal textarea:-ms-input-placeholder {
-  /* IE 10+ */
-  opacity: 1;
-  color: #fff;
-  font-size: 14px;
-  text-transform: uppercase;
-}
-.modal .close {
-  position: absolute;
-  right: 15px;
-  top: 14px;
-  color: #fff;
-  opacity: 1;
-  font-size: 19px;
-  font-family: "Brandon Grotesque Bold", Helvetica, Arial, sans-serif;
-}
-.modal .warning {
-  color: #c80e4b;
-  text-align: left;
-}
-.modal .warning.red {
-  color: #c80e4b;
-}
-.modal .warning.green {
-  color: #0ec8c1;
-  text-transform: initial;
-}
-.modal .spendview {
-  display: none;
-}
-.modal .spendview.active {
-  display: block;
-}
-.modal .save-btn {
-  background: #c80e4b;
-  border: 1px solid #c80e4b;
-  -webkit-transition: all 0.2s ease-out;
-  -moz-transition: all 0.2s ease-out;
-  transition: all 0.2s ease-out;
-}
-.modal .save-btn:hover {
-  box-shadow: 0 0 30px 0 rgba(200, 14, 75, 1) !important;
-  color: #fff;
-}
-.modal .save-btn.green {
-  background: #0ec8c1;
-  border: 1px solid #0ec8c1;
-  margin-right: 0;
-}
-.modal .save-btn.green:hover {
-  box-shadow: 0 0 30px 0 rgba(14, 200, 193, 0.5) !important;
-  color: #fff;
-}
-.modal .copy-btn {
-  margin-top: 0;
-  margin-right: 10px;
-  font-size: 11.5px;
-  padding: 7px 12px 4px;
-}
-.modal .save-btn {
-  margin-top: 5px;
-  margin-right: 10px;
-  font-size: 11.5px;
-  padding: 7px 12px 4px;
-}
-.modal h5 {
-  margin-top: 0;
-  margin-bottom: 5px;
-  margin-top: 10px;
-}
-.modal p {
-  font-size: 13px;
-  text-transform: initial;
-  margin-bottom: 2px;
-}
-.instructions-modal {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  width: 630px;
-  min-height: 343px;
-}
-.instructions-modal h3 {
-  margin: 0 0 25px;
-  font-size: 20px;
-  text-transform: initial;
-}
-.instructions-modal p {
-  font-size: 14px;
-  line-height: 1.2;
-  text-align: left;
-}
-.instructions-modal p button {
-  border-radius: 7px;
-  background-color: transparent;
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1.26px;
-  line-height: 1.2;
-  position: relative;
-  border: 2px solid #dfc983;
-  margin: 4px 5px;
-  padding: 6px 12px 5px;
-  transition: none;
-}
-.instructions-modal p button:hover {
-  box-shadow: none !important;
-  cursor: initial;
-  color: #fff;
-}
-.instructions-modal p button.red-btn {
-  background: #c80e4b;
-  border: 1px solid #c80e4b;
-}
-.instructions-modal p button.red-btn-en,
-.instructions-modal p button.gen-new-wallet-sr {
-  margin-left: 0;
-}
-.instructions-modal p button.green-btn {
-  background: #0ec8c1;
-  border: 1px solid #0ec8c1;
-}
-.instructions-modal .lang-bts-wrap {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  position: absolute;
-}
-.instructions-modal .lang-bts-wrap button {
-  margin: 0 10px 0 0;
-  padding: 4px 8px 3px;
-  width: 48px;
-  text-indent: 2px;
-}
-.instructions-modal .lang-bts-wrap button.active {
-  background: #dfc983;
-  border: 2px solid #dfc983;
-  color: #000;
-}
-.instructions-modal .lang-bts-wrap button.active:hover {
-  box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
-}
-.instructions-modal p img {
-  position: relative;
-  top: -1px;
-  height: 28px;
-  margin: 4px 5px;
-}
-.instructions-modal .save-wallet-keys,
-.instructions-modal .gen-new-wallet {
-  margin: 0 4px 5px 0;
-}
-.instructions-modal p strong {
-  color: #c80e4b;
-  text-transform: uppercase;
+@media (min-width: 800px) {
+  .mining-bg-wrap img {
+    max-width: 800px;
+  }
 }
