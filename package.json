@@ -1,5 +1,5 @@
 {
-  "name": "McAfee1ClickMiner",
+  "name": "McAfeeSafexMiner",
   "description": "McAfee 1 Click Mining App Blockchain proof of work Safex Cash",
   "version": "v0.0.1",
   "homepage": ".",
@@ -67,7 +67,7 @@
     "make-all-installers": "npm run build && electron-builder build -ml && electron-builder build -w --x64 --ia32"
   },
   "build": {
-    "appId": "com.electron.mcafee_1_click_mining_app",
+    "appId": "com.electron.mcafee_safex_click_mining_app",
     "npmRebuild": true,
     "extends": null,
     "files": [
