@@ -20,6 +20,8 @@ export default class SendModal extends React.Component {
 
                                         <label htmlFor="amount">Amount</label>
                                         <input name="amount" placeholder="Enter Amount" />
+                                        <label htmlFor="amount">(Optional) Payment ID</label>
+                                        <input name="paymentid" placeholder="(optional) payment id" />
                                         <button className="button-shine" type="submit">Send</button>
                                     </form>
                                 </div>
