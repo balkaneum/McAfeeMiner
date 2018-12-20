@@ -48,13 +48,16 @@ header .close {
   opacity: 1;
   font-size: 19px;
   font-family: "Brandon Grotesque Bold", Helvetica, Arial,sans-serif;
+  -webkit-transition: all 0.2s ease-out;
+  -moz-transition: all 0.2s ease-out;
+  transition: all 0.2s ease-out;
 }
 header .close.fadeIn {
   animation-delay: .8s;
 }
 header .close:focus,
 header .close:hover {
-  color: #fff;
+  color: #dfc983;
   opacity: 1;
 }
 header img.fadeIn {
