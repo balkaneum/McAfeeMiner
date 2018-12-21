@@ -1121,8 +1121,6 @@ export default class MiningApp extends React.Component {
           </footer>
         </div>
 
-
-
         <div className={this.state.balance_modal_active ? 'modal balance-modal active' : 'modal balance-modal'}>
           <span className="close" onClick={this.closeModal} disabled={this.state.wallet_sync ? "" : "disabled"}>X</span>
           <h3 className={this.state.wallet_loaded ? "wallet-loaded-h3" : ""}>Check Balance</h3>

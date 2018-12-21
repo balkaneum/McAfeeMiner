@@ -277,7 +277,7 @@
   margin-bottom: 0;
 }
 
-.newWalletModal label {
+.newWalletModal .spendview label {
   text-transform: uppercase;
 }
 .newWalletModal input {
