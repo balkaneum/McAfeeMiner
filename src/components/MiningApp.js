@@ -1002,7 +1002,7 @@ export default class MiningApp extends React.Component {
           <div className="btns-wrap">
             <button className="modal-btn"
               onClick={this.openNewWalletModal}
-              title="Generate New Wallet Address">
+              title="Generate New Wallet">
               <img src="images/new.png" alt="new-wallet" />
             </button>
             <button className="modal-btn" 
