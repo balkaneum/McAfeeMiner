@@ -59,6 +59,7 @@ header .close:focus,
 header .close:hover {
   color: #dfc983;
   opacity: 1;
+  cursor: pointer;
 }
 header img.fadeIn {
   animation-delay: .3s;
