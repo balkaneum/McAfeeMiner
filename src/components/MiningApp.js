@@ -1243,7 +1243,7 @@ export default class MiningApp extends React.Component {
         />
 
         <div
-          className={this.state.modal_active || this.state.instructions_modal_active || this.state.balance_modal_active ? 'backdrop active' : 'backdrop'}
+          className={this.state.balance_modal_active ? 'backdrop active' : 'backdrop'}
           onClick={this.closeModal}>
         </div>
       </div>

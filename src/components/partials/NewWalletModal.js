@@ -24,8 +24,9 @@ export default class NewWalletModal extends React.Component {
         const pubkey = sa.pubkeys_to_string(keys.spend.pub, keys.view.pub);
 
         localStorage.setItem("wallet", JSON.stringify(keys));
+        this.exportWallet();
         this.setState({
-            exported: false,
+            exported: true,
             new_wallet_generated: true,
             new_wallet: pubkey,
             spendkey_sec: keys.spend.sec,
@@ -47,10 +48,6 @@ export default class NewWalletModal extends React.Component {
         var date = Date.now();
 
         fileDownload(keys, date + 'unsafex.txt');
-
-        this.setState(() => ({
-            exported: true
-        }));
     }
 
     render() {
