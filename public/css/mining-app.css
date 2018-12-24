@@ -5,6 +5,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
 }
 .mining-bg-wrap {
   position: absolute;
@@ -29,24 +30,8 @@
   display: inline-block;
   z-index: -1;
 }
-/* header {
-  text-align: center;
-  width: 100%;
-  z-index: 1;
-  margin: -30px 0 25px;
-  position: relative;
-}
-header p {
-  color: #fff;
-  position: absolute;
-  top: -20px;
-  left: 15px;
-  margin-bottom: 0;
-}
-header p.fadeIn {
-  animation-delay: .8s;
-} */
 
+/* Header */
 header {
   text-align: center;
   width: 100%;
@@ -63,14 +48,18 @@ header .close {
   opacity: 1;
   font-size: 19px;
   font-family: "Brandon Grotesque Bold", Helvetica, Arial,sans-serif;
+  -webkit-transition: all 0.2s ease-out;
+  -moz-transition: all 0.2s ease-out;
+  transition: all 0.2s ease-out;
 }
 header .close.fadeIn {
   animation-delay: .8s;
 }
 header .close:focus,
 header .close:hover {
-  color: #fff;
+  color: #dfc983;
   opacity: 1;
+  cursor: pointer;
 }
 header img.fadeIn {
   animation-delay: .3s;
@@ -451,17 +440,13 @@ header p.fadeIn {
 
 /* Footer */
 .main footer {
-  position: absolute;
-  right: 15px;
-  bottom: -15px;
+  position: relative;
+  width: 100%;
   text-align: right;
   z-index: 2;
 }
 .main footer.fadeIn {
   animation-delay: 0.8s;
-}
-.main footer a {
-  display: inline-block;
 }
 .main footer p {
   font-family: "Rift Soft", Helvetica, Arial, sans-serif;
@@ -485,6 +470,9 @@ header p.fadeIn {
 }
 .main footer a {
   display: inline-block;
+  position: absolute;
+  right: 15px;
+  bottom: -15px;
 }
 .main footer a:hover {
   cursor: pointer;
@@ -502,6 +490,12 @@ header p.fadeIn {
 }
 
 @media (min-width: 800px) {
+  .main footer  {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  header,
   .mining-bg-wrap img {
     max-width: 800px;
   }

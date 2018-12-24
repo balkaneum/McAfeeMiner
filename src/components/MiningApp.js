@@ -18,12 +18,14 @@ import {
   closeSendPopup
 } from '../utils/balance';
 
+import NewWalletModal from './partials/NewWalletModal';
 import BalanceAlert from './partials/BalanceAlert';
 import SendModal from './partials/SendModal';
 import CreateNewWalletModal from './partials/CreateNewWalletModal';
 import OpenExistingWalletModal from './partials/OpenExistingWalletModal';
 import CreateFromKeysModal from './partials/CreateFromKeysModal';
 import InstructionsModal from './partials/InstructionsModal';
+import ExitModal from './partials/ExitModal';
 
 // Testnet conf
 // let net = 'testnet';
@@ -49,14 +51,7 @@ export default class MiningApp extends React.Component {
       address: '',
       pool_url: '',
       pools_list: [
-        'mcafee.safex.io:1111',
-        'pool.safexnews.net:1111',
-        'safex.cool-pool.net:3333',
-        'safex.cnpools.space:3333',
-        'safex.cnpools.space:1111',
-        'safex.cryptominingpools.net:3333',
-        'safex.luckypool.io:3366',
-        'safex.xmining.pro:3333'
+        'mcafee.safex.io:1111'
       ],
       jsonConfig: {
         "algo": "cryptonight/2",
@@ -104,8 +99,10 @@ export default class MiningApp extends React.Component {
       balance_modal_active: false,
       balance_alert_close_disabled: false,
       instructions_lang: 'english',
+      new_wallet_modal: false,
+      exit_modal: false,
       exiting: false,
-      
+
       //balance settings
       balance: 0,
       unlocked_balance: 0,
@@ -154,9 +151,10 @@ export default class MiningApp extends React.Component {
     this.addressChange = this.addressChange.bind(this);
 
     //UI functions
-    this.openModal = this.openModal.bind(this);
+    this.openNewWalletModal = this.openNewWalletModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.footerLink = this.footerLink.bind(this);
+    this.openExitModal = this.openExitModal.bind(this);
     this.closeApp = this.closeApp.bind(this);
 
     //balance functions
@@ -184,7 +182,6 @@ export default class MiningApp extends React.Component {
     this.openFromExistingModal = this.openFromExistingModal.bind(this);
     this.openCreateFromKeysModal = this.openCreateFromKeysModal.bind(this);
     this.closeWallet = this.closeWallet.bind(this);
-    this.exportWallet = this.exportWallet.bind(this);
   }
 
   //first step select wallet path, if exists, set password
@@ -594,9 +591,9 @@ export default class MiningApp extends React.Component {
     })
   }
 
-  openModal() {
+  openNewWalletModal() {
     this.setState(() => ({
-      modal_active: true
+      new_wallet_modal: true
     }));
   }
 
@@ -658,7 +655,7 @@ export default class MiningApp extends React.Component {
   closeModal() {
     if (this.state.modal_close_disabled === false) {
       this.setState(() => ({
-        modal_active: false,
+        new_wallet_modal: false,
         instructions_modal_active: false,
         balance_modal_active: false,
         balance_alert: false,
@@ -669,7 +666,8 @@ export default class MiningApp extends React.Component {
         send_token: false,
         create_new_wallet_modal: false,
         open_from_existing_modal: false,
-        create_from_keys_modal: false
+        create_from_keys_modal: false,
+        exit_modal: false
       }));
     }
   }
@@ -955,32 +953,13 @@ export default class MiningApp extends React.Component {
     console.log(this.miner.getStatus(), this.state.hashrate);
   }
 
-  exportWallet() {
-    var wallet_data = JSON.parse(localStorage.getItem('wallet'));
-    var keys = "";
-
-    keys += "Public address: " + wallet_data.public_addr + '\n';
-    keys += "Spendkey " + '\n';
-    keys += "pub: " + wallet_data.spend.pub + '\n';
-    keys += "sec: " + wallet_data.spend.sec + '\n';
-    keys += "Viewkey " + '\n';
-    keys += "pub: " + wallet_data.view.pub + '\n';
-    keys += "sec: " + wallet_data.view.sec + '\n';
-    var date = Date.now();
-
-    fileDownload(keys, date + 'unsafex.txt');
-
-    this.setState(() => ({
-      exported: true
-    }));
-  }
-
   footerLink() {
     shell.openExternal('https://www.safex.io/')
   }
 
   closeApp() {
     let window = remote.getCurrentWindow();
+    this.closeModal();
 
     if (this.state.active) {
       this.stopMining();
@@ -1001,6 +980,12 @@ export default class MiningApp extends React.Component {
         window.close();
       }, 1000);
     }
+  }
+
+  openExitModal() {
+    this.setState({
+      exit_modal: true
+    });
   }
 
   render() {
@@ -1065,34 +1050,39 @@ export default class MiningApp extends React.Component {
           <img src="images/mcafee.png" className={this.state.exiting ? "animated fadeOut" : "animated fadeIn"} alt="McAfee Logo" />
           <button className={this.state.exiting ? "close animated fadeOut " : "close animated fadeIn"}
             title={this.state.starting || this.state.stopping ? "Please wait" : "Close App"}
-            onClick={this.closeApp}
-            disabled={this.state.starting ? "disabled" : ''}>
+            onClick={this.openExitModal}
+          >
             X
-                    </button>
+          </button>
           <p className={this.state.exiting ? "animated fadeOut " : "animated fadeIn"}>{packageJson.version}</p>
         </header>
 
         <div className={this.state.exiting ? "main animated fadeOut" : "main animated fadeIn"}>
           <div className="btns-wrap">
-            <button className="modal-btn" 
+            <button className="modal-btn"
+              onClick={this.openNewWalletModal}
+              title="Generate New Wallet">
+              <img src="images/new.png" alt="new-wallet" />
+            </button>
+            <button className="modal-btn"
               onClick={this.openCreateWalletModal}
               title="Create New Wallet File"
-              disabled={this.state.wallet_loaded || this.state.active || this.state.stopping  ? "disabled" : ""}>
+              disabled={this.state.wallet_loaded || this.state.active || this.state.stopping ? "disabled" : ""}>
               <img src="images/new-wallet.png" alt="new-wallet" />
             </button>
-            <button className="modal-btn" 
+            <button className="modal-btn"
               onClick={this.openFromExistingModal}
               title="Open Wallet File"
-              disabled={this.state.wallet_loaded || this.state.active || this.state.stopping  ? "disabled" : ""}>
+              disabled={this.state.wallet_loaded || this.state.active || this.state.stopping ? "disabled" : ""}>
               <img src="images/open-logo.png" alt="open-logo" />
             </button>
-            <button className="modal-btn" 
+            <button className="modal-btn"
               onClick={this.openCreateFromKeysModal}
               title="Create New Wallet From Keys"
               disabled={this.state.wallet_loaded || this.state.active || this.state.stopping ? "disabled" : ""}>
               <img src="images/create-from-keys.png" alt="open-logo" />
             </button>
-            <button className="modal-btn" 
+            <button className="modal-btn"
               onClick={this.openBalanceModal}
               title="Check Balance">
               <img src="images/key.png" alt="key" />
@@ -1119,8 +1109,8 @@ export default class MiningApp extends React.Component {
               <img src="images/line-right.png" alt="Line Right" />
             </div>
 
-            <select className="button-shine pool-url" name="pool" id="pool" 
-              disabled={this.state.active || this.state.stopping ? "disabled" : ""} 
+            <select className="button-shine pool-url" name="pool" id="pool"
+              disabled={this.state.active || this.state.stopping ? "disabled" : ""}
               title={this.state.active || this.state.stopping ? "Choose the pool you want to connect to (disabled while mining)" : "Choose the pool you want to connect to"}>
               {pools_list}
             </select>
@@ -1217,7 +1207,7 @@ export default class MiningApp extends React.Component {
                 <label htmlFor="selected_balance_address">Safex Wallet Address</label>
                 <textarea placeholder="Safex Wallet Address" name="selected_balance_address"
                   value={this.state.balance_wallet} rows="2" readOnly />
-                
+
                 <div className="groups-wrap">
                   <div className="form-group">
                     <label htmlFor="balance">Pending Safex Cash</label>
@@ -1263,6 +1253,11 @@ export default class MiningApp extends React.Component {
           />
         </div>
 
+        <NewWalletModal
+          newWalletModal={this.state.new_wallet_modal}
+          closeNewWalletModal={this.closeModal}
+        />
+
         <InstructionsModal
           instructionsModalActive={this.state.instructions_modal_active}
           instructionsLang={this.state.instructions_lang}
@@ -1300,8 +1295,14 @@ export default class MiningApp extends React.Component {
           closeBalanceAlert={this.setCloseBalanceAlert}
         />
 
+        <ExitModal
+          exitModal={this.state.exit_modal}
+          closeExitModal={this.closeModal}
+          closeApp={this.closeApp}
+        />
+
         <div
-          className={this.state.modal_active || this.state.instructions_modal_active || this.state.balance_modal_active ? 'backdrop active' : 'backdrop'}
+          className={this.state.balance_modal_active ? 'backdrop active' : 'backdrop'}
           onClick={this.closeModal}>
         </div>
       </div>

@@ -73,9 +73,9 @@
   text-indent: 2px;
 }
 .instructions-modal .lang-bts-wrap button.active {
-  background: #dfc983;
+  background: rgba(223, 201, 131, .65);
   border: 2px solid #dfc983;
-  color: #000;
+  color: #fff;
 }
 .instructions-modal .lang-bts-wrap button.active:hover {
   -webkit-box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
