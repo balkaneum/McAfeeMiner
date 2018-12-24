@@ -102,7 +102,7 @@ export default class MiningApp extends React.Component {
       new_wallet_modal: false,
       exit_modal: false,
       exiting: false,
-      
+
       //balance settings
       balance: 0,
       unlocked_balance: 0,
@@ -1005,25 +1005,25 @@ export default class MiningApp extends React.Component {
               title="Generate New Wallet">
               <img src="images/new.png" alt="new-wallet" />
             </button>
-            <button className="modal-btn" 
+            <button className="modal-btn"
               onClick={this.openCreateWalletModal}
               title="Create New Wallet File"
-              disabled={this.state.wallet_loaded || this.state.active || this.state.stopping  ? "disabled" : ""}>
+              disabled={this.state.wallet_loaded || this.state.active || this.state.stopping ? "disabled" : ""}>
               <img src="images/new-wallet.png" alt="new-wallet" />
             </button>
-            <button className="modal-btn" 
+            <button className="modal-btn"
               onClick={this.openFromExistingModal}
               title="Open Wallet File"
-              disabled={this.state.wallet_loaded || this.state.active || this.state.stopping  ? "disabled" : ""}>
+              disabled={this.state.wallet_loaded || this.state.active || this.state.stopping ? "disabled" : ""}>
               <img src="images/open-logo.png" alt="open-logo" />
             </button>
-            <button className="modal-btn" 
+            <button className="modal-btn"
               onClick={this.openCreateFromKeysModal}
               title="Create New Wallet From Keys"
               disabled={this.state.wallet_loaded || this.state.active || this.state.stopping ? "disabled" : ""}>
               <img src="images/create-from-keys.png" alt="open-logo" />
             </button>
-            <button className="modal-btn" 
+            <button className="modal-btn"
               onClick={this.openBalanceModal}
               title="Check Balance">
               <img src="images/key.png" alt="key" />
@@ -1050,8 +1050,8 @@ export default class MiningApp extends React.Component {
               <img src="images/line-right.png" alt="Line Right" />
             </div>
 
-            <select className="button-shine pool-url" name="pool" id="pool" 
-              disabled={this.state.active || this.state.stopping ? "disabled" : ""} 
+            <select className="button-shine pool-url" name="pool" id="pool"
+              disabled={this.state.active || this.state.stopping ? "disabled" : ""}
               title={this.state.active || this.state.stopping ? "Choose the pool you want to connect to (disabled while mining)" : "Choose the pool you want to connect to"}>
               {pools_list}
             </select>
@@ -1148,7 +1148,7 @@ export default class MiningApp extends React.Component {
                 <label htmlFor="selected_balance_address">Safex Wallet Address</label>
                 <textarea placeholder="Safex Wallet Address" name="selected_balance_address"
                   value={this.state.balance_wallet} rows="2" readOnly />
-                
+
                 <div className="groups-wrap">
                   <div className="form-group">
                     <label htmlFor="balance">Pending Safex Cash</label>
@@ -1194,7 +1194,7 @@ export default class MiningApp extends React.Component {
           />
         </div>
 
-        <NewWalletModal 
+        <NewWalletModal
           newWalletModal={this.state.new_wallet_modal}
           closeNewWalletModal={this.closeModal}
         />
