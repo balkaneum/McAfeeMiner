@@ -8,6 +8,8 @@ You can download the latest release from (https://github.com/balkaneum/McAfeeMin
 
 ## Development
 
+This project is a fork of Safex 1 Click Miner (https://github.com/safex/safex_miner)
+
 #### Backend:
 
 To start project backend
