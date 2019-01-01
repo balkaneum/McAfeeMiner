@@ -16,6 +16,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  animation-delay: 0.3s;
 }
 .mining-bg-wrap .ring-outer,
 .mining-bg-wrap .ring-inner,
