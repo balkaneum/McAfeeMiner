@@ -129,10 +129,6 @@
   -moz-transition: all 0.2s ease-in;
   transition: all 0.2s ease-in;
 }
-.balance-modal .btns-wrap button:hover img {
-  -webkit-filter: grayscale(0);
-  filter: grayscale(0);
-}
 .balance-modal .btns-wrap .signal,
 .balance-modal .btns-wrap .blockheight {
   border: 0px none;
