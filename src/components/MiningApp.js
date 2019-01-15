@@ -553,6 +553,9 @@ export default class MiningApp extends React.Component {
         this.setOpenBalanceAlert('Please wait while blockchain is being updated...', 'balance_alert', true);
       }
       wallet.on('refreshed', this.refreshCallback);
+      this.setState(() => ({
+        modal_close_disabled: false,
+      }));
     }
   }
 
