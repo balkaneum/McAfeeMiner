@@ -1345,7 +1345,3 @@ export default class MiningApp extends React.Component {
     );
   }
 }
-
-MiningApp.contextTypes = {
-  router: React.PropTypes.object.isRequired
-};
