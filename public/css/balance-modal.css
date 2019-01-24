@@ -46,6 +46,10 @@
 .balance-modal form button {
   margin-top: 10px;
 }
+.balance-modal form button:active,
+.balance-modal form button:focus, {
+  outline: none;
+}
 .balance-modal p {
   font-size: 14px;
   line-height: 1.2;

@@ -9,7 +9,7 @@ function verify_safex_address(spend, view, address) {
 
     var _address = swg.pubkeys_to_string(spend_pub, view_pub);
 
-    if (_address == address) {
+    if (_address === address) {
         return true;
     } else {
         return false;
@@ -70,20 +70,10 @@ function closeBalanceAlert(target) {
 /**
  * Open Send Cash Popup
  */
-function openSendCashPopup(target) {
+function openSendPopup(target, send_cash_or_token) {
     target.setState({
-        send_cash: true,
-        send_token: false
-    });
-}
-
-/**
- * Open Send Token Popup
- */
-function openSendTokenPopup(target) {
-    target.setState({
-        send_token: true,
-        send_cash: false
+        send_modal: true,
+        send_cash_or_token: send_cash_or_token
     });
 }
 
@@ -92,9 +82,13 @@ function openSendTokenPopup(target) {
  */
 function closeSendPopup(target) {
     target.setState({
-        send_cash: false,
-        send_token: false,
+        send_modal: false
     });
+    setTimeout(() => {
+        target.setState({
+            send_cash_or_token: false
+        });
+    }, 300);
 }
 
 module.exports = {
@@ -102,7 +96,6 @@ module.exports = {
     structureSafexKeys,
     openBalanceAlert,
     closeBalanceAlert,
-    openSendCashPopup,
-    openSendTokenPopup,
+    openSendPopup,
     closeSendPopup
 };

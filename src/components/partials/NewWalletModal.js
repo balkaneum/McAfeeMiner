@@ -110,16 +110,16 @@ export default class NewWalletModal extends React.Component {
                                     luck!
                                 </h5>
                             ) : (
-                                <h5 className="warning red">
-                                    The following keys are to control your coins, do not share
-                                    them. Keep your keys for yourself only! Before you proceed to
-                                    mine please save your keys now.
+                                    <h5 className="warning red">
+                                        The following keys are to control your coins, do not share
+                                        them. Keep your keys for yourself only! Before you proceed to
+                                        mine please save your keys now.
                                 </h5>
-                            )}
+                                )}
 
                             <label htmlFor="sec-spendkey">Secret Spenkey</label>
                             <input type="text" name="sec-spendkey" value={this.state.spendkey_sec} />
-                            
+
                             <label htmlFor="sec-spendkey">Secret Viewkey</label>
                             <input type="text" name="sec-spendkey" value={this.state.viewkey_sec} />
 
