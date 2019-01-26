@@ -923,6 +923,11 @@ export default class MiningApp extends React.Component {
     }
   }
 
+  minimizeApp = () => {
+    let window = remote.getCurrentWindow();
+    window.minimize()
+  }
+
   openExitModal = () => {
     this.setState({
       exit_modal: true
@@ -994,6 +999,13 @@ export default class MiningApp extends React.Component {
             onClick={this.openExitModal}
           >
             X
+          </button>
+          <button 
+            className={this.state.exiting ? "minimize animated fadeOut " : "minimize animated fadeIn"}
+            title="Minimize"
+            onClick={this.minimizeApp}
+          >
+            _
           </button>
           <p className={this.state.exiting ? "animated fadeOut " : "animated fadeIn"}>{packageJson.version}</p>
         </header>

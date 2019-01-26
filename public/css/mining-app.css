@@ -42,6 +42,7 @@ header {
   margin: -25px 0 0px;
   position: relative;
   animation-delay: 0.3s;
+  -webkit-app-region: drag;
 }
 header .close {
   position: absolute;
@@ -55,15 +56,35 @@ header .close {
   -moz-transition: all 0.2s ease-out;
   transition: all 0.2s ease-out;
 }
-header .close.fadeIn {
+header .close.fadeIn,
+header .minimize.fadeIn {
   animation-delay: .8s;
 }
 header .close:focus,
-header .close:hover {
+header .close:hover,
+header .minimize:focus,
+header .minimize:hover {
   color: #dfc983;
   opacity: 1;
   cursor: pointer;
 }
+header .minimize {
+  background: none;
+  border: 0px;
+  position: absolute;
+  right: 40px;
+  top: -12px;
+  font-size: 25px;
+  color: #fff;
+  opacity: 1;
+  padding: 0;
+  line-height: 1;
+  font-family: "Brandon Grotesque Bold", Helvetica, Arial,sans-serif;
+  -webkit-transition: all 0.2s ease-out;
+  -moz-transition: all 0.2s ease-out;
+  transition: all 0.2s ease-out;
+}
+
 header img.fadeIn {
   animation-delay: .3s;
 }
