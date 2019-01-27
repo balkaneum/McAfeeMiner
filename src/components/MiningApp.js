@@ -928,6 +928,16 @@ export default class MiningApp extends React.Component {
     window.minimize()
   }
 
+  maximizeApp = () => {
+    let window = remote.getCurrentWindow();
+
+    if (window.isMaximized()) {
+      window.unmaximize();
+    } else {
+      window.maximize();
+    }
+  }
+
   openExitModal = () => {
     this.setState({
       exit_modal: true
@@ -1006,6 +1016,12 @@ export default class MiningApp extends React.Component {
             onClick={this.minimizeApp}
           >
             _
+          </button>
+          <button
+            className={this.state.exiting ? "maximize animated fadeOut " : "maximize animated fadeIn"}
+            title="Maximize"
+            onClick={this.maximizeApp}
+          >
           </button>
           <p className={this.state.exiting ? "animated fadeOut " : "animated fadeIn"}>{packageJson.version}</p>
         </header>
