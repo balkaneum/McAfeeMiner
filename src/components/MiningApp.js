@@ -1,5 +1,4 @@
 import React from 'react';
-import packageJson from "../../package";
 
 const { shell } = window.require('electron')
 const xmrigCpu = window.require('node-xmrig-cpu');
@@ -23,6 +22,7 @@ import OpenExistingWalletModal from './partials/OpenExistingWalletModal';
 import CreateFromKeysModal from './partials/CreateFromKeysModal';
 import InstructionsModal from './partials/InstructionsModal';
 import ExitModal from './partials/ExitModal';
+import Header from './partials/Header';
 
 export default class MiningApp extends React.Component {
   constructor(props) {
@@ -41,7 +41,8 @@ export default class MiningApp extends React.Component {
       pool_url: '',
       mining_info: '',
       pools_list: [
-        'mcafee.safex.io:1111'
+        'mcafee.safex.io:1111',
+        'pool.safexnews.net:1111',
       ],
       jsonConfig: {
         "algo": "cryptonight/2",
@@ -923,21 +924,6 @@ export default class MiningApp extends React.Component {
     }
   }
 
-  minimizeApp = () => {
-    let window = remote.getCurrentWindow();
-    window.minimize()
-  }
-
-  maximizeApp = () => {
-    let window = remote.getCurrentWindow();
-
-    if (window.isMaximized()) {
-      window.unmaximize();
-    } else {
-      window.maximize();
-    }
-  }
-
   openExitModal = () => {
     this.setState({
       exit_modal: true
@@ -1002,29 +988,10 @@ export default class MiningApp extends React.Component {
           />
         </div>
 
-        <header>
-          <img src="images/mcafee.png" className={this.state.exiting ? "animated fadeOut" : "animated fadeIn"} alt="McAfee Logo" />
-          <button className={this.state.exiting ? "close animated fadeOut " : "close animated fadeIn"}
-            title={this.state.starting || this.state.stopping ? "Please wait" : "Close App"}
-            onClick={this.openExitModal}
-          >
-            X
-          </button>
-          <button
-            className={this.state.exiting ? "maximize animated fadeOut " : "maximize animated fadeIn"}
-            title="Maximize"
-            onClick={this.maximizeApp}
-          >
-          </button>
-          <button 
-            className={this.state.exiting ? "minimize animated fadeOut " : "minimize animated fadeIn"}
-            title="Minimize"
-            onClick={this.minimizeApp}
-          >
-            _
-          </button>
-          <p className={this.state.exiting ? "animated fadeOut " : "animated fadeIn"}>{packageJson.version}</p>
-        </header>
+        <Header
+          exiting={this.state.exiting}
+          openExitModal={this.openExitModal}
+        />
 
         <div className={this.state.exiting ? "main animated fadeOut" : "main animated fadeIn"}>
           <div className="btns-wrap">
