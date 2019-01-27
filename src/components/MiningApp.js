@@ -41,8 +41,7 @@ export default class MiningApp extends React.Component {
       pool_url: '',
       mining_info: '',
       pools_list: [
-        'mcafee.safex.io:1111',
-        'pool.safexnews.net:1111',
+        'mcafee.safex.io:1111'
       ],
       jsonConfig: {
         "algo": "cryptonight/2",
