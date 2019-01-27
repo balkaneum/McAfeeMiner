@@ -1010,18 +1010,18 @@ export default class MiningApp extends React.Component {
           >
             X
           </button>
+          <button
+            className={this.state.exiting ? "maximize animated fadeOut " : "maximize animated fadeIn"}
+            title="Maximize"
+            onClick={this.maximizeApp}
+          >
+          </button>
           <button 
             className={this.state.exiting ? "minimize animated fadeOut " : "minimize animated fadeIn"}
             title="Minimize"
             onClick={this.minimizeApp}
           >
             _
-          </button>
-          <button
-            className={this.state.exiting ? "maximize animated fadeOut " : "maximize animated fadeIn"}
-            title="Maximize"
-            onClick={this.maximizeApp}
-          >
           </button>
           <p className={this.state.exiting ? "animated fadeOut " : "animated fadeIn"}>{packageJson.version}</p>
         </header>

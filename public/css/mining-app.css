@@ -63,10 +63,7 @@ header .maximize.fadeIn {
 }
 header .close:focus,
 header .close:hover,
-header .minimize:focus,
-header .minimize:hover,
-header .maximize:focus, 
-header .maximize:hover {
+header .minimize:hover {
   color: #dfc983;
   opacity: 1;
   cursor: pointer;
@@ -75,7 +72,7 @@ header .minimize {
   background: none;
   border: 0px;
   position: absolute;
-  right: 62px;
+  right: 63px;
   top: -12px;
   font-size: 25px;
   color: #fff;
@@ -92,11 +89,11 @@ header .maximize {
   border: 0px;
   position: absolute;
   right: 40px;
-  top: -3px;
+  top: -3.5px;
   font-size: 25px;
   color: #fff;
   border: 2px solid #fff;
-  border-top: 5px solid #fff;
+  border-top: 4px solid #fff;
   opacity: 1;
   height: 16.5px;
   width: 12px;
@@ -106,6 +103,10 @@ header .maximize {
   -webkit-transition: all 0.2s ease-out;
   -moz-transition: all 0.2s ease-out;
   transition: all 0.2s ease-out;
+}
+header .maximize:hover {
+  border: 2px solid #dfc983;
+  border-top: 4px solid #dfc983;
 }
 
 header img.fadeIn {
