@@ -12,6 +12,7 @@ header .buttons-wrap {
   position: absolute;
   top: -4px;
   right: 15px;
+  -webkit-app-region: no-drag;
 }
 header .close {
   display: inline-block;
