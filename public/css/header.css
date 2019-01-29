@@ -1,0 +1,92 @@
+/* Header */
+header {
+  text-align: center;
+  width: 100%;
+  z-index: 1;
+  margin: -25px 0 0px;
+  position: relative;
+  animation-delay: 0.3s;
+  -webkit-app-region: drag;
+}
+header .buttons-wrap {
+  position: absolute;
+  top: -4px;
+  right: 15px;
+}
+header .close {
+  display: inline-block;
+  color: #fff;
+  opacity: 1;
+  font-size: 19px;
+  font-family: "Brandon Grotesque Bold", Helvetica, Arial,sans-serif;
+  -webkit-transition: all 0.2s ease-out;
+  -moz-transition: all 0.2s ease-out;
+  transition: all 0.2s ease-out;
+}
+header .close.fadeIn,
+header .minimize.fadeIn,
+header .maximize.fadeIn {
+  animation-delay: .8s;
+}
+header .close:focus,
+header .close:hover,
+header .minimize:hover {
+  color: #dfc983;
+  opacity: 1;
+  cursor: pointer;
+}
+header .minimize {
+  background: none;
+  position: relative;
+  top: -7px;
+  border: 0px;
+  display: inline-block;
+  font-size: 25px;
+  color: #fff;
+  opacity: 1;
+  padding: 0;
+  margin-right: 10px;
+  line-height: 1;
+  font-family: "Brandon Grotesque Bold", Helvetica, Arial,sans-serif;
+  -webkit-transition: all 0.2s ease-out;
+  -moz-transition: all 0.2s ease-out;
+  transition: all 0.2s ease-out;
+}
+header .maximize {
+  background: none;
+  position: relative;
+  top: -6px;
+  margin-right: 10px;
+  display: inline-block;
+  font-size: 25px;
+  color: #fff;
+  border: 2px solid #fff;
+  border-top: 4px solid #fff;
+  opacity: 1;
+  height: 16.5px;
+  width: 12px;
+  padding: 0;
+  line-height: 1;
+  font-family: "Brandon Grotesque Bold", Helvetica, Arial,sans-serif;
+  -webkit-transition: all 0.2s ease-out;
+  -moz-transition: all 0.2s ease-out;
+  transition: all 0.2s ease-out;
+}
+header .maximize:hover {
+  border: 2px solid #dfc983;
+  border-top: 4px solid #dfc983;
+}
+
+header img.fadeIn {
+  animation-delay: .3s;
+}
+header p {
+  color: #fff;
+  position: absolute;
+  top: -5px;
+  left: 15px;
+  margin-bottom: 0;
+}
+header p.fadeIn {
+  animation-delay: .8s;
+} 

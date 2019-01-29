@@ -28,25 +28,27 @@ export default class Header extends React.Component {
         return (
             <header>
                 <img src="images/mcafee.png" className={this.props.exiting ? "animated fadeOut" : "animated fadeIn"} alt="McAfee Logo" />
-                <button className={this.props.exiting ? "close animated fadeOut " : "close animated fadeIn"}
-                    title="Close App"
-                    onClick={this.props.openExitModal}
-                >
-                    X
-                </button>
-                <button
-                    className={this.props.exiting ? "maximize animated fadeOut " : "maximize animated fadeIn"}
-                    title="Maximize"
-                    onClick={this.maximizeApp}
-                >
-                </button>
-                <button
-                    className={this.props.exiting ? "minimize animated fadeOut " : "minimize animated fadeIn"}
-                    title="Minimize"
-                    onClick={this.minimizeApp}
-                >
-                    _
-                </button>
+                <div className="buttons-wrap">
+                    <button
+                        className={this.props.exiting ? "minimize animated fadeOut " : "minimize animated fadeIn"}
+                        title="Minimize"
+                        onClick={this.minimizeApp}
+                    >
+                        _
+                    </button>
+                    <button
+                        className={this.props.exiting ? "maximize animated fadeOut " : "maximize animated fadeIn"}
+                        title="Maximize"
+                        onClick={this.maximizeApp}
+                    >
+                    </button>
+                    <button className={this.props.exiting ? "close animated fadeOut " : "close animated fadeIn"}
+                        title="Close App"
+                        onClick={this.props.openExitModal}
+                    >
+                        X
+                    </button>
+                </div>
                 <p className={this.props.exiting ? "animated fadeOut " : "animated fadeIn"}>{packageJson.version}</p>
             </header>
         );
