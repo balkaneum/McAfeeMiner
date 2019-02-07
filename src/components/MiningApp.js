@@ -29,6 +29,23 @@ export default class MiningApp extends React.Component {
     this.miner = null;
     this.env = parseEnv();
 
+    if (process.env.NODE_ENV === "development") {
+      this.pools_list = [
+        'mcafee.safex.io:1111',
+        'pool.safexnews.net:1111',
+        'safex.cool-pool.net:3333',
+        'safex.cnpools.space:3333',
+        'safex.cnpools.space:1111',
+        'safex.cryptominingpools.net:3333',
+        'safex.luckypool.io:3366',
+        'safex.xmining.pro:3333'
+      ];
+    } else {
+      this.pools_list = [
+        'mcafee.safex.io:1111'
+      ];
+    }
+
     this.state = {
       //mining settings
       active: false,
@@ -41,9 +58,6 @@ export default class MiningApp extends React.Component {
       address: '',
       pool_url: '',
       mining_info: '',
-      pools_list: [
-        'mcafee.safex.io:1111'
-      ],
       jsonConfig: {
         "algo": "cryptonight/2",
         "api": {
@@ -920,7 +934,7 @@ export default class MiningApp extends React.Component {
     }
     cpu_options.reverse();
 
-    const pools_list = this.state.pools_list.map((pools_list, index) => (
+    const pools_list = this.pools_list.map((pools_list, index) => (
       <option key={index} value={pools_list} id={index}>
         {pools_list}
       </option>
