@@ -1,5 +1,4 @@
 import React from "react";
-import packageJson from "../../../package";
 const remote = window.require('electron').remote;
 
 export default class Header extends React.Component {
@@ -49,7 +48,7 @@ export default class Header extends React.Component {
                         X
                     </button>
                 </div>
-                <p className={this.props.exiting ? "animated fadeOut " : "animated fadeIn"}>{packageJson.version}</p>
+                <p className={this.props.exiting ? "animated fadeOut " : "animated fadeIn"}>{remote.app.getVersion()}</p>
             </header>
         );
     }

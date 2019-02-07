@@ -1,18 +1,12 @@
 import React from 'react';
-
-const { shell } = window.require('electron')
-const xmrigCpu = window.require('node-xmrig-cpu');
-const safex = window.require('safex-nodejs-libwallet');
-const { dialog } = window.require('electron').remote;
-const remote = window.require('electron').remote;
-
 import {
   verify_safex_address,
   openBalanceAlert,
   closeBalanceAlert,
   openSendPopup,
-  closeSendPopup
-} from '../utils/balance';
+  closeSendPopup,
+  parseEnv
+} from '../utils/utils';
 
 import NewWalletModal from './partials/NewWalletModal';
 import BalanceAlert from './partials/BalanceAlert';
@@ -24,10 +18,18 @@ import InstructionsModal from './partials/InstructionsModal';
 import ExitModal from './partials/ExitModal';
 import Header from './partials/Header';
 
+const { shell } = window.require('electron')
+const xmrigCpu = window.require('node-xmrig-cpu');
+const safex = window.require('safex-nodejs-libwallet');
+const { dialog } = window.require('electron').remote;
+const remote = window.require('electron').remote;
+
 export default class MiningApp extends React.Component {
   constructor(props) {
     super(props);
     this.miner = null;
+    this.env = parseEnv();
+
     this.state = {
       //mining settings
       active: false,
@@ -807,7 +809,7 @@ export default class MiningApp extends React.Component {
       this.stopMining();
     } else {
       this.startMining();
-    }      
+    }
   }
 
   startMining = () => {
