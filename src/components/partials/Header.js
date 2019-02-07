@@ -43,7 +43,7 @@ export default class Header extends React.Component {
                     </button>
                     <button className={this.props.exiting ? "close animated fadeOut " : "close animated fadeIn"}
                         title="Close App"
-                        onClick={this.props.openExitModal}
+                        onClick={this.props.closeApp}
                     >
                         X
                     </button>

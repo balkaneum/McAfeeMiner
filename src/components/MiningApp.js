@@ -15,7 +15,6 @@ import CreateNewWalletModal from './partials/CreateNewWalletModal';
 import OpenExistingWalletModal from './partials/OpenExistingWalletModal';
 import CreateFromKeysModal from './partials/CreateFromKeysModal';
 import InstructionsModal from './partials/InstructionsModal';
-import ExitModal from './partials/ExitModal';
 import Header from './partials/Header';
 
 const { shell } = window.require('electron')
@@ -888,33 +887,26 @@ export default class MiningApp extends React.Component {
 
   closeApp = () => {
     let window = remote.getCurrentWindow();
-    this.closeModal();
 
     if (this.state.active) {
       this.stopMining();
       this.closeWallet();
       setTimeout(() => {
-        this.setState(() => ({
+        this.setState({
           exiting: true
-        }));
+        });
       }, 5000);
       setTimeout(() => {
         window.close();
       }, 6000);
     } else {
-      this.setState(() => ({
+      this.setState({
         exiting: true
-      }));
+      });
       setTimeout(() => {
         window.close();
       }, 1000);
     }
-  }
-
-  openExitModal = () => {
-    this.setState({
-      exit_modal: true
-    });
   }
 
   render() {
@@ -978,6 +970,7 @@ export default class MiningApp extends React.Component {
         <Header
           exiting={this.state.exiting}
           openExitModal={this.openExitModal}
+          closeApp={this.closeApp}
         />
 
         <div className={this.state.exiting ? "main animated fadeOut" : "main animated fadeIn"}>
@@ -1227,12 +1220,6 @@ export default class MiningApp extends React.Component {
           balanceAlert={this.state.create_from_keys_alert}
           balanceAlertText={this.state.balance_alert_text}
           closeBalanceAlert={this.setCloseBalanceAlert}
-        />
-
-        <ExitModal
-          exitModal={this.state.exit_modal}
-          closeExitModal={this.closeModal}
-          closeApp={this.closeApp}
         />
 
         <div
