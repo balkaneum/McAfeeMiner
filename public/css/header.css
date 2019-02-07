@@ -3,14 +3,14 @@ header {
   text-align: center;
   width: 100%;
   z-index: 1;
-  margin: -25px 0 0px;
+  padding: 15px 0 0;
   position: relative;
   animation-delay: 0.3s;
   -webkit-app-region: drag;
 }
 header .buttons-wrap {
   position: absolute;
-  top: -4px;
+  top: 15px;
   right: 15px;
   -webkit-app-region: no-drag;
 }
@@ -84,7 +84,7 @@ header img.fadeIn {
 header p {
   color: #fff;
   position: absolute;
-  top: -5px;
+  top: 15px;
   left: 15px;
   margin-bottom: 0;
 }
