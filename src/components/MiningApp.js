@@ -17,8 +17,10 @@ import {
   inputValidate,
   checkInputValueLenght,
   checkInputValuePrefix,
-  addClass
+  addClass,
+  closeAllModals
 } from "../utils/utils";
+import { miningStart, miningStop } from "../utils/mining";
 
 import NewWalletModal from "./partials/NewWalletModal";
 import BalanceAlert from "./partials/BalanceAlert";
@@ -535,23 +537,7 @@ export default class MiningApp extends React.Component {
   };
 
   closeModal = () => {
-    if (this.state.modal_close_disabled === false) {
-      this.setState(() => ({
-        new_wallet_modal: false,
-        instructions_modal_active: false,
-        balance_modal_active: false,
-        balance_alert: false,
-        open_file_alert: false,
-        create_new_wallet_alert: false,
-        create_from_keys_alert: false,
-        send_cash: false,
-        send_token: false,
-        create_new_wallet_modal: false,
-        open_from_existing_modal: false,
-        create_from_keys_modal: false,
-        exit_modal: false
-      }));
-    }
+    closeAllModals(this);
   };
 
   startBalanceCheck = () => {
@@ -728,75 +714,10 @@ export default class MiningApp extends React.Component {
       return false;
     }
     if (this.state.active) {
-      this.stopMining();
+      miningStop(this);
     } else {
-      this.startMining();
+      miningStart(this);
     }
-  };
-
-  startMining = () => {
-    var userWallet = document.getElementById("mining_address").value;
-    var pool = document.getElementById("pool").value;
-    var maxCpuUsage = document.getElementById("cpuUsage").value;
-
-    //specify jsonConfig.pools[0].url, jsonConfig.pools[0].user (safex address)
-    this.state.jsonConfig.pools[0].url = pool;
-    this.state.jsonConfig.pools[0].user = userWallet;
-    this.state.jsonConfig["max-cpu-usage"] = maxCpuUsage;
-
-    console.log("User address: " + userWallet);
-    console.log("Pool: " + pool);
-    console.log("CPU usage: " + maxCpuUsage);
-    console.log("Starting mining...");
-
-    this.setState(() => ({
-      active: true,
-      starting: true
-    }));
-    this.openInfoPopup("Starting miner...");
-    setTimeout(() => {
-      this.setState(() => ({
-        starting: false
-      }));
-      this.openInfoPopup("Mining in progress");
-    }, 12000);
-
-    if (this.miner) {
-      this.miner.reloadConfig(JSON.stringify(this.state.jsonConfig));
-    } else {
-      this.miner = new xmrigCpu.NodeXmrigCpu(
-        JSON.stringify(this.state.jsonConfig)
-      );
-    }
-    this.miner.startMining();
-    console.log("Native mining started!");
-
-    let checkStatusInterval = setInterval(this.checkStatus, 2000);
-    this.setState({
-      checkStatusInterval: checkStatusInterval
-    });
-  };
-
-  stopMining = () => {
-    this.setState(() => ({
-      active: false,
-      stopping: true
-    }));
-    this.openInfoPopup("Stopping miner...");
-    setTimeout(() => {
-      this.setState(() => ({
-        mining_info: false,
-        mining_info_text: "",
-        stopping: false
-      }));
-    }, 5000);
-    console.log("Ending mining...");
-    clearInterval(this.state.checkStatusInterval);
-    this.setState(() => ({
-      hashrate: 0
-    }));
-    this.miner.stopMining();
-    console.log("Mining ended");
   };
 
   checkStatus = () => {
@@ -846,6 +767,22 @@ export default class MiningApp extends React.Component {
   );
 
   render() {
+    let cpu_options = [];
+    for (var i = 25; i <= 100; i += 25) {
+      cpu_options.push(
+        <option key={i} value={i}>
+          {i}%
+        </option>
+      );
+    }
+    cpu_options.reverse();
+
+    const pools_list = this.state.pools_list.map((pools_list, index) => (
+      <option key={index} value={pools_list} id={index}>
+        {pools_list}
+      </option>
+    ));
+
     const buttons = [
       {
         type: "new_wallet_modal",
@@ -894,21 +831,6 @@ export default class MiningApp extends React.Component {
       }
     ];
 
-    var cpu_options = [];
-    for (var i = 25; i <= 100; i += 25) {
-      cpu_options.push(
-        <option key={i} value={i}>
-          {i}%
-        </option>
-      );
-    }
-    cpu_options.reverse();
-
-    const pools_list = this.state.pools_list.map((pools_list, index) => (
-      <option key={index} value={pools_list} id={index}>
-        {pools_list}
-      </option>
-    ));
     return (
       <div className="mining-app-wrap">
         <div
@@ -1022,51 +944,30 @@ export default class MiningApp extends React.Component {
                 </div>
               </div>
               {this.state.active ? (
-                <div>
-                  {this.state.starting ? (
-                    <button
-                      type="submit"
-                      className="submit button-shine active"
-                      disabled
-                    >
-                      <span>Starting</span>
-                    </button>
-                  ) : (
-                    <button
-                      type="submit"
-                      className="submit button-shine active"
-                    >
-                      <span>Stop</span>
-                    </button>
-                  )}
-                </div>
+                <button
+                  type="submit"
+                  className="submit button-shine active"
+                  disabled={this.state.starting ? "disabled" : ""}
+                >
+                  <span>{this.state.starting ? "Starting" : "Stop"}</span>
+                </button>
               ) : (
                 <div>
-                  {this.state.stopping ? (
+                  {
                     <button
                       type="submit"
-                      className="submit button-shine active"
+                      className={`submit button-shine ${
+                        this.state.stopping ? "active" : ""
+                      }`}
                       disabled={
                         this.state.active || this.state.stopping
                           ? "disabled"
                           : ""
                       }
                     >
-                      <span>Stopping</span>
+                      <span>{this.state.stopping ? "Stopping" : "Start"}</span>
                     </button>
-                  ) : (
-                    <button
-                      type="submit"
-                      className="submit button-shine"
-                      disabled={
-                        this.state.active || this.state.stopping
-                          ? "disabled"
-                          : ""
-                      }
-                    >
-                      <span>Start</span>
-                    </button>
-                  )}
+                  }
                 </div>
               )}
               <p

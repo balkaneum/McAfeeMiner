@@ -107,6 +107,29 @@ function parseEnv() {
 }
 
 /**
+ * Close All Modals
+ */
+function closeAllModals(target) {
+  if (target.state.modal_close_disabled === false) {
+    target.setState(() => ({
+      new_wallet_modal: false,
+      instructions_modal_active: false,
+      balance_modal_active: false,
+      balance_alert: false,
+      open_file_alert: false,
+      create_new_wallet_alert: false,
+      create_from_keys_alert: false,
+      send_cash: false,
+      send_token: false,
+      create_new_wallet_modal: false,
+      open_from_existing_modal: false,
+      create_from_keys_modal: false,
+      exit_modal: false
+    }));
+  }
+}
+
+/**
  * Validate input
  */
 function inputValidate(inputValue) {
@@ -159,9 +182,6 @@ function checkInputValuePrefix(inputValue) {
 const addClass = (condition, className) => (condition ? ` ${className} ` : "");
 
 export {
-  active,
-  starting,
-  stopping,
   verify_safex_address,
   structureSafexKeys,
   openBalanceAlert,
@@ -172,5 +192,6 @@ export {
   inputValidate,
   checkInputValueLenght,
   checkInputValuePrefix,
-  addClass
+  addClass,
+  closeAllModals
 };
