@@ -104,13 +104,6 @@ function parseEnv() {
 }
 
 /**
- * Round amount
- */
-function roundAmount(balance) {
-    return Math.floor(parseFloat(balance) / 100000000) / 100;
-}
-
-/**
  * Validate input
  */
 function inputValidate(inputValue) {
@@ -162,7 +155,6 @@ export {
     openSendPopup,
     closeSendPopup,
     parseEnv,
-    roundAmount,
     inputValidate,
     checkInputValueLenght,
     checkInputValuePrefix

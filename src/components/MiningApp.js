@@ -1,12 +1,19 @@
 import React from 'react';
 import {
+  updatedCallback,
+  refreshCallback,
+  newBlockCallback,
+  balanceCheck,
+  rescanBalance,
+  roundAmount
+} from '../utils/balance';
+import {
   verify_safex_address,
   openBalanceAlert,
   closeBalanceAlert,
   openSendPopup,
   closeSendPopup,
   parseEnv,
-  roundAmount,
   inputValidate,
   checkInputValueLenght,
   checkInputValuePrefix
@@ -427,157 +434,6 @@ export default class MiningApp extends React.Component {
     }
   }
 
-  updatedCallback = () => {
-    console.log("UPDATED");
-    this.state.wallet_meta.store()
-      .then(() => {
-        console.log("Wallet stored");
-        this.setCloseBalanceAlert();
-      })
-      .catch((e) => {
-        console.log("Unable to store wallet: " + e)
-      })
-  }
-
-  refreshCallback = () => {
-    console.log("wallet refreshed");
-    let wallet = this.state.wallet_meta;
-    this.setState(() => ({
-      modal_close_disabled: false,
-      balance_alert_close_disabled: false,
-      wallet: {
-        balance: roundAmount(wallet.balance() - wallet.unlockedBalance()),
-        unlocked_balance: roundAmount(wallet.unlockedBalance()),
-        tokens: roundAmount(wallet.tokenBalance() - wallet.unlockedTokenBalance()),
-        unlocked_tokens: roundAmount(wallet.unlockedTokenBalance()),
-        blockchain_height: wallet.blockchainHeight(),
-        wallet_connected: wallet.connected() === "connected"
-      }
-    }));
-
-    wallet.store()
-      .then(() => {
-        console.log("Wallet stored");
-        this.setCloseBalanceAlert();
-      })
-      .catch((e) => {
-        console.log("Unable to store wallet: " + e);
-        this.setOpenBalanceAlert("Unable to store wallet: " + e, 'balance_alert', false);
-      });
-
-    wallet.off('refreshed');
-
-    setTimeout(() => {
-      wallet.on('newBlock', this.newBlockCallback);
-      wallet.on('updated', this.updatedCallback);
-    }, 300);
-  }
-
-  newBlockCallback = (height) => {
-    let wallet = this.state.wallet_meta;
-    let syncedHeight = wallet.daemonBlockchainHeight() - height < 10;
-    if (syncedHeight) {
-      console.log("syncedHeight up to date...");
-      if (wallet.synchronized()) {
-        console.log("newBlock wallet synchronized, setting state...");
-        this.setState(() => ({
-          wallet_sync: true,
-          modal_close_disabled: false,
-          balance_alert_close_disabled: false,
-          wallet: {
-            balance: roundAmount(wallet.balance() - wallet.unlockedBalance()),
-            unlocked_balance: roundAmount(wallet.unlockedBalance()),
-            tokens: roundAmount(wallet.tokenBalance() - wallet.unlockedTokenBalance()),
-            unlocked_tokens: roundAmount(wallet.unlockedTokenBalance()),
-            blockchain_height: wallet.blockchainHeight()
-          }
-        }));
-      }
-    }
-  }
-
-  startBalanceCheck = () => {
-    if (this.state.wallet_loaded) {
-      let wallet = this.state.wallet_meta;
-      console.log("daemon blockchain height: " + wallet.daemonBlockchainHeight());
-      console.log("blockchain height: " + wallet.blockchainHeight());
-
-      if (this.state.wallet_loaded) {
-        this.setState(() => ({
-          modal_close_disabled: false,
-          balance_alert_close_disabled: false,
-          wallet: {
-            balance: roundAmount(wallet.balance() - wallet.unlockedBalance()),
-            unlocked_balance: roundAmount(wallet.unlockedBalance()),
-            tokens: roundAmount(wallet.tokenBalance() - wallet.unlockedTokenBalance()),
-            unlocked_tokens: roundAmount(wallet.unlockedTokenBalance()),
-            blockchain_height: wallet.blockchainHeight(),
-            wallet_connected: wallet.connected() === "connected"
-          }
-        }));
-        console.log("balance: " + roundAmount(wallet.balance()));
-        console.log("unlocked balance: " + roundAmount(wallet.unlockedBalance()));
-        console.log("token balance: " + roundAmount(wallet.tokenBalance() - wallet.unlockedTokenBalance()));
-        console.log("unlocked token balance: " + roundAmount(wallet.unlockedTokenBalance()));
-        console.log("blockchain height " + wallet.blockchainHeight());
-        console.log('connected: ' + wallet.connected());
-      }
-      console.log("balance address: " + wallet.address());
-      this.setState(() => ({
-        wallet_sync: false,
-      }));
-      if (wallet.daemonBlockchainHeight() - wallet.blockchainHeight() > 10) {
-        this.setOpenBalanceAlert('Please wait while blockchain is being updated...', 'balance_alert', true);
-      }
-      wallet.on('refreshed', this.refreshCallback);
-      this.setState(() => ({
-        modal_close_disabled: false,
-      }));
-    }
-  }
-
-  rescanBalance = () => {
-    var wallet = this.state.wallet_meta;
-    this.setOpenBalanceAlert('Rescanning, this may take some time, please wait ', 'balance_alert', true);
-    wallet.off('updated');
-    wallet.off('newBlock');
-    wallet.off('refreshed');
-    this.setState(() => ({
-      modal_close_disabled: true
-    }));
-    setTimeout(() => {
-      console.log("Starting blockchain rescan sync...");
-      wallet.rescanBlockchain();
-      console.log("Blockchain rescan executed...");
-      setTimeout(() => {
-        console.log("Rescan setting callbacks");
-        this.setState(() => ({
-          modal_close_disabled: false,
-          balance_alert_close_disabled: false,
-          wallet: {
-            wallet_connected: wallet.connected() === "connected",
-            balance: roundAmount(wallet.balance() - wallet.unlockedBalance()),
-            unlocked_balance: roundAmount(wallet.unlockedBalance()),
-            tokens: roundAmount(wallet.tokenBalance() - wallet.unlockedTokenBalance()),
-            unlocked_tokens: roundAmount(wallet.unlockedTokenBalance()),
-            blockchain_height: wallet.blockchainHeight(),
-          }
-        }));
-        this.setCloseBalanceAlert();
-        wallet.store()
-          .then(() => {
-            console.log("Wallet stored");
-          })
-          .catch((e) => {
-            console.log("Unable to store wallet: " + e);
-            this.setOpenBalanceAlert("Unable to store wallet: " + e, 'balance_alert', false);
-          });
-        wallet.on('newBlock', this.newBlockCallback);
-        wallet.on('updated', this.updatedCallback);
-      }, 1000);
-    }, 1000);
-  }
-
   openInfoPopup = (message) => {
     this.setState({
       mining_info: true,
@@ -630,6 +486,26 @@ export default class MiningApp extends React.Component {
         exit_modal: false
       }));
     }
+  }
+
+  startBalanceCheck = () => {
+    balanceCheck(this);
+  }
+
+  startRefreshCallback = () => {
+    refreshCallback(this)
+  }
+
+  startNewBlockCallback = (height) => {
+    newBlockCallback(this, height)
+  }
+
+  startUpdatedCallback = () => {
+    updatedCallback(this)
+  }
+
+  startRescanBalance = () => {
+    rescanBalance(this);
   }
 
   sendCashOrToken = (e, cash_or_token) => {
@@ -842,7 +718,6 @@ export default class MiningApp extends React.Component {
 
   closeApp = () => {
     let window = remote.getCurrentWindow();
-
     if (this.state.active) {
       this.stopMining();
       this.closeWallet();
@@ -1082,7 +957,7 @@ export default class MiningApp extends React.Component {
                         {this.state.wallet.blockchain_height}
                       </span>
                     </button>
-                    <button className="button-shine refresh" onClick={this.rescanBalance} title="Rescan blockchain from scratch">
+                    <button className="button-shine refresh" onClick={this.startRescanBalance} title="Rescan blockchain from scratch">
                       <img src="images/refresh.png" alt="refresh" />
                     </button>
                   </div>
