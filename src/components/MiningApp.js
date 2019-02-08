@@ -753,10 +753,16 @@ export default class MiningApp extends React.Component {
       });
   };
 
-  changeInstructionLang = (lang) => {
-    this.setState(() => ({
-      instructions_lang: lang
-    }));
+  changeInstructionLang = () => {
+    if (this.state.instructions_lang === 'english') {
+      this.setState({
+        instructions_lang: 'serbian'
+      });
+    } else {
+      this.setState({
+        instructions_lang: 'english'
+      });
+    }
   }
 
   inputValidate = (inputValue) => {
@@ -1106,7 +1112,7 @@ export default class MiningApp extends React.Component {
 
             <footer className={this.state.exiting ? "animated fadeOut" : "animated fadeIn"}>
               <a onClick={this.footerLink} title="Visit Safex site">
-                <img src="images/powered.png" alt="Powered by Safex" />
+                <img src="images/safex-logo.png" alt="Powered by Safex" />
               </a>
             </footer>
           </div>
@@ -1203,8 +1209,7 @@ export default class MiningApp extends React.Component {
           <InstructionsModal
             instructionsModalActive={this.state.instructions_modal_active}
             instructionsLang={this.state.instructions_lang}
-            changeInstructionLangEn={this.changeInstructionLang.bind(this, 'english')}
-            changeInstructionLangSrb={this.changeInstructionLang.bind(this, 'serbian')}
+            changeInstructionLang={this.changeInstructionLang}
             closeInstructionsModal={this.closeModal}
           />
 

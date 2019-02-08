@@ -10,11 +10,11 @@ export default class InstructionsModal extends React.Component {
                     <div className="lang-bts-wrap">
                         <button
                             className={this.props.instructionsLang === 'english' ? "button-shine active" : "button-shine"}
-                            onClick={this.props.changeInstructionLangEn}>EN
+                            onClick={this.props.changeInstructionLang}>EN
                         </button>
                         <button
                             className={this.props.instructionsLang === 'serbian' ? "button-shine active" : "button-shine"}
-                            onClick={this.props.changeInstructionLangSrb}>SRB
+                            onClick={this.props.changeInstructionLang}>SRB
                         </button>
                     </div>
                     {

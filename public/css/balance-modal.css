@@ -47,8 +47,9 @@
   margin-top: 10px;
 }
 .balance-modal form button:active,
-.balance-modal form button:focus, {
-  outline: none;
+.balance-modal form button:focus {
+  outline: none !important;
+  color: #fff;
 }
 .balance-modal p {
   font-size: 14px;
