@@ -500,6 +500,13 @@ export default class MiningApp extends React.Component {
     }
   };
 
+  openInfoPopup = message => {
+    this.setState({
+      mining_info: true,
+      mining_info_text: message
+    });
+  };
+
   openModal = modal_type => {
     this.setState({
       [modal_type]: true
@@ -911,33 +918,33 @@ export default class MiningApp extends React.Component {
         >
           <img
             className={`ring-outer ${addClass(
-              this.active || this.stopping,
+              this.state.active || this.state.stopping,
               "rotatingLeft"
             )}`}
             src="images/ring-outer.png"
             alt="Ring outer"
           />
           <img
-            className={
-              this.active || this.stopping
-                ? "rotatingRight ring-inner"
-                : "ring-inner"
-            }
+            className={`ring-inner ${addClass(
+              this.state.active || this.state.stopping,
+              "rotatingRight"
+            )}`}
             src="images/ring-inner.png"
             alt="Ring inner"
           />
           <img
-            className={
-              this.active || this.stopping
-                ? "rotatingRight ring-center"
-                : "ring-center"
-            }
+            className={`ring-center ${addClass(
+              this.state.active || this.state.stopping,
+              "rotatingRight"
+            )}`}
             src="images/ring-center.png"
             alt="Ring center"
           />
           <img
             className={
-              this.active || this.stopping ? "rotatingRight circles" : "circles"
+              this.state.active || this.state.stopping
+                ? "rotatingRight circles"
+                : "circles"
             }
             src="images/circles.png"
             alt="Circles"
@@ -952,11 +959,9 @@ export default class MiningApp extends React.Component {
           />
 
           <div
-            className={
-              this.state.exiting
-                ? "main animated fadeOut"
-                : "main animated fadeIn"
-            }
+            className={`main animated ${
+              this.state.exiting ? "fadeOut" : "fadeIn"
+            }`}
           >
             <div className="btns-wrap">{buttons.map(this.renderButton)}</div>
 
@@ -973,11 +978,9 @@ export default class MiningApp extends React.Component {
                   disabled={
                     this.state.active || this.state.stopping ? "disabled" : ""
                   }
-                  title={
-                    this.state.wallet.address === ""
-                      ? "Your Safex Address will be shown here"
-                      : "Your Safex Address"
-                  }
+                  title={`Your Safex Address ${
+                    this.state.wallet.address === "" ? "will be shown here" : ""
+                  }`}
                   readOnly={this.state.wallet_loaded ? "readOnly" : ""}
                 />
                 <img src="images/line-right.png" alt="Line Right" />
@@ -990,11 +993,11 @@ export default class MiningApp extends React.Component {
                 disabled={
                   this.state.active || this.state.stopping ? "disabled" : ""
                 }
-                title={
+                title={`Choose the pool you want to connect to ${
                   this.state.active || this.state.stopping
-                    ? "Choose the pool you want to connect to (disabled while mining)"
-                    : "Choose the pool you want to connect to"
-                }
+                    ? "(disabled while mining)"
+                    : ""
+                }`}
               >
                 {pools_list}
               </select>
@@ -1008,11 +1011,11 @@ export default class MiningApp extends React.Component {
                     disabled={
                       this.state.active || this.state.stopping ? "disabled" : ""
                     }
-                    title={
+                    title={`Choose how much CPU power you want to use for mining ${
                       this.state.active || this.state.stopping
-                        ? "Choose how much CPU power you want to use for mining (disabled while mining)"
-                        : "Choose how much CPU power you want to use for mining"
-                    }
+                        ? "(disabled while mining)"
+                        : ""
+                    }`}
                   >
                     {cpu_options}
                   </select>
@@ -1092,11 +1095,9 @@ export default class MiningApp extends React.Component {
           </div>
 
           <div
-            className={
-              this.state.balance_modal_active
-                ? "modal balance-modal active"
-                : "modal balance-modal"
-            }
+            className={`modal balance-modal ${
+              this.state.balance_modal_active ? "active" : ""
+            }`}
           >
             <span
               className="close"
@@ -1113,11 +1114,9 @@ export default class MiningApp extends React.Component {
               <div className="wallet-exists">
                 <div className="btns-wrap">
                   <button
-                    className={
-                      this.state.wallet.wallet_connected
-                        ? "signal connected"
-                        : "signal"
-                    }
+                    className={`signal ${
+                      this.state.wallet.wallet_connected ? "connected" : ""
+                    }`}
                     title="Status"
                   >
                     <img src="images/connected.png" alt="connected" />
