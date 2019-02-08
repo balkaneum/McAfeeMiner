@@ -103,6 +103,57 @@ function parseEnv() {
     return env_obj;
 }
 
+/**
+ * Round amount
+ */
+function roundAmount(balance) {
+    return Math.floor(parseFloat(balance) / 100000000) / 100;
+}
+
+/**
+ * Validate input
+ */
+function inputValidate(inputValue) {
+    let inputRegex = /^[a-zA-Z0-9]/;
+    return inputRegex.test(inputValue);
+}
+
+/**
+ * Check input length (must be between 95 and 105 characters)
+ */
+function checkInputValueLenght(inputValue) {
+    let inputValueLength = inputValue.length;
+    if (inputValueLength <= 95) {
+        console.log('Safex hash address length is too short');
+        this.openInfoPopup('Address length is too short');
+        return false;
+    } else if (inputValueLength >= 105) {
+        console.log('Safex hash address length is too long');
+        this.openInfoPopup('Address length is too long');
+        return false;
+    } else {
+        return true;
+    }
+}
+
+/**
+ * Check Input Prefix
+ */
+function checkInputValuePrefix(inputValue) {
+    let userInputValue = inputValue;
+    if (userInputValue.startsWith("SFXt") || userInputValue.startsWith("Safex")) {
+        if (!userInputValue.startsWith("SFXts") || !userInputValue.startsWith("SFXti")) {
+            return true;
+        } else {
+            console.log('Suffix is invalid');
+            return false;
+        }
+    } else {
+        console.log('Suffix is invalid');
+        return false;
+    }
+}
+
 export {
     verify_safex_address,
     structureSafexKeys,
@@ -110,5 +161,9 @@ export {
     closeBalanceAlert,
     openSendPopup,
     closeSendPopup,
-    parseEnv
+    parseEnv,
+    roundAmount,
+    inputValidate,
+    checkInputValueLenght,
+    checkInputValuePrefix
 };

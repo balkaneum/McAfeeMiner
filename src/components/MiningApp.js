@@ -5,7 +5,11 @@ import {
   closeBalanceAlert,
   openSendPopup,
   closeSendPopup,
-  parseEnv
+  parseEnv,
+  roundAmount,
+  inputValidate,
+  checkInputValueLenght,
+  checkInputValuePrefix
 } from '../utils/utils';
 
 import NewWalletModal from './partials/NewWalletModal';
@@ -442,10 +446,10 @@ export default class MiningApp extends React.Component {
       modal_close_disabled: false,
       balance_alert_close_disabled: false,
       wallet: {
-        balance: this.roundBalanceAmount(wallet.balance() - wallet.unlockedBalance()),
-        unlocked_balance: this.roundBalanceAmount(wallet.unlockedBalance()),
-        tokens: this.roundBalanceAmount(wallet.tokenBalance() - wallet.unlockedTokenBalance()),
-        unlocked_tokens: this.roundBalanceAmount(wallet.unlockedTokenBalance()),
+        balance: roundAmount(wallet.balance() - wallet.unlockedBalance()),
+        unlocked_balance: roundAmount(wallet.unlockedBalance()),
+        tokens: roundAmount(wallet.tokenBalance() - wallet.unlockedTokenBalance()),
+        unlocked_tokens: roundAmount(wallet.unlockedTokenBalance()),
         blockchain_height: wallet.blockchainHeight(),
         wallet_connected: wallet.connected() === "connected"
       }
@@ -481,10 +485,10 @@ export default class MiningApp extends React.Component {
           modal_close_disabled: false,
           balance_alert_close_disabled: false,
           wallet: {
-            balance: this.roundBalanceAmount(wallet.balance() - wallet.unlockedBalance()),
-            unlocked_balance: this.roundBalanceAmount(wallet.unlockedBalance()),
-            tokens: this.roundBalanceAmount(wallet.tokenBalance() - wallet.unlockedTokenBalance()),
-            unlocked_tokens: this.roundBalanceAmount(wallet.unlockedTokenBalance()),
+            balance: roundAmount(wallet.balance() - wallet.unlockedBalance()),
+            unlocked_balance: roundAmount(wallet.unlockedBalance()),
+            tokens: roundAmount(wallet.tokenBalance() - wallet.unlockedTokenBalance()),
+            unlocked_tokens: roundAmount(wallet.unlockedTokenBalance()),
             blockchain_height: wallet.blockchainHeight()
           }
         }));
@@ -503,18 +507,18 @@ export default class MiningApp extends React.Component {
           modal_close_disabled: false,
           balance_alert_close_disabled: false,
           wallet: {
-            balance: this.roundBalanceAmount(wallet.balance() - wallet.unlockedBalance()),
-            unlocked_balance: this.roundBalanceAmount(wallet.unlockedBalance()),
-            tokens: this.roundBalanceAmount(wallet.tokenBalance() - wallet.unlockedTokenBalance()),
-            unlocked_tokens: this.roundBalanceAmount(wallet.unlockedTokenBalance()),
+            balance: roundAmount(wallet.balance() - wallet.unlockedBalance()),
+            unlocked_balance: roundAmount(wallet.unlockedBalance()),
+            tokens: roundAmount(wallet.tokenBalance() - wallet.unlockedTokenBalance()),
+            unlocked_tokens: roundAmount(wallet.unlockedTokenBalance()),
             blockchain_height: wallet.blockchainHeight(),
             wallet_connected: wallet.connected() === "connected"
           }
         }));
-        console.log("balance: " + this.roundBalanceAmount(wallet.balance()));
-        console.log("unlocked balance: " + this.roundBalanceAmount(wallet.unlockedBalance()));
-        console.log("token balance: " + this.roundBalanceAmount(wallet.tokenBalance() - wallet.unlockedTokenBalance()));
-        console.log("unlocked token balance: " + this.roundBalanceAmount(wallet.unlockedTokenBalance()));
+        console.log("balance: " + roundAmount(wallet.balance()));
+        console.log("unlocked balance: " + roundAmount(wallet.unlockedBalance()));
+        console.log("token balance: " + roundAmount(wallet.tokenBalance() - wallet.unlockedTokenBalance()));
+        console.log("unlocked token balance: " + roundAmount(wallet.unlockedTokenBalance()));
         console.log("blockchain height " + wallet.blockchainHeight());
         console.log('connected: ' + wallet.connected());
       }
@@ -552,10 +556,10 @@ export default class MiningApp extends React.Component {
           balance_alert_close_disabled: false,
           wallet: {
             wallet_connected: wallet.connected() === "connected",
-            balance: this.roundBalanceAmount(wallet.balance() - wallet.unlockedBalance()),
-            unlocked_balance: this.roundBalanceAmount(wallet.unlockedBalance()),
-            tokens: this.roundBalanceAmount(wallet.tokenBalance() - wallet.unlockedTokenBalance()),
-            unlocked_tokens: this.roundBalanceAmount(wallet.unlockedTokenBalance()),
+            balance: roundAmount(wallet.balance() - wallet.unlockedBalance()),
+            unlocked_balance: roundAmount(wallet.unlockedBalance()),
+            tokens: roundAmount(wallet.tokenBalance() - wallet.unlockedTokenBalance()),
+            unlocked_tokens: roundAmount(wallet.unlockedTokenBalance()),
             blockchain_height: wallet.blockchainHeight(),
           }
         }));
@@ -574,10 +578,6 @@ export default class MiningApp extends React.Component {
     }, 1000);
   }
 
-  roundBalanceAmount = (balance) => {
-    return Math.floor(parseFloat(balance) / 100000000) / 100;
-  }
-
   openInfoPopup = (message) => {
     this.setState({
       mining_info: true,
@@ -585,41 +585,11 @@ export default class MiningApp extends React.Component {
     })
   }
 
-  openNewWalletModal = () => {
-    this.setState(() => ({
-      new_wallet_modal: true
-    }));
-  }
-
-  openInstructionsModal = () => {
-    this.setState(() => ({
-      instructions_modal_active: true
-    }));
-  }
-
-  openCreateWalletModal = () => {
-    this.setState(() => ({
-      create_new_wallet_modal: true
-    }));
-  }
-
-  openFromExistingModal = () => {
-    this.setState(() => ({
-      open_from_existing_modal: true
-    }));
-  }
-
-  openCreateFromKeysModal = () => {
-    this.setState(() => ({
-      create_from_keys_modal: true
-    }));
-  }
-
-  openBalanceModal = () => {
-    this.setState(() => ({
-      balance_modal_active: true
-    }));
-    if (this.state.wallet_loaded) {
+  openModal = (modal_type) => {
+    this.setState({
+      [modal_type]: true
+    });
+    if (modal_type === 'balance_modal_active' && this.state.wallet_loaded) {
       this.startBalanceCheck();
     }
   }
@@ -734,10 +704,10 @@ export default class MiningApp extends React.Component {
             setTimeout(() => {
               this.setState({
                 wallet: {
-                  balance: this.roundBalanceAmount(wallet.unlockedBalance() - wallet.balance()),
-                  unlocked_balance: this.roundBalanceAmount(wallet.unlockedBalance()),
-                  tokens: this.roundBalanceAmount(wallet.unlockedTokenBalance() - wallet.tokenBalance()),
-                  unlocked_tokens: this.roundBalanceAmount(wallet.unlockedTokenBalance())
+                  balance: roundAmount(wallet.unlockedBalance() - wallet.balance()),
+                  unlocked_balance: roundAmount(wallet.unlockedBalance()),
+                  tokens: roundAmount(wallet.unlockedTokenBalance() - wallet.tokenBalance()),
+                  unlocked_tokens: roundAmount(wallet.unlockedTokenBalance())
                 }
               })
             }, 300);
@@ -765,41 +735,6 @@ export default class MiningApp extends React.Component {
     }
   }
 
-  inputValidate = (inputValue) => {
-    let inputRegex = /^[a-zA-Z0-9]/;
-    return inputRegex.test(inputValue);
-  }
-
-  checkInputValueLenght = (inputValue) => {
-    let inputValueLength = inputValue.length;
-    if (inputValueLength <= 95) {
-      console.log('Safex hash address length is too short');
-      this.openInfoPopup('Address length is too short');
-      return false;
-    } else if (inputValueLength >= 105) {
-      console.log('Safex hash address length is too long');
-      this.openInfoPopup('Address length is too long');
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-  checkInputValuePrefix(inputValue) {
-    let userInputValue = inputValue;
-    if (userInputValue.startsWith("SFXt") || userInputValue.startsWith("Safex")) {
-      if (!userInputValue.startsWith("SFXts") || !userInputValue.startsWith("SFXti")) {
-        return true;
-      } else {
-        console.log('Suffix is invalid');
-        return false;
-      }
-    } else {
-      console.log('Suffix is invalid');
-      return false;
-    }
-  }
-
   handleSubmit = (e) => {
     e.preventDefault();
     let miningAddress = e.target.mining_address.value;
@@ -808,15 +743,15 @@ export default class MiningApp extends React.Component {
       this.openInfoPopup('Please enter Safex address');
       return false;
     }
-    if (!this.inputValidate(miningAddress)) {
+    if (!inputValidate(miningAddress)) {
       this.openInfoPopup('Please enter valid Safex address');
       return false;
     }
-    if (!this.checkInputValueLenght(miningAddress)) {
+    if (!checkInputValueLenght(miningAddress)) {
       this.openInfoPopup('Please enter valid address');
       return false;
     }
-    if (!this.checkInputValuePrefix(miningAddress)) {
+    if (!checkInputValuePrefix(miningAddress)) {
       this.openInfoPopup('Your address must start with Safex or SFXt');
       return false;
     }
@@ -997,34 +932,34 @@ export default class MiningApp extends React.Component {
           <div className={this.state.exiting ? "main animated fadeOut" : "main animated fadeIn"}>
             <div className="btns-wrap">
               <button className="modal-btn"
-                onClick={this.openNewWalletModal}
+                onClick={this.openModal.bind(this, 'new_wallet_modal')}
                 title="Generate New Wallet">
                 <img src="images/new.png" alt="new-wallet" />
               </button>
               <button className="modal-btn"
-                onClick={this.openCreateWalletModal}
+                onClick={this.openModal.bind(this, 'create_new_wallet_modal')}
                 title="Create New Wallet File"
                 disabled={this.state.wallet_loaded || this.state.active || this.state.stopping ? "disabled" : ""}>
                 <img src="images/new-wallet.png" alt="new-wallet" />
               </button>
               <button className="modal-btn"
-                onClick={this.openFromExistingModal}
+                onClick={this.openModal.bind(this, 'open_from_existing_modal')}
                 title="Open Wallet File"
                 disabled={this.state.wallet_loaded || this.state.active || this.state.stopping ? "disabled" : ""}>
                 <img src="images/open-logo.png" alt="open-logo" />
               </button>
               <button className="modal-btn"
-                onClick={this.openCreateFromKeysModal}
+                onClick={this.openModal.bind(this, 'create_new_wallet_modal')}
                 title="Create New Wallet From Keys"
                 disabled={this.state.wallet_loaded || this.state.active || this.state.stopping ? "disabled" : ""}>
                 <img src="images/create-from-keys.png" alt="open-logo" />
               </button>
               <button className="modal-btn"
-                onClick={this.openBalanceModal}
+                onClick={this.openModal.bind(this, 'balance_modal_active')}
                 title="Check Balance">
                 <img src="images/key.png" alt="key" />
               </button>
-              <button className="instructions-btn modal-btn" onClick={this.openInstructionsModal}
+              <button className="instructions-btn modal-btn" onClick={this.openModal.bind(this, 'instructions_modal_active')}
                 title="Instructions">
                 ?
               </button>
