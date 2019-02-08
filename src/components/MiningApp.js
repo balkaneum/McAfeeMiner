@@ -766,7 +766,11 @@ export default class MiningApp extends React.Component {
       title={title}
       disabled={disabled}
     >
-      {content.startsWith("images/") ? <img src={content} /> : content}
+      {content.startsWith("images/") ? (
+        <img src={content} alt={content} />
+      ) : (
+        content
+      )}
     </button>
   );
 
@@ -1188,9 +1192,9 @@ export default class MiningApp extends React.Component {
           />
 
           <div
-            className={
-              this.state.balance_modal_active ? "backdrop active" : "backdrop"
-            }
+            className={`backdrop ${
+              this.state.balance_modal_active ? "active" : ""
+            }`}
             onClick={this.closeModal}
           />
         </div>

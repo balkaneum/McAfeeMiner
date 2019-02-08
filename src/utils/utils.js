@@ -1,7 +1,4 @@
 var swg = window.require("safex-addressjs");
-const active = false;
-const starting = false;
-const stopping = false;
 
 /**
  * Verify Safex Address
