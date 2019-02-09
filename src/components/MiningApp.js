@@ -35,7 +35,6 @@ const remote = window.require("electron").remote;
 export default class MiningApp extends React.Component {
   constructor(props) {
     super(props);
-    this.env = parseEnv();
     if (process.env.NODE_ENV === "development") {
       this.pools_list = [
         "mcafee.safex.io:1111",
@@ -149,9 +148,7 @@ export default class MiningApp extends React.Component {
       wallet_loaded: false,
       wallet_exists: false,
       wallet_password: "",
-      wallet_path: "",
-      network: "mainnet",
-      daemonHostPort: "rpc.safex.io:17402"
+      wallet_path: ""
     };
   }
   
@@ -443,8 +440,8 @@ export default class MiningApp extends React.Component {
       {content.startsWith("images/") ? (
         <img src={content} alt={content} />
       ) : (
-        content
-      )}
+          content
+        )}
     </button>
   );
 
