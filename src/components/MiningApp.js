@@ -10,7 +10,6 @@ import {
 import {
   openSendPopup,
   closeSendPopup,
-  parseEnv,
   inputValidate,
   checkInputValueLenght,
   checkInputValuePrefix,
@@ -108,7 +107,6 @@ export default class MiningApp extends React.Component {
       instructions_lang: "english",
       new_wallet_modal: false,
       exit_modal: false,
-      exiting: false,
 
       //balance settings
       balance: 0,
@@ -412,20 +410,10 @@ export default class MiningApp extends React.Component {
       miningStop(this);
       this.closeWallet();
       setTimeout(() => {
-        this.setState({
-          exiting: true
-        });
-      }, 5000);
-      setTimeout(() => {
         window.close();
       }, 6000);
     } else {
-      this.setState({
-        exiting: true
-      });
-      setTimeout(() => {
-        window.close();
-      }, 1000);
+      window.close();
     }
   };
 
@@ -512,11 +500,7 @@ export default class MiningApp extends React.Component {
 
     return (
       <div className="mining-app-wrap">
-        <div
-          className={`mining-bg-wrap animated ${
-            this.state.exiting ? "fadeOut" : "fadeIn"
-          }`}
-        >
+        <div className="mining-bg-wrap animated fadeIn">
           <img
             className={`ring-outer ${addClass(
               this.state.active || this.state.stopping,
@@ -554,16 +538,11 @@ export default class MiningApp extends React.Component {
 
         <div className="mining-app-inner">
           <Header
-            exiting={this.state.exiting}
             openExitModal={this.openExitModal}
             closeApp={this.closeApp}
           />
 
-          <div
-            className={`main animated ${
-              this.state.exiting ? "fadeOut" : "fadeIn"
-            }`}
-          >
+          <div className="main animated fadeIn">
             <div className="btns-wrap">
               {buttons.map(this.renderButton)}
             </div>
@@ -675,11 +654,7 @@ export default class MiningApp extends React.Component {
               <p className="white-text">{this.state.hashrate} H/s</p>
             </div>
 
-            <footer
-              className={
-                this.state.exiting ? "animated fadeOut" : "animated fadeIn"
-              }
-            >
+            <footer className="animated fadeIn">
               <a onClick={this.footerLink} title="Visit Safex site">
                 <img src="images/safex-logo.png" alt="Powered by Safex" />
               </a>
