@@ -92,7 +92,7 @@ function balanceCheck(target) {
       console.log("connected: " + wallet.connected());
     }
     console.log("balance address: " + wallet.address());
-    target.setState({ wallet: { wallet_sync: false }});
+    target.setState(() => ({ wallet: { wallet_sync: false }}));
     if (wallet.daemonBlockchainHeight() - wallet.blockchainHeight() > 10) {
       target.setOpenBalanceAlert("Please wait while blockchain is being updated...");
     }
