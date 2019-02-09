@@ -254,10 +254,15 @@ function open_from_wallet_file(target, e) {
                 }
             });
             target.setState({
+              modal: false
+            });
+            setTimeout(() => {
+              target.setState({
                 open_from_existing_modal: false,
                 balance_alert: false,
                 balance_alert_close_disabled: false
-            })
+              });
+            }, 300);
         })
         .catch(err => {
             target.setState(() => ({

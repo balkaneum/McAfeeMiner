@@ -222,6 +222,13 @@ export default class MiningApp extends React.Component {
     this.setOpenModal("balance_alert", alert, disabled);
   };
 
+  setCloseBalanceAlert = () => {
+    this.setState({
+      balance_alert: false,
+      balance_alert_close_disabled: false
+    })
+  };
+
   setOpenSendPopup = send_cash_or_token => {
     openSendPopup(this, send_cash_or_token);
   };

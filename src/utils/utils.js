@@ -136,12 +136,17 @@ const addClass = (condition, className) => (condition ? ` ${className} ` : "");
  * @param disabled
  */
 function openModal(target, modal_type, alert, disabled) {
+  if (modal_type === "balance_modal_active" && target.state.wallet_loaded) {
+    target.setState({
+      balance_modal_active: true
+    });
+    target.startBalanceCheck();
+    return false;
+  }
   if (modal_type === "balance_modal_active") {
     target.setState({
-      [modal_type]: true
+      balance_modal_active: true
     });
-  } else if (modal_type === "balance_modal_active" && target.state.wallet_loaded) {
-    target.startBalanceCheck();
   } else {
     target.setState({
       modal: true,
