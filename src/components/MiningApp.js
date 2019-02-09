@@ -8,7 +8,6 @@ import {
   roundAmount
 } from "../utils/balance";
 import {
-  verify_safex_address,
   openBalanceAlert,
   closeBalanceAlert,
   openSendPopup,
@@ -21,6 +20,11 @@ import {
   closeAllModals
 } from "../utils/utils";
 import { miningStart, miningStop } from "../utils/mining";
+import {
+  create_new_wallet,
+  create_new_wallet_from_keys,
+  open_from_wallet_file 
+} from "../utils/wallet";
 
 import NewWalletModal from "./partials/NewWalletModal";
 import BalanceAlert from "./partials/BalanceAlert";
@@ -158,7 +162,7 @@ export default class MiningApp extends React.Component {
       daemonHostPort: "rpc.safex.io:17402"
     };
   }
-
+  
   //first step select wallet path, if exists, set password
   //second step set password
 
@@ -176,312 +180,17 @@ export default class MiningApp extends React.Component {
     }));
   };
 
-  open_from_wallet_file = e => {
-    e.preventDefault();
-    const pass = e.target.pass.value;
-    let filepath = e.target.filepath.value;
+  createNewWallet = (e) => {
+    create_new_wallet(this, e)
+  }
 
-    if (filepath === "") {
-      this.setOpenBalanceAlert(
-        "Choose the wallet file",
-        "open_file_alert",
-        false
-      );
-      return false;
-    }
-    if (pass === "") {
-      this.setOpenBalanceAlert(
-        "Enter password for your wallet file",
-        "open_file_alert",
-        false
-      );
-      return false;
-    }
-    if (this.state.wallet_loaded) {
-      this.closeWallet();
-    }
-    this.setState({
-      modal_close_disabled: true
-    });
-    var args = {
-      path: this.state.wallet_path,
-      password: pass,
-      network: this.state.network,
-      daemonAddress: this.state.daemonHostPort
-    };
-    this.setOpenBalanceAlert(
-      "Please wait while your wallet file is loaded",
-      "open_file_alert",
-      true
-    );
-    safex
-      .openWallet(args)
-      .then(wallet => {
-        this.setState({
-          wallet_loaded: true,
-          wallet_meta: wallet,
-          modal_close_disabled: false,
-          balance_alert_close_disabled: true,
-          mining_info: false,
-          wallet: {
-            address: wallet.address(),
-            spend_key: wallet.secretSpendKey(),
-            view_key: wallet.secretViewKey()
-          }
-        });
-        this.closeModal();
-      })
-      .catch(err => {
-        this.setState(() => ({
-          modal_close_disabled: false
-        }));
-        this.setOpenBalanceAlert(
-          "Error opening the wallet: " + err,
-          "open_file_alert",
-          false
-        );
-      });
-  };
+  createNewWalletFromKeys = (e) => {
+    create_new_wallet_from_keys(this, e);
+  }
 
-  create_new_wallet = e => {
-    e.preventDefault();
-
-    const pass1 = e.target.pass1.value;
-    const pass2 = e.target.pass2.value;
-    console.log("new wallet password " + e.target.pass1.value);
-
-    if (pass1 === "" || pass2 === "") {
-      this.setOpenBalanceAlert(
-        "Fill out all the fields",
-        "create_new_wallet_alert",
-        false
-      );
-      return false;
-    }
-    if (pass1 !== pass2) {
-      this.setOpenBalanceAlert(
-        "Repeated password does not match",
-        "create_new_wallet_alert",
-        false
-      );
-      return false;
-    }
-    if (this.state.wallet_loaded) {
-      this.closeWallet();
-    }
-    dialog.showSaveDialog(filepath => {
-      if (!filepath) {
-        return false;
-      }
-      if (safex.walletExists(filepath)) {
-        this.setState(() => ({
-          modal_close_disabled: false
-        }));
-        this.setOpenBalanceAlert(
-          `Wallet already exists. Please choose a different file name.
-          This application does not enable overwriting an existing wallet file
-          OR you can open it using the Load Existing Wallet`,
-          "create_new_wallet_alert",
-          false
-        );
-        return false;
-      }
-      this.setState(() => ({
-        wallet_path: filepath,
-        wallet_exists: false,
-        modal_close_disabled: true
-      }));
-      var args = {
-        path: filepath,
-        password: pass1,
-        network: this.state.network,
-        daemonAddress: this.state.daemonHostPort
-      };
-      this.setOpenBalanceAlert(
-        "Please wait while your wallet file is being created",
-        "create_new_wallet_alert",
-        true
-      );
-      console.log(
-        "wallet doesn't exist. creating new one: " + this.state.wallet_path
-      );
-
-      safex
-        .createWallet(args)
-        .then(wallet => {
-          this.setState({
-            wallet_loaded: true,
-            wallet_meta: wallet,
-            wallet: {
-              address: wallet.address(),
-              spend_key: wallet.secretSpendKey(),
-              view_key: wallet.secretViewKey()
-            },
-            modal_close_disabled: false,
-            mining_info: false
-          });
-          console.log("wallet address  " + this.state.wallet.address);
-          console.log(
-            "wallet spend private key  " + this.state.wallet.spend_key
-          );
-          console.log("wallet view private key  " + this.state.wallet.view_key);
-          wallet.on("refreshed", () => {
-            console.log("Wallet File successfully created!");
-            this.closeModal();
-            wallet
-              .store()
-              .then(() => {
-                console.log("Wallet stored");
-              })
-              .catch(e => {
-                console.log("Unable to store wallet: " + e);
-              });
-          });
-        })
-        .catch(err => {
-          this.setOpenBalanceAlert(
-            "error with the creation of the wallet " + err,
-            "create_new_wallet_alert",
-            false
-          );
-        });
-    });
-    //pass dialog box
-    //pass password
-    //confirm password
-  };
-
-  create_new_wallet_from_keys = e => {
-    e.preventDefault();
-
-    //here we need the key set
-    //the wallet path desired
-    //the password
-    var safex_address = e.target.address.value;
-    var view_key = e.target.viewkey.value;
-    var spend_key = e.target.spendkey.value;
-    var pass1 = e.target.pass1.value;
-    var pass2 = e.target.pass2.value;
-
-    if (
-      safex_address === "" ||
-      view_key === "" ||
-      spend_key === "" ||
-      pass1 === "" ||
-      pass2 === ""
-    ) {
-      this.setOpenBalanceAlert(
-        "Fill out all the fields",
-        "create_from_keys_alert",
-        false
-      );
-      return false;
-    }
-    if (pass1 === "" && pass2 === "" && pass1 !== pass2) {
-      this.setOpenBalanceAlert(
-        "Passwords do not match",
-        "create_from_keys_alert",
-        false
-      );
-      return false;
-    }
-    if (verify_safex_address(spend_key, view_key, safex_address) === false) {
-      this.setOpenBalanceAlert(
-        "Incorrect keys",
-        "create_from_keys_alert",
-        false
-      );
-      return false;
-    }
-    if (this.state.wallet_loaded) {
-      this.closeWallet();
-    }
-    dialog.showSaveDialog(filepath => {
-      if (!filepath) {
-        return false;
-      }
-      if (safex.walletExists(filepath)) {
-        this.setState(() => ({
-          modal_close_disabled: false
-        }));
-        this.setOpenBalanceAlert(
-          `Wallet already exists. Please choose a different file name.
-          This application does not enable overwriting an existing wallet file
-          OR you can open it using the Load Existing Wallet`,
-          "create_new_wallet_alert",
-          false
-        );
-        return false;
-      }
-      this.setState({
-        wallet_path: filepath,
-        wallet_exists: false,
-        modal_close_disabled: true
-      });
-      var args = {
-        path: this.state.wallet_path,
-        password: pass1,
-        network: this.state.network,
-        daemonAddress: this.state.daemonHostPort,
-        restoreHeight: 0,
-        addressString: safex_address,
-        viewKeyString: view_key,
-        spendKeyString: spend_key
-      };
-      this.setOpenBalanceAlert(
-        "Please wait while your wallet file is being created. Do not close the application until the process is complete. This may take some time, please be patient.",
-        "create_from_keys_alert",
-        true
-      );
-      console.log(
-        "wallet doesn't exist. creating new one: " + this.state.wallet_path
-      );
-
-      safex
-        .createWalletFromKeys(args)
-        .then(wallet => {
-          console.log("Create wallet form keys performed!");
-          this.setState({
-            wallet_loaded: true,
-            wallet_meta: wallet,
-            wallet: {
-              address: wallet.address(),
-              spend_key: wallet.secretSpendKey(),
-              view_key: wallet.secretViewKey()
-            },
-            modal_close_disabled: false,
-            mining_info: false
-          });
-          console.log("wallet address  " + this.state.wallet.address);
-          console.log(
-            "wallet spend private key  " + this.state.wallet.spend_key
-          );
-          console.log("wallet view private key  " + this.state.wallet.view_key);
-          console.log("create_new_wallet_from_keys checkpoint 1");
-          wallet.on("refreshed", () => {
-            console.log("Wallet File successfully created!");
-            this.closeModal();
-            wallet
-              .store()
-              .then(() => {
-                console.log("Wallet stored");
-              })
-              .catch(e => {
-                console.log("Unable to store wallet: " + e);
-              });
-          });
-        })
-        .catch(err => {
-          console.log("Create wallet form keys failed!");
-          this.setOpenBalanceAlert(
-            "Error with the creation of the wallet " + err,
-            "create_from_keys_alert",
-            false
-          );
-        });
-    });
-    console.log("create_new_wallet_from_keys checkpoint 2");
-  };
+  openWalletFile = (e) => {
+    open_from_wallet_file(this, e);
+  }
 
   addressChange = e => {
     let address = e.target.value;
@@ -1164,7 +873,7 @@ export default class MiningApp extends React.Component {
           <CreateNewWalletModal
             createNewWalletModal={this.state.create_new_wallet_modal}
             closeNewWalletModal={this.closeModal}
-            createNewWallet={this.create_new_wallet}
+            createNewWallet={this.createNewWallet}
             balanceAlert={this.state.create_new_wallet_alert}
             balanceAlertText={this.state.balance_alert_text}
             closeBalanceAlert={this.setCloseBalanceAlert}
@@ -1174,7 +883,7 @@ export default class MiningApp extends React.Component {
             browseFile={this.browseFile}
             openFromExistingModal={this.state.open_from_existing_modal}
             closeFromExistingModal={this.closeModal}
-            openFromWalletFile={this.open_from_wallet_file}
+            openWalletFile={this.openWalletFile}
             balanceAlert={this.state.open_file_alert}
             balanceAlertText={this.state.balance_alert_text}
             filepath={this.state.wallet_path}
@@ -1184,7 +893,7 @@ export default class MiningApp extends React.Component {
           <CreateFromKeysModal
             openCreateFromKeysModal={this.state.create_from_keys_modal}
             closeCreateFromKeysModal={this.closeModal}
-            createNewWalletFromKeys={this.create_new_wallet_from_keys}
+            createNewWalletFromKeys={this.createNewWalletFromKeys}
             balanceAlert={this.state.create_from_keys_alert}
             balanceAlertText={this.state.balance_alert_text}
             closeBalanceAlert={this.setCloseBalanceAlert}

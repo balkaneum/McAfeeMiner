@@ -21,7 +21,7 @@ export default class OpenExistingWalletModal extends React.Component {
             >
               Browse File
             </button>
-            <form onSubmit={this.props.openFromWalletFile}>
+            <form onSubmit={e => { this.props.openWalletFile(e)}}>
               <label htmlFor="path">Wallet File</label>
               <input
                 name="filepath"
