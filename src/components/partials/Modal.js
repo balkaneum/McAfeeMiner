@@ -453,9 +453,7 @@ export default class Modal extends React.Component {
         }
         if (this.props.balanceModalActive) {
           modal = (
-            <div
-              className={`balance-modal ${this.props.balanceModalActive ? "active" : ""}`}
-            >
+            <div className={`balance-modal ${this.props.balanceModalActive ? "active" : ""}`}>
               <span
                 className="close"
                 onClick={this.props.closeModal}
@@ -648,16 +646,16 @@ export default class Modal extends React.Component {
             </div>
           );
         }
-        if (this.props.balanceAlert) {
+        if (this.props.alert) {
             modal = (
                 <div
                     className={`balanceAlert ${
-                    this.props.balanceAlert ? "active" : ""
+                    this.props.alert ? "active" : ""
                     }`}
                 >
                     <div className="mainAlertPopupInner">
-                        <p>{this.props.balanceAlertText}</p>
-                        {this.props.balanceAlertCloseDisabled ? (
+                        <p>{this.props.alertText}</p>
+                        {this.props.alertCloseDisabled ? (
                             ""
                         ) : (
                             <span

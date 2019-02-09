@@ -103,10 +103,9 @@ export default class MiningApp extends React.Component {
       modal_close_disabled: false,
       instructions_modal_active: false,
       balance_modal_active: false,
-      balance_alert_close_disabled: false,
+      alert_close_disabled: false,
       instructions_lang: "english",
       new_wallet_modal: false,
-      exit_modal: false,
 
       //balance settings
       balance: 0,
@@ -116,11 +115,11 @@ export default class MiningApp extends React.Component {
       balance_wallet: "",
       balance_view_key: "",
       balance_spend_key: "",
-      balance_alert: false,
+      alert: false,
       open_file_alert: false,
       create_new_wallet_alert: false,
       create_from_keys_alert: false,
-      balance_alert_text: "",
+      alert_text: "",
       send_cash_or_token: false,
       tick_handle: null,
       tx_being_sent: false,
@@ -212,14 +211,14 @@ export default class MiningApp extends React.Component {
     openModal(this, modal_type, alert, disabled);
   };
 
-  setOpenBalanceAlert = (alert, disabled = false) => {
-    this.setOpenModal("balance_alert", alert, disabled);
+  setOpenAlert = (alert, disabled = false) => {
+    this.setOpenModal("alert", alert, disabled);
   };
 
   setCloseBalanceAlert = () => {
     this.setState({
-      balance_alert: false,
-      balance_alert_close_disabled: false
+      alert: false,
+      alert_close_disabled: false
     })
   };
 
@@ -265,11 +264,11 @@ export default class MiningApp extends React.Component {
     }));
 
     if (sendingAddress === "") {
-      this.setOpenBalanceAlert("Fill out all the fields");
+      this.setOpenAlert("Fill out all the fields");
       return false;
     }
     if (amount === "") {
-      this.setOpenBalanceAlert("Enter Amount");
+      this.setOpenAlert("Enter Amount");
       return false;
     }
     if (paymentid !== "") {
@@ -313,9 +312,9 @@ export default class MiningApp extends React.Component {
           .then(() => {
             console.log("Transaction commited successfully");
             if (this.state.cash_or_token === 0) {
-              this.setOpenBalanceAlert("Transaction commited successfully, Your cash transaction ID is: " + txId);
+              this.setOpenAlert("Transaction commited successfully, Your cash transaction ID is: " + txId);
             } else {
-              this.setOpenBalanceAlert("Transaction commited successfully, Your token transaction ID is: " + txId);
+              this.setOpenAlert("Transaction commited successfully, Your token transaction ID is: " + txId);
             }
             this.setState(() => ({
               tx_being_sent: false
@@ -339,14 +338,14 @@ export default class MiningApp extends React.Component {
             this.setState(() => ({
               tx_being_sent: false
             }));
-            this.setOpenBalanceAlert("Error on commiting transaction: " + e);
+            this.setOpenAlert("Error on commiting transaction: " + e);
           });
       })
       .catch(e => {
         this.setState(() => ({
           tx_being_sent: false
         }));
-        this.setOpenBalanceAlert("Couldn't create transaction: " + e);
+        this.setOpenAlert("Couldn't create transaction: " + e);
       });
   };
 
@@ -689,8 +688,9 @@ export default class MiningApp extends React.Component {
             txBeingSent={this.state.tx_being_sent}
             availableCash={this.state.wallet.unlocked_balance}
             availableTokens={this.state.wallet.unlocked_tokens}
-            balanceAlert={this.state.balance_alert}
-            balanceAlertText={this.state.balance_alert_text}
+            alert={this.state.alert}
+            alertText={this.state.alert_text}
+            alertCloseDisabled={this.state.alert_close_disabled}
           />
         </div>
       </div>
