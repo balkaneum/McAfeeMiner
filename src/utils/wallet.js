@@ -12,19 +12,11 @@ function create_new_wallet(target, e) {
     console.log("new wallet password " + e.target.pass1.value);
 
     if (pass1 === "" || pass2 === "") {
-        target.setOpenBalanceAlert(
-            "Fill out all the fields",
-            "create_new_wallet_alert",
-            false
-        );
+        target.setOpenBalanceAlert("Fill out all the fields");
         return false;
     }
     if (pass1 !== pass2) {
-        target.setOpenBalanceAlert(
-            "Repeated password does not match",
-            "create_new_wallet_alert",
-            false
-        );
+        target.setOpenBalanceAlert("Repeated password does not match");
         return false;
     }
     if (target.state.wallet_loaded) {
@@ -42,8 +34,7 @@ function create_new_wallet(target, e) {
                 `Wallet already exists. Please choose a different file name.
                 This application does not enable overwriting an existing wallet file
                 OR you can open it using the Load Existing Wallet`,
-                "create_new_wallet_alert",
-                false
+                "create_new_wallet_alert"
             );
             return false;
         }
@@ -100,11 +91,7 @@ function create_new_wallet(target, e) {
                 });
             })
             .catch(err => {
-                target.setOpenBalanceAlert(
-                    "error with the creation of the wallet " + err,
-                    "create_new_wallet_alert",
-                    false
-                );
+                target.setOpenBalanceAlert("error with the creation of the wallet " + err);
             });
     });
     //pass dialog box
@@ -131,27 +118,15 @@ function create_new_wallet_from_keys(target, e) {
         pass1 === "" ||
         pass2 === ""
     ) {
-        target.setOpenBalanceAlert(
-            "Fill out all the fields",
-            "create_from_keys_alert",
-            false
-        );
+        target.setOpenBalanceAlert("Fill out all the fields");
         return false;
     }
     if (pass1 === "" && pass2 === "" && pass1 !== pass2) {
-        target.setOpenBalanceAlert(
-            "Passwords do not match",
-            "create_from_keys_alert",
-            false
-        );
+        target.setOpenBalanceAlert("Passwords do not match");
         return false;
     }
     if (verify_safex_address(spend_key, view_key, safex_address) === false) {
-        target.setOpenBalanceAlert(
-            "Incorrect keys",
-            "create_from_keys_alert",
-            false
-        );
+        target.setOpenBalanceAlert("Incorrect keys");
         return false;
     }
     if (target.state.wallet_loaded) {
@@ -169,9 +144,7 @@ function create_new_wallet_from_keys(target, e) {
                 `Wallet already exists. Please choose a different file name.
                 This application does not enable overwriting an existing wallet file
                 OR you can open it using the Load Existing Wallet`,
-                "create_new_wallet_alert",
-                false
-            );
+                "create_new_wallet_alert");
             return false;
         }
         target.setState({
@@ -191,7 +164,6 @@ function create_new_wallet_from_keys(target, e) {
         };
         target.setOpenBalanceAlert(
             "Please wait while your wallet file is being created. Do not close the application until the process is complete. This may take some time, please be patient.",
-            "create_from_keys_alert",
             true
         );
         console.log(
@@ -234,11 +206,7 @@ function create_new_wallet_from_keys(target, e) {
             })
             .catch(err => {
                 console.log("Create wallet form keys failed!");
-                target.setOpenBalanceAlert(
-                    "Error with the creation of the wallet " + err,
-                    "create_from_keys_alert",
-                    false
-                );
+                target.setOpenBalanceAlert("Error with the creation of the wallet " + err);
             });
     });
     console.log("create_new_wallet_from_keys checkpoint 2");
@@ -250,19 +218,11 @@ function open_from_wallet_file(target, e) {
     let filepath = e.target.filepath.value;
 
     if (filepath === "") {
-        target.setOpenBalanceAlert(
-            "Choose the wallet file",
-            "open_file_alert",
-            false
-        );
+        target.setOpenBalanceAlert("Choose the wallet file");
         return false;
     }
     if (pass === "") {
-        target.setOpenBalanceAlert(
-            "Enter password for your wallet file",
-            "open_file_alert",
-            false
-        );
+        target.setOpenBalanceAlert("Enter password for your wallet file");
         return false;
     }
     if (target.state.wallet_loaded) {
@@ -277,11 +237,7 @@ function open_from_wallet_file(target, e) {
         network: target.state.network,
         daemonAddress: target.state.daemonHostPort
     };
-    target.setOpenBalanceAlert(
-        "Please wait while your wallet file is loaded",
-        "open_file_alert",
-        true
-    );
+    target.setOpenBalanceAlert("Please wait while your wallet file is loaded", true);
     safex
         .openWallet(args)
         .then(wallet => {
@@ -297,17 +253,17 @@ function open_from_wallet_file(target, e) {
                     view_key: wallet.secretViewKey()
                 }
             });
-            target.closeModal();
+            target.setState({
+                open_from_existing_modal: false,
+                balance_alert: false,
+                balance_alert_close_disabled: false
+            })
         })
         .catch(err => {
             target.setState(() => ({
                 modal_close_disabled: false
             }));
-            target.setOpenBalanceAlert(
-                "Error opening the wallet: " + err,
-                "open_file_alert",
-                false
-            );
+            target.setOpenBalanceAlert("Error opening the wallet: " + err, false);
         });
 };
 

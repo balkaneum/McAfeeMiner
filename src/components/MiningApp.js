@@ -8,8 +8,6 @@ import {
   roundAmount
 } from "../utils/balance";
 import {
-  openBalanceAlert,
-  closeBalanceAlert,
   openSendPopup,
   closeSendPopup,
   parseEnv,
@@ -17,6 +15,7 @@ import {
   checkInputValueLenght,
   checkInputValuePrefix,
   addClass,
+  openModal,
   closeAllModals
 } from "../utils/utils";
 import { miningStart, miningStop } from "../utils/mining";
@@ -25,15 +24,9 @@ import {
   create_new_wallet_from_keys,
   open_from_wallet_file 
 } from "../utils/wallet";
-
-import NewWalletModal from "./partials/NewWalletModal";
-import BalanceAlert from "./partials/BalanceAlert";
-import SendModal from "./partials/SendModal";
-import CreateNewWalletModal from "./partials/CreateNewWalletModal";
-import OpenExistingWalletModal from "./partials/OpenExistingWalletModal";
-import CreateFromKeysModal from "./partials/CreateFromKeysModal";
-import InstructionsModal from "./partials/InstructionsModal";
 import Header from "./partials/Header";
+import SendModal from "./partials/SendModal";
+import Modal from "./partials/Modal";
 
 const { shell } = window.require("electron");
 const safex = window.require("safex-nodejs-libwallet");
@@ -109,7 +102,7 @@ export default class MiningApp extends React.Component {
       },
 
       //UI settings
-      modal_active: false,
+      modal: false,
       modal_close_disabled: false,
       instructions_modal_active: false,
       balance_modal_active: false,
@@ -221,23 +214,12 @@ export default class MiningApp extends React.Component {
     });
   };
 
-  openModal = modal_type => {
-    this.setState({
-      [modal_type]: true
-    });
-    if (modal_type === "balance_modal_active" && this.state.wallet_loaded) {
-      this.startBalanceCheck();
-    }
+  setOpenModal = (modal_type, alert, disabled) => {
+    openModal(this, modal_type, alert, disabled);
   };
 
-  setOpenBalanceAlert = (alert, alert_state, disabled) => {
-    openBalanceAlert(this, alert, alert_state, disabled);
-  };
-
-  setCloseBalanceAlert = () => {
-    if (this.state.balance_alert_close_disabled === false) {
-      closeBalanceAlert(this);
-    }
+  setOpenBalanceAlert = (alert, disabled = false) => {
+    this.setOpenModal("balance_alert", alert, disabled);
   };
 
   setOpenSendPopup = send_cash_or_token => {
@@ -282,15 +264,11 @@ export default class MiningApp extends React.Component {
     }));
 
     if (sendingAddress === "") {
-      this.setOpenBalanceAlert(
-        "Fill out all the fields",
-        "balance_alert",
-        false
-      );
+      this.setOpenBalanceAlert("Fill out all the fields");
       return false;
     }
     if (amount === "") {
-      this.setOpenBalanceAlert("Enter Amount", "balance_alert", false);
+      this.setOpenBalanceAlert("Enter Amount");
       return false;
     }
     if (paymentid !== "") {
@@ -334,19 +312,9 @@ export default class MiningApp extends React.Component {
           .then(() => {
             console.log("Transaction commited successfully");
             if (this.state.cash_or_token === 0) {
-              this.setOpenBalanceAlert(
-                "Transaction commited successfully, Your cash transaction ID is: " +
-                  txId,
-                "balance_alert",
-                false
-              );
+              this.setOpenBalanceAlert("Transaction commited successfully, Your cash transaction ID is: " + txId);
             } else {
-              this.setOpenBalanceAlert(
-                "Transaction commited successfully, Your token transaction ID is: " +
-                  txId,
-                "balance_alert",
-                false
-              );
+              this.setOpenBalanceAlert("Transaction commited successfully, Your token transaction ID is: " + txId);
             }
             this.setState(() => ({
               tx_being_sent: false
@@ -370,22 +338,14 @@ export default class MiningApp extends React.Component {
             this.setState(() => ({
               tx_being_sent: false
             }));
-            this.setOpenBalanceAlert(
-              "Error on commiting transaction: " + e,
-              "balance_alert",
-              false
-            );
+            this.setOpenBalanceAlert("Error on commiting transaction: " + e);
           });
       })
       .catch(e => {
         this.setState(() => ({
           tx_being_sent: false
         }));
-        this.setOpenBalanceAlert(
-          "Couldn't create transaction: " + e,
-          "balance_alert",
-          false
-        );
+        this.setOpenBalanceAlert("Couldn't create transaction: " + e);
       });
   };
 
@@ -470,7 +430,7 @@ export default class MiningApp extends React.Component {
     <button
       className={classes.join(" ")}
       key={type}
-      onClick={this.openModal.bind(this, type)}
+      onClick={this.setOpenModal.bind(this, type)}
       title={title}
       disabled={disabled}
     >
@@ -601,7 +561,9 @@ export default class MiningApp extends React.Component {
               this.state.exiting ? "fadeOut" : "fadeIn"
             }`}
           >
-            <div className="btns-wrap">{buttons.map(this.renderButton)}</div>
+            <div className="btns-wrap">
+              {buttons.map(this.renderButton)}
+            </div>
 
             <form onSubmit={this.handleSubmit}>
               <div className="address-wrap">
@@ -614,10 +576,14 @@ export default class MiningApp extends React.Component {
                   name="mining_address"
                   id="mining_address"
                   disabled={
-                    this.state.active || this.state.stopping ? "disabled" : ""
+                    this.state.active || this.state.stopping
+                      ? "disabled"
+                      : ""
                   }
                   title={`Your Safex Address ${
-                    this.state.wallet.address === "" ? "will be shown here" : ""
+                    this.state.wallet.address === ""
+                      ? "will be shown here"
+                      : ""
                   }`}
                   readOnly={this.state.wallet_loaded ? "readOnly" : ""}
                 />
@@ -647,7 +613,9 @@ export default class MiningApp extends React.Component {
                     name="cores"
                     id="cpuUsage"
                     disabled={
-                      this.state.active || this.state.stopping ? "disabled" : ""
+                      this.state.active || this.state.stopping
+                        ? "disabled"
+                        : ""
                     }
                     title={`Choose how much CPU power you want to use for mining ${
                       this.state.active || this.state.stopping
@@ -681,14 +649,18 @@ export default class MiningApp extends React.Component {
                           : ""
                       }
                     >
-                      <span>{this.state.stopping ? "Stopping" : "Start"}</span>
+                      <span>
+                        {this.state.stopping ? "Stopping" : "Start"}
+                      </span>
                     </button>
                   }
                 </div>
               )}
               <p
                 className={
-                  this.state.mining_info ? "mining-info active" : "mining-info"
+                  this.state.mining_info
+                    ? "mining-info active"
+                    : "mining-info"
                 }
               >
                 {this.state.mining_info_text}
@@ -712,197 +684,179 @@ export default class MiningApp extends React.Component {
           </div>
 
           <div
-            className={`modal balance-modal ${
+            className={`modal ${
               this.state.balance_modal_active ? "active" : ""
             }`}
           >
-            <span
-              className="close"
-              onClick={this.closeModal}
-              disabled={this.state.wallet_sync ? "" : "disabled"}
+            <div
+              className={`balance-modal ${
+                this.state.balance_modal_active ? "active" : ""
+              }`}
             >
-              X
-            </span>
-            <h3 className={this.state.wallet_loaded ? "wallet-loaded-h3" : ""}>
-              Check Balance
-            </h3>
+              <span
+                className="close"
+                onClick={this.closeModal}
+                disabled={this.state.wallet_sync ? "" : "disabled"}
+              >
+                X
+              </span>
+              <h3
+                className={
+                  this.state.wallet_loaded ? "wallet-loaded-h3" : ""
+                }
+              >
+                Check Balance
+              </h3>
 
-            {this.state.wallet_loaded ? (
-              <div className="wallet-exists">
-                <div className="btns-wrap">
-                  <button
-                    className={`signal ${
-                      this.state.wallet.wallet_connected ? "connected" : ""
-                    }`}
-                    title="Status"
-                  >
-                    <img src="images/connected.png" alt="connected" />
-                    <p>
-                      {this.state.wallet.wallet_connected ? (
-                        <span>Connected</span>
-                      ) : (
-                        <span>Connection error</span>
-                      )}
-                    </p>
-                  </button>
-                  <button className="blockheight" title="Blockchain Height">
-                    <img src="images/blocks.png" alt="blocks" />
-                    <span>{this.state.wallet.blockchain_height}</span>
-                  </button>
-                  <button
-                    className="button-shine refresh"
-                    onClick={this.startRescanBalance}
-                    title="Rescan blockchain from scratch"
-                  >
-                    <img src="images/refresh.png" alt="refresh" />
-                  </button>
-                </div>
-                <label htmlFor="selected_balance_address">
-                  Safex Wallet Address
-                </label>
-                <textarea
-                  placeholder="Safex Wallet Address"
-                  name="selected_balance_address"
-                  defaultValue={this.state.wallet.address}
-                  rows="2"
-                  readOnly
-                />
-
-                <div className="groups-wrap">
-                  <div className="form-group">
-                    <label htmlFor="balance">Pending Safex Cash</label>
-                    <input
-                      type="text"
-                      className="yellow-field"
-                      placeholder="Balance"
-                      name="balance"
-                      value={this.state.wallet.balance}
-                      onChange={this.sendAmountOnChange}
-                      readOnly
-                    />
-                    <label htmlFor="unlocked_balance">
-                      Available Safex Cash
-                    </label>
-                    <input
-                      type="text"
-                      className="green-field"
-                      placeholder="Unlocked balance"
-                      name="unlocked_balance"
-                      value={this.state.wallet.unlocked_balance}
-                      onChange={this.sendAmountOnChange}
-                      readOnly
-                    />
+              {this.state.wallet_loaded ? (
+                <div className="wallet-exists">
+                  <div className="btns-wrap">
                     <button
-                      className="button-shine"
-                      onClick={this.setOpenSendPopup.bind(this, 0)}
+                      className={`signal ${
+                        this.state.wallet.wallet_connected
+                          ? "connected"
+                          : ""
+                      }`}
+                      title="Status"
                     >
-                      Send Cash
+                      <img src="images/connected.png" alt="connected" />
+                      <p>
+                        {this.state.wallet.wallet_connected ? (
+                          <span>Connected</span>
+                        ) : (
+                          <span>Connection error</span>
+                        )}
+                      </p>
+                    </button>
+                    <button
+                      className="blockheight"
+                      title="Blockchain Height"
+                    >
+                      <img src="images/blocks.png" alt="blocks" />
+                      <span>{this.state.wallet.blockchain_height}</span>
+                    </button>
+                    <button
+                      className="button-shine refresh"
+                      onClick={this.startRescanBalance}
+                      title="Rescan blockchain from scratch"
+                    >
+                      <img src="images/refresh.png" alt="refresh" />
                     </button>
                   </div>
+                  <label htmlFor="selected_balance_address">
+                    Safex Wallet Address
+                  </label>
+                  <textarea
+                    placeholder="Safex Wallet Address"
+                    name="selected_balance_address"
+                    defaultValue={this.state.wallet.address}
+                    rows="2"
+                    readOnly
+                  />
 
-                  <div className="form-group">
-                    <label htmlFor="tokens">Pending Safex Tokens</label>
-                    <input
-                      type="text"
-                      className="yellow-field"
-                      placeholder="Tokens"
-                      value={this.state.wallet.tokens}
-                      onChange={this.sendAmountOnChange}
-                      readOnly
-                    />
-                    <label htmlFor="unlocked_tokens">
-                      Available Safex Tokens
-                    </label>
-                    <input
-                      className="green-field"
-                      type="text"
-                      placeholder="Unlocked Tokens"
-                      name="unlocked_tokens"
-                      value={this.state.wallet.unlocked_tokens}
-                      onChange={this.sendAmountOnChange}
-                      readOnly
-                    />
-                    <button
-                      className="button-shine"
-                      onClick={this.setOpenSendPopup.bind(this, 1)}
-                    >
-                      Send Tokens
-                    </button>
+                  <div className="groups-wrap">
+                    <div className="form-group">
+                      <label htmlFor="balance">Pending Safex Cash</label>
+                      <input
+                        type="text"
+                        className="yellow-field"
+                        placeholder="Balance"
+                        name="balance"
+                        value={this.state.wallet.balance}
+                        onChange={this.sendAmountOnChange}
+                        readOnly
+                      />
+                      <label htmlFor="unlocked_balance">
+                        Available Safex Cash
+                      </label>
+                      <input
+                        type="text"
+                        className="green-field"
+                        placeholder="Unlocked balance"
+                        name="unlocked_balance"
+                        value={this.state.wallet.unlocked_balance}
+                        onChange={this.sendAmountOnChange}
+                        readOnly
+                      />
+                      <button
+                        className="button-shine"
+                        onClick={this.setOpenSendPopup.bind(this, 0)}
+                      >
+                        Send Cash
+                      </button>
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="tokens">Pending Safex Tokens</label>
+                      <input
+                        type="text"
+                        className="yellow-field"
+                        placeholder="Tokens"
+                        value={this.state.wallet.tokens}
+                        onChange={this.sendAmountOnChange}
+                        readOnly
+                      />
+                      <label htmlFor="unlocked_tokens">
+                        Available Safex Tokens
+                      </label>
+                      <input
+                        className="green-field"
+                        type="text"
+                        placeholder="Unlocked Tokens"
+                        name="unlocked_tokens"
+                        value={this.state.wallet.unlocked_tokens}
+                        onChange={this.sendAmountOnChange}
+                        readOnly
+                      />
+                      <button
+                        className="button-shine"
+                        onClick={this.setOpenSendPopup.bind(this, 1)}
+                      >
+                        Send Tokens
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ) : (
-              <div className="no-wallet">
-                <h4>Please load the wallet file</h4>
-              </div>
-            )}
+              ) : (
+                <div className="no-wallet">
+                  <h4>Please load the wallet file</h4>
+                </div>
+              )}
 
-            <BalanceAlert
-              balanceAlert={this.state.balance_alert}
-              balanceAlertText={this.state.balance_alert_text}
-              closeBalanceAlert={this.setCloseBalanceAlert}
-              walletSync={this.wallet_sync}
-              balanceAlertCloseDisabled={
-                this.state.balance_alert_close_disabled
-              }
-            />
-
-            <SendModal
-              sendModal={this.state.send_modal}
-              send_cash_or_token={this.state.send_cash_or_token}
-              sendCashOrToken={this.sendCashOrToken}
-              closeSendPopup={this.setCloseSendPopup}
-              txBeingSent={this.state.tx_being_sent}
-              availableCash={this.state.wallet.unlocked_balance}
-              availableTokens={this.state.wallet.unlocked_tokens}
-            />
+              <SendModal
+                sendModal={this.state.send_modal}
+                send_cash_or_token={this.state.send_cash_or_token}
+                sendCashOrToken={this.sendCashOrToken}
+                closeSendPopup={this.setCloseSendPopup}
+                txBeingSent={this.state.tx_being_sent}
+                availableCash={this.state.wallet.unlocked_balance}
+                availableTokens={this.state.wallet.unlocked_tokens}
+              />
+            </div>
           </div>
 
-          <NewWalletModal
+          <Modal
+            modal={this.state.modal}
             newWalletModal={this.state.new_wallet_modal}
-            closeNewWalletModal={this.closeModal}
-          />
-
-          <InstructionsModal
+            closeModal={this.closeModal}
             instructionsModalActive={this.state.instructions_modal_active}
             instructionsLang={this.state.instructions_lang}
             changeInstructionLang={this.changeInstructionLang}
-            closeInstructionsModal={this.closeModal}
-          />
-
-          <CreateNewWalletModal
             createNewWalletModal={this.state.create_new_wallet_modal}
-            closeNewWalletModal={this.closeModal}
             createNewWallet={this.createNewWallet}
-            balanceAlert={this.state.create_new_wallet_alert}
-            balanceAlertText={this.state.balance_alert_text}
-            closeBalanceAlert={this.setCloseBalanceAlert}
-          />
-
-          <OpenExistingWalletModal
             browseFile={this.browseFile}
             openFromExistingModal={this.state.open_from_existing_modal}
-            closeFromExistingModal={this.closeModal}
             openWalletFile={this.openWalletFile}
-            balanceAlert={this.state.open_file_alert}
-            balanceAlertText={this.state.balance_alert_text}
             filepath={this.state.wallet_path}
-            closeBalanceAlert={this.setCloseBalanceAlert}
-          />
-
-          <CreateFromKeysModal
             openCreateFromKeysModal={this.state.create_from_keys_modal}
             closeCreateFromKeysModal={this.closeModal}
             createNewWalletFromKeys={this.createNewWalletFromKeys}
-            balanceAlert={this.state.create_from_keys_alert}
+            balanceAlert={this.state.balance_alert}
             balanceAlertText={this.state.balance_alert_text}
-            closeBalanceAlert={this.setCloseBalanceAlert}
           />
 
           <div
-            className={`backdrop ${
-              this.state.balance_modal_active ? "active" : ""
-            }`}
+            className={`backdrop ${this.state.balance_modal_active ? "active" : ""}`}
             onClick={this.closeModal}
           />
         </div>
