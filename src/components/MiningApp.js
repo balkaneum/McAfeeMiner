@@ -25,7 +25,6 @@ import {
   open_from_wallet_file 
 } from "../utils/wallet";
 import Header from "./partials/Header";
-import SendModal from "./partials/SendModal";
 import Modal from "./partials/Modal";
 
 const { shell } = window.require("electron");
@@ -132,6 +131,7 @@ export default class MiningApp extends React.Component {
       //wallet state settings
       wallet_meta: null,
       wallet: {
+        wallet_sync: false,
         address: "",
         spend_key: "",
         view_key: "",
@@ -142,7 +142,6 @@ export default class MiningApp extends React.Component {
         unlocked_tokens: 0,
         blockchain_height: 0
       },
-      wallet_sync: false,
       wallet_being_created: false,
       create_new_wallet_modal: false,
       open_from_existing_modal: false,
@@ -690,158 +689,6 @@ export default class MiningApp extends React.Component {
             </footer>
           </div>
 
-          <div
-            className={`modal ${
-              this.state.balance_modal_active ? "active" : ""
-            }`}
-          >
-            <div
-              className={`balance-modal ${
-                this.state.balance_modal_active ? "active" : ""
-              }`}
-            >
-              <span
-                className="close"
-                onClick={this.closeModal}
-                disabled={this.state.wallet_sync ? "" : "disabled"}
-              >
-                X
-              </span>
-              <h3
-                className={
-                  this.state.wallet_loaded ? "wallet-loaded-h3" : ""
-                }
-              >
-                Check Balance
-              </h3>
-
-              {this.state.wallet_loaded ? (
-                <div className="wallet-exists">
-                  <div className="btns-wrap">
-                    <button
-                      className={`signal ${
-                        this.state.wallet.wallet_connected
-                          ? "connected"
-                          : ""
-                      }`}
-                      title="Status"
-                    >
-                      <img src="images/connected.png" alt="connected" />
-                      <p>
-                        {this.state.wallet.wallet_connected ? (
-                          <span>Connected</span>
-                        ) : (
-                          <span>Connection error</span>
-                        )}
-                      </p>
-                    </button>
-                    <button
-                      className="blockheight"
-                      title="Blockchain Height"
-                    >
-                      <img src="images/blocks.png" alt="blocks" />
-                      <span>{this.state.wallet.blockchain_height}</span>
-                    </button>
-                    <button
-                      className="button-shine refresh"
-                      onClick={this.startRescanBalance}
-                      title="Rescan blockchain from scratch"
-                    >
-                      <img src="images/refresh.png" alt="refresh" />
-                    </button>
-                  </div>
-                  <label htmlFor="selected_balance_address">
-                    Safex Wallet Address
-                  </label>
-                  <textarea
-                    placeholder="Safex Wallet Address"
-                    name="selected_balance_address"
-                    defaultValue={this.state.wallet.address}
-                    rows="2"
-                    readOnly
-                  />
-
-                  <div className="groups-wrap">
-                    <div className="form-group">
-                      <label htmlFor="balance">Pending Safex Cash</label>
-                      <input
-                        type="text"
-                        className="yellow-field"
-                        placeholder="Balance"
-                        name="balance"
-                        value={this.state.wallet.balance}
-                        onChange={this.sendAmountOnChange}
-                        readOnly
-                      />
-                      <label htmlFor="unlocked_balance">
-                        Available Safex Cash
-                      </label>
-                      <input
-                        type="text"
-                        className="green-field"
-                        placeholder="Unlocked balance"
-                        name="unlocked_balance"
-                        value={this.state.wallet.unlocked_balance}
-                        onChange={this.sendAmountOnChange}
-                        readOnly
-                      />
-                      <button
-                        className="button-shine"
-                        onClick={this.setOpenSendPopup.bind(this, 0)}
-                      >
-                        Send Cash
-                      </button>
-                    </div>
-
-                    <div className="form-group">
-                      <label htmlFor="tokens">Pending Safex Tokens</label>
-                      <input
-                        type="text"
-                        className="yellow-field"
-                        placeholder="Tokens"
-                        value={this.state.wallet.tokens}
-                        onChange={this.sendAmountOnChange}
-                        readOnly
-                      />
-                      <label htmlFor="unlocked_tokens">
-                        Available Safex Tokens
-                      </label>
-                      <input
-                        className="green-field"
-                        type="text"
-                        placeholder="Unlocked Tokens"
-                        name="unlocked_tokens"
-                        value={this.state.wallet.unlocked_tokens}
-                        onChange={this.sendAmountOnChange}
-                        readOnly
-                      />
-                      <button
-                        className="button-shine"
-                        onClick={this.setOpenSendPopup.bind(this, 1)}
-                      >
-                        Send Tokens
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="no-wallet">
-                  <h4>Please load the wallet file</h4>
-                </div>
-              )}
-
-              <SendModal
-                sendModal={this.state.send_modal}
-                send_cash_or_token={this.state.send_cash_or_token}
-                sendCashOrToken={this.sendCashOrToken}
-                closeSendPopup={this.setCloseSendPopup}
-                txBeingSent={this.state.tx_being_sent}
-                availableCash={this.state.wallet.unlocked_balance}
-                availableTokens={this.state.wallet.unlocked_tokens}
-              />
-            </div>
-          </div>
-
           <Modal
             modal={this.state.modal}
             newWalletModal={this.state.new_wallet_modal}
@@ -858,13 +705,20 @@ export default class MiningApp extends React.Component {
             openCreateFromKeysModal={this.state.create_from_keys_modal}
             closeCreateFromKeysModal={this.closeModal}
             createNewWalletFromKeys={this.createNewWalletFromKeys}
+            wallet={this.state.wallet}
+            balanceModalActive={this.state.balance_modal_active}
+            walletLoaded={this.state.wallet_loaded}
+            startRescanBalance={this.startRescanBalance}
+            setOpenSendPopup={this.setOpenSendPopup}
+            sendModal={this.state.send_modal}
+            send_cash_or_token={this.state.send_cash_or_token}
+            sendCashOrToken={this.sendCashOrToken}
+            closeSendPopup={this.setCloseSendPopup}
+            txBeingSent={this.state.tx_being_sent}
+            availableCash={this.state.wallet.unlocked_balance}
+            availableTokens={this.state.wallet.unlocked_tokens}
             balanceAlert={this.state.balance_alert}
             balanceAlertText={this.state.balance_alert_text}
-          />
-
-          <div
-            className={`backdrop ${this.state.balance_modal_active ? "active" : ""}`}
-            onClick={this.closeModal}
           />
         </div>
       </div>

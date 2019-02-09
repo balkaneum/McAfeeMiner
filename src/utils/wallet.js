@@ -253,6 +253,9 @@ function open_from_wallet_file(target, e) {
                     view_key: wallet.secretViewKey()
                 }
             });
+            console.log(
+              "wallet address  " + target.state.wallet.address
+            );
             target.setState({
               modal: false
             });

@@ -81,8 +81,11 @@
   box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
   color: #ffffce;
 }
-.modal button:active {
+.modal button:active,
+.modal button:focus {
   box-shadow: none !important;
+  outline: none !important;
+  color: #fff !important;
 }
 .modal .form-group {
   margin-bottom: 0;
