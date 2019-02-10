@@ -56,11 +56,7 @@ export default class Modal extends React.Component {
 
         if (this.props.newWalletModal) {
             modal = (
-                <div
-                    className={`newWalletModal ${
-                        this.props.newWalletModal ? "active" : ""
-                        }`}
-                >
+                <div className={`newWalletModal ${this.props.newWalletModal ? "active" : "" }`}>
                     <span className="close" onClick={this.props.closeModal}>
                         X
                     </span>
@@ -77,37 +73,18 @@ export default class Modal extends React.Component {
                             placeholder="New Wallet Address"
                             value={this.state.new_wallet}
                             rows="2"
-                            onChange={({ target: { value } }) =>
-                                this.setState({ value, copied: false })
-                            }
+                            onChange={({ target: { value } }) => this.setState({ value, copied: false })}
                             readOnly
                         />
-                        <div
-                            className={
-                                this.state.new_wallet_generated
-                                    ? "spendview active"
-                                    : "spendview"
-                            }
-                        >
-                            {this.state.copied ? (
-                                <CopyToClipboard
-                                    text={this.state.new_wallet}
-                                    onCopy={() => this.setState({ copied: true })}
-                                    className="button-shine copy-btn"
-                                    disabled={this.state.new_wallet === "" ? "disabled" : ""}
-                                >
-                                    <button>Copied Address</button>
-                                </CopyToClipboard>
-                            ) : (
-                                    <CopyToClipboard
-                                        text={this.state.new_wallet}
-                                        onCopy={() => this.setState({ copied: true })}
-                                        className="button-shine copy-btn"
-                                        disabled={this.state.new_wallet === "" ? "disabled" : ""}
-                                    >
-                                        <button>Copy Address</button>
-                                    </CopyToClipboard>
-                                )}
+                        <div className={this.state.new_wallet_generated ? "spendview active" : "spendview"}>
+                            <CopyToClipboard
+                                text={this.state.new_wallet}
+                                onCopy={() => this.setState({ copied: true })}
+                                className="button-shine copy-btn"
+                                disabled={this.state.new_wallet === "" ? "disabled" : ""}
+                            >
+                                <button>{this.state.copied ? "Copied Address" : "Copy Address"}</button>
+                            </CopyToClipboard>
                             {this.state.exported ? (
                                 <h5 className="warning green">
                                     Wallet keys have been successfuly saved. Please do not share
@@ -139,9 +116,7 @@ export default class Modal extends React.Component {
                             >
                                 <span>
                                     {" "}
-                                    {this.state.exported
-                                        ? "Wallet Keys Saved"
-                                        : "Save Wallet Keys"}
+                                    {this.state.exported ? "Wallet Keys Saved" : "Save Wallet Keys"}
                                 </span>
                             </button>
                         </div>
@@ -151,20 +126,12 @@ export default class Modal extends React.Component {
         }
         if (this.props.createNewWalletModal) {
             modal = (
-                <div
-                    className={`createNewWalletModal ${
-                        this.props.createNewWalletModal ? "active" : ""
-                        }`}
-                >
+                <div className={`createNewWalletModal ${this.props.createNewWalletModal ? "active" : ""}`}>
                     <div className="sendModalInner">
-                        <span
-                            className="close"
-                            onClick={this.props.closeModal}
-                        >
+                        <span className="close" onClick={this.props.closeModal}>
                             X
                         </span>
                         <h3>Create New Wallet File</h3>
-
                         <form onSubmit={this.props.createNewWallet}>
                             <label htmlFor="pass1">Enter New Password</label>
                             <input
@@ -172,14 +139,12 @@ export default class Modal extends React.Component {
                                 name="pass1"
                                 placeholder="New Password"
                             />
-
                             <label htmlFor="pass1">Repeat Password</label>
                             <input
                                 type="password"
                                 name="pass2"
                                 placeholder="Repeat Password"
                             />
-
                             <button
                                 type="submit"
                                 className="button-shine new-wallet-btn"
@@ -193,30 +158,16 @@ export default class Modal extends React.Component {
         }
         if (this.props.openFromExistingModal) {
             modal = (
-                <div
-                    className={`openFromExistingModal ${
-                        this.props.openFromExistingModal ? "active" : ""
-                        }`}
-                >
+                <div className={`openFromExistingModal ${this.props.openFromExistingModal ? "active" : ""}`}>
                     <div className="sendModalInner">
-                        <span
-                            className="close"
-                            onClick={this.props.closeModal}
-                        >
+                        <span className="close" onClick={this.props.closeModal}>
                             X
                         </span>
                         <h3>Open Wallet File</h3>
-                        <button
-                            className="button-shine browse-btn"
-                            onClick={this.props.browseFile}
-                        >
+                        <button className="button-shine browse-btn" onClick={this.props.browseFile}>
                             Browse File
                         </button>
-                        <form
-                            onSubmit={e => {
-                                this.props.openWalletFile(e);
-                            }}
-                        >
+                        <form onSubmit={e => { this.props.openWalletFile(e) }}>
                             <label htmlFor="path">Wallet File</label>
                             <input
                                 name="filepath"
@@ -224,14 +175,12 @@ export default class Modal extends React.Component {
                                 placeholder="Wallet File Path"
                                 readOnly
                             />
-
                             <label htmlFor="path">Wallet Password</label>
                             <input
                                 type="password"
                                 name="pass"
                                 placeholder="Wallet Password"
                             />
-
                             <button
                                 type="submit"
                                 className="button-shine new-wallet-btn"
@@ -245,16 +194,9 @@ export default class Modal extends React.Component {
         }
         if (this.props.openCreateFromKeysModal) {
           modal = (
-            <div
-                  className={`openCreateFromKeysModal ${
-                  this.props.openCreateFromKeysModal ? "active" : ""}`
-              }
-            >
+            <div className={`openCreateFromKeysModal ${this.props.openCreateFromKeysModal ? "active" : ""}`}>
               <div className="sendModalInner">
-                <span
-                  className="close"
-                  onClick={this.props.closeModal}
-                >
+                <span className="close" onClick={this.props.closeModal}>
                   X
                 </span>
                 <h3>Create Wallet From Keys</h3>
@@ -283,21 +225,11 @@ export default class Modal extends React.Component {
                       />
                     </div>
                   </div>
-                  <label htmlFor="spendkey">
-                    Secret Spend Key (Sec, Private){" "}
-                  </label>
-                  <input
-                    name="spendkey"
-                    placeholder="Secret Spendkey"
-                  />
-                  <label htmlFor="viewkey">
-                    Secret View Key (Sec, Private)
-                  </label>
+                  <label htmlFor="spendkey">Secret Spend Key (Sec, Private){" "}</label>
+                  <input name="spendkey" placeholder="Secret Spendkey"/>
+                  <label htmlFor="viewkey">Secret View Key (Sec, Private)</label>
                   <input name="viewkey" placeholder="Secret Viewkey" />
-                  <button
-                    type="submit"
-                    className="button-shine new-wallet-btn"
-                  >
+                  <button type="submit" className="button-shine new-wallet-btn">
                     Create Wallet From Keys
                   </button>
                 </form>
@@ -307,31 +239,19 @@ export default class Modal extends React.Component {
         }
         if (this.props.instructionsModalActive) {
           modal = (
-            <div
-              className={`instructions-modal ${
-                this.props.instructionsModalActive ? "active" : ""
-              }`}
-            >
+            <div className={`instructions-modal ${this.props.instructionsModalActive ? "active" : ""}`}>
               <span className="close" onClick={this.props.closeModal}>
                 X
               </span>
               <div className="lang-bts-wrap">
                 <button
-                  className={`button-shine ${
-                    this.props.instructionsLang === "english"
-                      ? "active"
-                      : ""
-                  }`}
+                  className={`button-shine ${this.props.instructionsLang === "english" ? "active" : ""}`}
                   onClick={this.props.changeInstructionLang}
                 >
                   EN
                 </button>
                 <button
-                  className={`button-shine ${
-                    this.props.instructionsLang === "serbian"
-                      ? "active"
-                      : ""
-                  }`}
+                  className={`button-shine ${this.props.instructionsLang === "serbian" ? "active" : ""}`}
                   onClick={this.props.changeInstructionLang}
                 >
                   SRB
@@ -344,10 +264,7 @@ export default class Modal extends React.Component {
                     If you don't already have a Safex Wallet, click the
                     Create New Wallet File
                     <button className="icon-btn">
-                      <img
-                        src="images/new-wallet.png"
-                        alt="new-wallet"
-                      />
+                      <img src="images/new-wallet.png" alt="new-wallet" />
                     </button>
                     button. Enter password for your new wallet and click
                     <button>Create New Wallet</button>. In the dialog
@@ -364,10 +281,7 @@ export default class Modal extends React.Component {
                     to create new wallet from keys click Create Wallet
                     From Keys
                     <button className="icon-btn">
-                      <img
-                        src="images/create-from-keys.png"
-                        alt="create-from-keys"
-                      />
+                      <img src="images/create-from-keys.png" alt="create-from-keys" />
                     </button>
                     button. Enter your Safex address, private spend key,
                     private view key and password and save it in a
@@ -399,10 +313,7 @@ export default class Modal extends React.Component {
                     Ako nemate Safex Wallet, kliknite Create New Wallet
                     File
                     <button className="icon-btn">
-                      <img
-                        src="images/new-wallet.png"
-                        alt="new-wallet"
-                      />
+                      <img src="images/new-wallet.png" alt="new-wallet" />
                     </button>
                     dugme. Unesite lozinku za svoju datoteku i kliknite{" "}
                     <button>Create New Wallet</button>dugme. U dijalog
@@ -418,10 +329,7 @@ export default class Modal extends React.Component {
                     da napravite novu datoteku od već postojećih
                     ključeva, kliknite
                     <button className="icon-btn">
-                      <img
-                        src="images/create-from-keys.png"
-                        alt="create-from-keys"
-                      />
+                      <img src="images/create-from-keys.png" alt="create-from-keys" />
                     </button>
                     dugme. Unesite svoju Safex adresu, tajni spend ključ
                     (private spend key), tajni view ključ (private view
@@ -461,11 +369,7 @@ export default class Modal extends React.Component {
               >
                 X
               </span>
-              <h3
-                className={
-                  this.props.walletLoaded ? "wallet-loaded-h3" : ""
-                }
-              >
+              <h3 className={this.props.walletLoaded ? "wallet-loaded-h3" : ""}>
                 Check Balance
               </h3>
 
@@ -473,26 +377,15 @@ export default class Modal extends React.Component {
                 <div className="wallet-exists">
                   <div className="btns-wrap">
                     <button
-                      className={`signal ${
-                        this.props.wallet.wallet_connected
-                          ? "connected"
-                          : ""
-                      }`}
+                      className={`signal ${this.props.wallet.wallet_connected ? "connected" : ""}`}
                       title="Status"
                     >
                       <img src="images/connected.png" alt="connected" />
                       <p>
-                        {this.props.wallet.wallet_connected ? (
-                          <span>Connected</span>
-                        ) : (
-                          <span>Connection error</span>
-                        )}
+                        <span>{this.props.wallet.wallet_connected ? "Connected" : "Connection error"}</span>
                       </p>
                     </button>
-                    <button
-                      className="blockheight"
-                      title="Blockchain Height"
-                    >
+                    <button className="blockheight" title="Blockchain Height">
                       <img src="images/blocks.png" alt="blocks" />
                       <span>{this.props.wallet.blockchain_height}</span>
                     </button>
@@ -541,10 +434,7 @@ export default class Modal extends React.Component {
                         onChange={this.sendAmountOnChange}
                         readOnly
                       />
-                      <button
-                        className="button-shine"
-                        onClick={this.props.setOpenSendPopup.bind(this, 0)}
-                      >
+                      <button className="button-shine" onClick={this.props.setOpenSendPopup.bind(this, 0)}>
                         Send Cash
                       </button>
                     </div>
@@ -573,10 +463,7 @@ export default class Modal extends React.Component {
                         onChange={this.sendAmountOnChange}
                         readOnly
                       />
-                      <button
-                        className="button-shine"
-                        onClick={this.props.setOpenSendPopup.bind(this, 1)}
-                      >
+                      <button className="button-shine" onClick={this.props.setOpenSendPopup.bind(this, 1)}>
                         Send Tokens
                       </button>
                     </div>
@@ -592,48 +479,23 @@ export default class Modal extends React.Component {
         }
         if (this.props.sendModal) {
           modal = (
-            <div
-              className={`sendModal ${
-                this.props.sendModal ? "active" : ""
-              }`}
-            >
+            <div className={`sendModal ${this.props.sendModal ? "active" : ""}`}>
               <div className="sendModalInner">
-                <span
-                  className="close"
-                  onClick={this.props.closeModal}
-                >
+                <span className="close" onClick={this.props.closeModal}>
                   X
                 </span>
-                {this.props.send_cash_or_token === 0 ? (
-                  <h3>Send Cash</h3>
-                ) : (
-                  <h3>Send Tokens</h3>
-                )}
-                <form
-                  onSubmit={e => {
-                    this.props.sendCashOrToken(
-                      e,
-                      this.props.send_cash_or_token
-                    );
-                  }}
-                >
+                <h3>{this.props.send_cash_or_token === 0 ? "Send Cash" : "Send Tokens"}</h3>
+                <form onSubmit={e => {this.props.sendCashOrToken(e, this.props.send_cash_or_token)}}>
                   <label htmlFor="send_to">Destination</label>
                   <textarea
                     name="send_to"
                     placeholder="Enter Destination Address"
                     rows="2"
                   />
-
                   <label htmlFor="amount">Amount</label>
                   <input name="amount" placeholder="Enter Amount" />
-
-                  <label htmlFor="paymentid">
-                    (Optional) Payment ID
-                  </label>
-                  <input
-                    name="paymentid"
-                    placeholder="(optional) payment id"
-                  />
+                  <label htmlFor="paymentid">(Optional) Payment ID</label>
+                  <input name="paymentid" placeholder="(optional) payment id"/>
                   <button
                     className="btn button-shine"
                     type="submit"
@@ -648,20 +510,13 @@ export default class Modal extends React.Component {
         }
         if (this.props.alert) {
             modal = (
-                <div
-                    className={`balanceAlert ${
-                    this.props.alert ? "active" : ""
-                    }`}
-                >
+                <div className={`balanceAlert ${this.props.alert ? "active" : ""}`}>
                     <div className="mainAlertPopupInner">
                         <p>{this.props.alertText}</p>
                         {this.props.alertCloseDisabled ? (
                             ""
                         ) : (
-                            <span
-                                className="close"
-                                onClick={this.props.closeModal}
-                            >
+                            <span className="close" onClick={this.props.closeModal}>
                                 X
                             </span>
                         )}
