@@ -2,11 +2,9 @@
 header {
   text-align: center;
   width: 100%;
-  z-index: 1;
   padding: 15px 0 0;
   position: relative;
   animation-delay: 0.3s;
-  -webkit-app-region: drag;
 }
 header .buttons-wrap {
   position: absolute;
@@ -14,20 +12,19 @@ header .buttons-wrap {
   right: 15px;
   -webkit-app-region: no-drag;
 }
+header .buttons-wrap button {
+  -webkit-app-region: no-drag;
+  animation-delay: 0.8s;
+}
 header .close {
   display: inline-block;
   color: #fff;
   opacity: 1;
   font-size: 19px;
-  font-family: "Brandon Grotesque Bold", Helvetica, Arial,sans-serif;
+  font-family: "Brandon Grotesque Bold", Helvetica, Arial, sans-serif;
   -webkit-transition: all 0.2s ease-out;
   -moz-transition: all 0.2s ease-out;
   transition: all 0.2s ease-out;
-}
-header .close.fadeIn,
-header .minimize.fadeIn,
-header .maximize.fadeIn {
-  animation-delay: .8s;
 }
 header .close:focus,
 header .close:hover,
@@ -39,16 +36,16 @@ header .minimize:hover {
 header .minimize {
   background: none;
   position: relative;
-  top: -7px;
+  top: -9px;
   border: 0px;
   display: inline-block;
-  font-size: 25px;
+  font-size: 28px;
   color: #fff;
   opacity: 1;
   padding: 0;
   margin-right: 10px;
   line-height: 1;
-  font-family: "Brandon Grotesque Bold", Helvetica, Arial,sans-serif;
+  font-family: "Brandon Grotesque Bold", Helvetica, Arial, sans-serif;
   -webkit-transition: all 0.2s ease-out;
   -moz-transition: all 0.2s ease-out;
   transition: all 0.2s ease-out;
@@ -56,7 +53,7 @@ header .minimize {
 header .maximize {
   background: none;
   position: relative;
-  top: -6px;
+  top: -8px;
   margin-right: 10px;
   display: inline-block;
   font-size: 25px;
@@ -68,7 +65,7 @@ header .maximize {
   width: 12px;
   padding: 0;
   line-height: 1;
-  font-family: "Brandon Grotesque Bold", Helvetica, Arial,sans-serif;
+  font-family: "Brandon Grotesque Bold", Helvetica, Arial, sans-serif;
   -webkit-transition: all 0.2s ease-out;
   -moz-transition: all 0.2s ease-out;
   transition: all 0.2s ease-out;
@@ -79,7 +76,7 @@ header .maximize:hover {
 }
 
 header img.fadeIn {
-  animation-delay: .3s;
+  animation-delay: 0.3s;
 }
 header p {
   color: #fff;
@@ -89,5 +86,5 @@ header p {
   margin-bottom: 0;
 }
 header p.fadeIn {
-  animation-delay: .8s;
-} 
+  animation-delay: 0.8s;
+}

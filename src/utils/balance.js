@@ -1,6 +1,7 @@
 function updatedCallback(target) {
   console.log("UPDATED");
-  target.state.wallet_meta.store()
+  target.state.wallet_meta
+    .store()
     .then(() => {
       console.log("Wallet stored");
       target.setCloseAlert();
@@ -14,7 +15,8 @@ function refreshCallback(target) {
   console.log("wallet refreshed");
   let wallet = target.state.wallet_meta;
   target.setWalletData();
-  wallet.store()
+  wallet
+    .store()
     .then(() => {
       console.log("Wallet stored");
       target.setCloseAlert();
@@ -45,21 +47,16 @@ function newBlockCallback(target, height) {
 function balanceCheck(target) {
   if (target.state.wallet_loaded) {
     let wallet = target.state.wallet_meta;
-    console.log("daemon blockchain height: " + wallet.daemonBlockchainHeight());
-    console.log("blockchain height: " + wallet.blockchainHeight());
-    target.setOpenAlert("Please wait while wallet file is loaded...", true);
-    if (target.state.wallet_loaded) {
-      target.setWalletData();
-      console.log("balance: " + roundAmount(Math.abs(wallet.balance() - wallet.unlockedBalance())));
-      console.log("unlocked balance: " + roundAmount(wallet.unlockedBalance()));
-      console.log("token balance: " + roundAmount(Math.abs(wallet.tokenBalance() - wallet.unlockedTokenBalance())));
-      console.log("unlocked token balance: " + roundAmount(wallet.unlockedTokenBalance()));
-      console.log("blockchain height " + wallet.blockchainHeight());
-      console.log("connected: " + wallet.connected());
-    }
-    target.setState(() => ({ wallet: { wallet_sync: false }}));
+    target.setOpenAlert(
+      "Please wait while blockchain is being updated... ",
+      true
+    );
+    target.setWalletData();
     if (wallet.daemonBlockchainHeight() - wallet.blockchainHeight() > 10) {
-      target.setOpenAlert("Please wait while blockchain is being updated...", true);
+      target.setOpenAlert(
+        "Please wait while blockchain is being updated... ",
+        true
+      );
     }
     wallet.on("refreshed", target.startRefreshCallback);
     target.setState(() => ({ modal_close_disabled: false }));
@@ -68,7 +65,10 @@ function balanceCheck(target) {
 
 function rescanBalance(target) {
   let wallet = target.state.wallet_meta;
-  target.setOpenAlert("Rescanning, this may take some time, please wait ", true);
+  target.setOpenAlert(
+    "Rescanning, this may take some time, please wait ",
+    true
+  );
   wallet.off("updated");
   wallet.off("newBlock");
   wallet.off("refreshed");
@@ -81,8 +81,11 @@ function rescanBalance(target) {
       console.log("Rescan setting callbacks");
       target.setWalletData();
       target.setCloseAlert();
-      wallet.store()
-        .then(() => { console.log("Wallet stored") })
+      wallet
+        .store()
+        .then(() => {
+          console.log("Wallet stored");
+        })
         .catch(e => {
           console.log("Unable to store wallet: " + e);
           target.setOpenAlert("Unable to store wallet: " + e);
@@ -100,9 +103,13 @@ function walletData(target) {
     alert_close_disabled: false,
     wallet: {
       address: wallet.address(),
-      balance: roundAmount(Math.abs(wallet.balance() - wallet.unlockedBalance())),
+      balance: roundAmount(
+        Math.abs(wallet.balance() - wallet.unlockedBalance())
+      ),
       unlocked_balance: roundAmount(wallet.unlockedBalance()),
-      tokens: roundAmount(Math.abs(wallet.tokenBalance() - wallet.unlockedTokenBalance())),
+      tokens: roundAmount(
+        Math.abs(wallet.tokenBalance() - wallet.unlockedTokenBalance())
+      ),
       unlocked_tokens: roundAmount(wallet.unlockedTokenBalance()),
       blockchain_height: wallet.blockchainHeight(),
       wallet_connected: wallet.connected() === "connected"

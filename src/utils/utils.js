@@ -56,14 +56,9 @@ function openSendPopup(target, send_cash_or_token) {
  */
 function closeSendPopup(target) {
   target.setState({
-    modal: false
+    send_modal: false,
+    send_cash_or_token: false
   });
-  setTimeout(() => {
-    target.setState({
-      send_modal: false,
-      send_cash_or_token: false
-    });
-  }, 300);
 }
 
 /**
@@ -93,11 +88,9 @@ function checkInputValueLenght(inputValue) {
   let inputValueLength = inputValue.length;
   if (inputValueLength <= 95) {
     console.log("Safex hash address length is too short");
-    this.openInfoPopup("Address length is too short");
     return false;
   } else if (inputValueLength >= 105) {
     console.log("Safex hash address length is too long");
-    this.openInfoPopup("Address length is too long");
     return false;
   } else {
     return true;
@@ -139,32 +132,35 @@ const addClass = (condition, className) => (condition ? ` ${className} ` : "");
  */
 function openModal(target, modal_type, alert, disabled) {
   if (modal_type === "balance_modal_active" && target.state.wallet_loaded) {
-    target.setState({
+    target.setState(() => ({
       modal: true,
-      balance_modal_active: true
-    });
+      balance_modal_active: true,
+      alert_text: alert,
+      alert_close_disabled: disabled
+    }));
     target.startBalanceCheck();
     return false;
   }
   if (target.state.balance_modal_active && target.state.alert) {
     target.setState({
-      balance_modal_active: false
-    });
-    return false;
-  } else {
-    target.setState({
-      modal: true,
-      [modal_type]: true,
+      balance_modal_active: false,
       alert_text: alert,
       alert_close_disabled: disabled
     });
+    return false;
   }
+  target.setState({
+    modal: true,
+    [modal_type]: true,
+    alert_text: alert,
+    alert_close_disabled: disabled
+  });
 }
 
 /**
- * Close All Modals
+ * Close Modal
  */
-function closeAllModals(target) {
+function closeModal(target) {
   if (target.state.modal_close_disabled === false) {
     if (
       (target.state.new_wallet_modal && target.state.alert) ||
@@ -181,30 +177,32 @@ function closeAllModals(target) {
       target.setState({
         send_modal: false
       });
-      return false;
     } else {
-      target.setState({
-        modal: false
-      });
-      setTimeout(() => {
-        target.setState({
-          new_wallet_modal: false,
-          instructions_modal_active: false,
-          balance_modal_active: false,
-          alert: false,
-          alert_close_disabled: false,
-          open_file_alert: false,
-          create_new_wallet_alert: false,
-          create_from_keys_alert: false,
-          send_cash: false,
-          send_token: false,
-          create_new_wallet_modal: false,
-          open_from_existing_modal: false,
-          create_from_keys_modal: false
-        });
-      }, 300);
+      target.closeAllModals();
     }
   }
+}
+
+/**
+ * Close All Modals
+ */
+function closeAllModals(target) {
+  target.setState({
+    modal: false
+  });
+  setTimeout(() => {
+    target.setState({
+      new_wallet_modal: false,
+      create_new_wallet_modal: false,
+      create_from_keys_modal: false,
+      open_from_existing_modal: false,
+      balance_modal_active: false,
+      instructions_modal_active: false,
+      alert: false,
+      alert_close_disabled: false,
+      modal_close_disabled: false
+    });
+  }, 300);
 }
 
 export {
@@ -218,5 +216,6 @@ export {
   checkInputValuePrefix,
   addClass,
   openModal,
+  closeModal,
   closeAllModals
 };

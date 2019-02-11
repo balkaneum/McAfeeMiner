@@ -10,7 +10,7 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  background: rgba(0,0,0,.8);
+  background: rgba(0, 0, 0, 0.8);
   z-index: 10001;
   opacity: 0;
   visibility: hidden;
@@ -124,7 +124,10 @@
 }
 .modal textarea:hover,
 .modal textarea:active,
-.modal textarea:focus {
+.modal textarea:focus,
+.modal input:hover,
+.modal input:active,
+.modal input:focus {
   -webkit-box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
   box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
 }
@@ -184,7 +187,7 @@
   user-select: initial; /* Non-prefixed version, currently supported by Chrome and Opera */
 }
 .modal input.yellow-field {
-  background: rgba(223, 201, 131, .5);
+  background: rgba(223, 201, 131, 0.5);
   border: 2px solid #dfc983;
 }
 .modal input.yellow-field:hover,
@@ -193,7 +196,7 @@
   box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
 }
 .modal input.green-field {
-  background: rgba(14, 200, 193, .5);
+  background: rgba(14, 200, 193, 0.5);
   border: 2px solid #0ec8c1;
 }
 .modal input.green-field:hover,
@@ -333,4 +336,49 @@
 .openCreateFromKeysModal .form-group {
   margin-top: 0;
   width: calc(50% - 7.5px);
+}
+
+/* Send Modal */
+.sendModal {
+  border-radius: 8px;
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 17px;
+  visibility: hidden;
+  opacity: 0;
+  height: 276px;
+  transition: all ease 0.3s;
+  -o-transition: all ease 0.3s;
+  -moz-transition: all ease 0.3s;
+  -webkit-transition: all ease 0.3s;
+  margin: auto;
+}
+.sendModal.active {
+  visibility: visible;
+  opacity: 1;
+}
+.sendModal h3 {
+  margin: 10px 0 12px;
+}
+.sendModal p {
+  background: transparent;
+  border: 0px none;
+  margin-right: 0;
+  font-size: 17px;
+  margin-bottom: 0;
+  text-transform: initial;
+  line-height: 1.2;
+  text-align: center;
+}
+.sendModal .form-group-wrap {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.sendModal .form-group-wrap .form-group {
+  margin-top: 0;
+  width: calc(50% - 7.5px);
+}
+.sendModal .btn {
+  margin: 5px 0 0;
 }

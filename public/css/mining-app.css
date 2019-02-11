@@ -5,6 +5,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  -webkit-app-region: drag;
 }
 .mining-app-inner {
   width: 100%;
@@ -25,7 +26,7 @@
   align-items: center;
 }
 .mining-bg-wrap.fadeIn {
-  animation-delay: .3s;
+  animation-delay: 0.3s;
 }
 .mining-bg-wrap .ring-outer,
 .mining-bg-wrap .ring-inner,
@@ -47,7 +48,7 @@
   z-index: 2;
   width: 100%;
   top: 0;
-  text-align: center; 
+  text-align: center;
 }
 .main.fadeIn {
   animation-delay: 0.3s;
@@ -55,6 +56,7 @@
 .btns-wrap {
   margin-bottom: 8px;
   text-align: center;
+  -webkit-app-region: no-drag;
 }
 .modal-btn {
   padding: 0 0 0 12px;
@@ -156,6 +158,7 @@
   -moz-user-select: initial; /* Firefox */
   -ms-user-select: initial; /* Internet Explorer/Edge */
   user-select: initial; /* Non-prefixed version, currently supported by Chrome and Opera */
+  -webkit-app-region: no-drag;
 }
 .main form input:hover,
 .main form input:active,
@@ -163,7 +166,7 @@
   box-shadow: 0 0 15px 0 rgba(255, 214, 22, 0.8) !important;
 }
 .main form input[disabled] {
-  color: rgba(255,255,255,.5);
+  color: rgba(255, 255, 255, 0.5);
 }
 .main form input[disabled]:hover {
   box-shadow: none !important;
@@ -210,6 +213,7 @@
   height: 30px;
   -webkit-appearance: none;
   -moz-appearance: none;
+  -webkit-app-region: no-drag;
 }
 .main form .pool-url:hover {
   cursor: pointer;
@@ -219,7 +223,7 @@
   outline: none;
 }
 .main form .pool-url[disabled] {
-  color: rgba(255,255,255,.5);
+  color: rgba(255, 255, 255, 0.5);
 }
 .main form .pool-url[disabled]:hover {
   box-shadow: none !important;
@@ -287,7 +291,7 @@
   border: 1px solid #dfc983;
 }
 .main form #cpuUsage[disabled] {
-  color: rgba(255,255,255,.5);
+  color: rgba(255, 255, 255, 0.5);
 }
 .main form #cpuUsage[disabled]:hover {
   box-shadow: none !important;
@@ -308,6 +312,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  -webkit-app-region: no-drag;
 }
 .submit {
   background: url(../images/submit-border.png) no-repeat top left / cover;
@@ -327,6 +332,7 @@
   -webkit-transition: all 0.2s ease-in;
   -moz-transition: all 0.2s ease-in;
   transition: all 0.2s ease-in;
+  -webkit-app-region: no-drag;
 }
 .submit[disabled]:hover {
   cursor: pointer;
@@ -340,6 +346,7 @@
   letter-spacing: 0.5px;
   text-transform: uppercase;
   background: linear-gradient(#ffffda 10%, #76541c 65%);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -440,16 +447,20 @@
   right: -5px;
   font-weight: 600;
 }
-.main footer a {
+.main footer button {
   display: inline-block;
   position: absolute;
   right: 15px;
   bottom: -15px;
+  background: transparent;
+  border: 0px;
+  padding: 0;
+  -webkit-app-region: no-drag;
 }
-.main footer a:hover {
+.main footer button:hover {
   cursor: pointer;
 }
-.main footer a:hover img {
+.main footer button:hover img {
   opacity: 1;
 }
 .main footer img {
@@ -462,7 +473,7 @@
 }
 
 @media (min-width: 800px) {
-  .main footer  {
+  .main footer {
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
