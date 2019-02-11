@@ -101,13 +101,16 @@ export default class MiningApp extends React.Component {
 
       //UI settings
       modal: false,
-      instructions_modal_active: false,
+      new_wallet_modal: false,
+      create_new_wallet_modal: false,
+      create_from_keys_modal: false,
+      open_from_existing_modal: false,
       balance_modal_active: false,
+      instructions_modal_active: false,
+      instructions_lang: "english",
       alert: false,
       alert_text: "",
       alert_close_disabled: false,
-      instructions_lang: "english",
-      new_wallet_modal: false,
 
       //balance settings
       balance: 0,
@@ -135,11 +138,7 @@ export default class MiningApp extends React.Component {
         blockchain_height: 0
       },
       wallet_being_created: false,
-      create_new_wallet_modal: false,
-      open_from_existing_modal: false,
-      create_from_keys_modal: false,
       wallet_loaded: false,
-      wallet_exists: false,
       wallet_password: "",
       filepath: ""
     };
@@ -621,7 +620,6 @@ export default class MiningApp extends React.Component {
             openWalletFile={this.openWalletFile}
             filepath={this.state.filepath}
             openCreateFromKeysModal={this.state.create_from_keys_modal}
-            closeCreateFromKeysModal={this.closeModal}
             createNewWalletFromKeys={this.createNewWalletFromKeys}
             wallet={this.state.wallet}
             balanceModalActive={this.state.balance_modal_active}
