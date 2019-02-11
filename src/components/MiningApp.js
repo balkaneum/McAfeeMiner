@@ -46,7 +46,7 @@ export default class MiningApp extends React.Component {
         "safex.xmining.pro:3333"
       ];
     } else {
-      this.pools_list = ["mcafee.safex.io:1111", "pool.safexnews.net:1111"];
+      this.pools_list = ["mcafee.safex.io:1111"];
     }
     this.state = {
       //mining settings
@@ -101,7 +101,6 @@ export default class MiningApp extends React.Component {
 
       //UI settings
       modal: false,
-      modal_close_disabled: false,
       instructions_modal_active: false,
       balance_modal_active: false,
       alert: false,
