@@ -161,7 +161,7 @@ function openModal(target, modal_type, alert, disabled) {
  * Close Modal
  */
 function closeModal(target) {
-  if (target.state.modal_close_disabled === false) {
+  if (target.state.alert_close_disabled === false) {
     if (
       (target.state.new_wallet_modal && target.state.alert) ||
       (target.state.create_new_wallet_modal && target.state.alert) ||
@@ -199,8 +199,7 @@ function closeAllModals(target) {
       balance_modal_active: false,
       instructions_modal_active: false,
       alert: false,
-      alert_close_disabled: false,
-      modal_close_disabled: false
+      alert_close_disabled: false
     });
   }, 300);
 }

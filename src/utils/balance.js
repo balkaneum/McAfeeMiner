@@ -59,7 +59,6 @@ function balanceCheck(target) {
       );
     }
     wallet.on("refreshed", target.startRefreshCallback);
-    target.setState(() => ({ modal_close_disabled: false }));
   }
 }
 
@@ -72,7 +71,6 @@ function rescanBalance(target) {
   wallet.off("updated");
   wallet.off("newBlock");
   wallet.off("refreshed");
-  target.setState({ modal_close_disabled: true });
   setTimeout(() => {
     console.log("Starting blockchain rescan sync...");
     wallet.rescanBlockchain();
@@ -99,8 +97,6 @@ function rescanBalance(target) {
 function walletData(target) {
   let wallet = target.state.wallet_meta;
   target.setState({
-    modal_close_disabled: false,
-    alert_close_disabled: false,
     wallet: {
       address: wallet.address(),
       balance: roundAmount(

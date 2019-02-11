@@ -25,7 +25,6 @@ function create_new_wallet(target, e) {
       return false;
     }
     if (safex.walletExists(filepath)) {
-      target.setState(() => ({ modal_close_disabled: false }));
       target.setOpenAlert(
         `Wallet already exists. Please choose a different file name.
         This application does not enable overwriting an existing wallet file
@@ -35,8 +34,7 @@ function create_new_wallet(target, e) {
     }
     target.setState(() => ({
       filepath: filepath,
-      wallet_exists: false,
-      modal_close_disabled: true
+      wallet_exists: false
     }));
     var args = {
       path: filepath,
@@ -57,7 +55,6 @@ function create_new_wallet(target, e) {
         target.setState({
           wallet_loaded: true,
           wallet_meta: wallet,
-          modal_close_disabled: false,
           mining_info: false,
           wallet: {
             address: wallet.address(),
@@ -130,7 +127,6 @@ function create_new_wallet_from_keys(target, e) {
       return false;
     }
     if (safex.walletExists(filepath)) {
-      target.setState(() => ({ modal_close_disabled: false }));
       target.setOpenAlert(
         `Wallet already exists. Please choose a different file name.
         This application does not enable overwriting an existing wallet file
@@ -140,8 +136,7 @@ function create_new_wallet_from_keys(target, e) {
     }
     target.setState({
       filepath: filepath,
-      wallet_exists: false,
-      modal_close_disabled: true
+      wallet_exists: false
     });
     var args = {
       path: target.state.filepath,
@@ -167,7 +162,6 @@ function create_new_wallet_from_keys(target, e) {
         target.setState({
           wallet_loaded: true,
           wallet_meta: wallet,
-          modal_close_disabled: false,
           mining_info: false,
           wallet: {
             address: wallet.address(),
@@ -216,7 +210,6 @@ function open_from_wallet_file(target, e) {
   if (target.state.wallet_loaded) {
     target.closeWallet();
   }
-  target.setState({ modal_close_disabled: true });
   var args = {
     path: target.state.filepath,
     password: pass,
@@ -230,7 +223,6 @@ function open_from_wallet_file(target, e) {
       target.setState({
         wallet_loaded: true,
         wallet_meta: wallet,
-        modal_close_disabled: false,
         alert_close_disabled: true,
         mining_info: false,
         wallet: {
@@ -242,7 +234,6 @@ function open_from_wallet_file(target, e) {
       target.closeAllModals();
     })
     .catch(err => {
-      target.setState(() => ({ modal_close_disabled: false }));
       target.setOpenAlert("Error opening the wallet: " + err, false);
     });
 }
