@@ -36,24 +36,29 @@ header .minimize:hover {
 header .minimize {
   background: none;
   position: relative;
-  top: -9px;
+  top: 0px;
   border: 0px;
   display: inline-block;
   font-size: 28px;
   color: #fff;
   opacity: 1;
   padding: 0;
+  height: 16.5px;
+  width: 13.5px;
   margin-right: 10px;
   line-height: 1;
-  font-family: "Brandon Grotesque Bold", Helvetica, Arial, sans-serif;
+  border-bottom: 3px solid #fff;
   -webkit-transition: all 0.2s ease-out;
   -moz-transition: all 0.2s ease-out;
   transition: all 0.2s ease-out;
 }
+header .minimize:hover {
+  border-bottom: 3px solid #dfc983;
+}
 header .maximize {
   background: none;
   position: relative;
-  top: -8px;
+  top: 2px;
   margin-right: 10px;
   display: inline-block;
   font-size: 25px;
@@ -65,7 +70,6 @@ header .maximize {
   width: 12px;
   padding: 0;
   line-height: 1;
-  font-family: "Brandon Grotesque Bold", Helvetica, Arial, sans-serif;
   -webkit-transition: all 0.2s ease-out;
   -moz-transition: all 0.2s ease-out;
   transition: all 0.2s ease-out;

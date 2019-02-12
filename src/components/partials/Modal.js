@@ -12,7 +12,8 @@ export default class Modal extends React.Component {
       new_wallet_generated: false,
       spendkey_sec: "",
       viewkey_sec: "",
-      exported: false
+      exported: false,
+      instructions_lang: "english"
     };
 
     this.newWallet = this.newWallet.bind(this);
@@ -63,6 +64,12 @@ export default class Modal extends React.Component {
 
     fileDownload(keys, date + "unsafex.txt");
   }
+
+  changeInstructionLang = lang => {
+    this.setState({
+      instructions_lang: lang
+    });
+  };
 
   render() {
     let modal;
@@ -280,22 +287,22 @@ export default class Modal extends React.Component {
           <div className="lang-bts-wrap">
             <button
               className={`button-shine ${
-                this.props.instructionsLang === "english" ? "active" : ""
+                this.state.instructions_lang === "english" ? "active" : ""
               }`}
-              onClick={this.props.changeInstructionLang}
+              onClick={this.changeInstructionLang.bind(this, "english")}
             >
               EN
             </button>
             <button
               className={`button-shine ${
-                this.props.instructionsLang === "serbian" ? "active" : ""
+                this.state.instructions_lang === "serbian" ? "active" : ""
               }`}
-              onClick={this.props.changeInstructionLang}
+              onClick={this.changeInstructionLang.bind(this, "serbian")}
             >
               SRB
             </button>
           </div>
-          {this.props.instructionsLang === "english" ? (
+          {this.state.instructions_lang === "english" ? (
             <div>
               <h3>Instructions</h3>
               <p>

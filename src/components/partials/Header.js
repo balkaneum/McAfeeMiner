@@ -36,9 +36,7 @@ export default class Header extends React.Component {
             className="minimize animated fadeIn"
             title="Minimize"
             onClick={this.minimizeApp}
-          >
-            _
-          </button>
+          />
           <button
             className="maximize animated fadeIn"
             title="Maximize"

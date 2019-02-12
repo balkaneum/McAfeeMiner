@@ -107,7 +107,6 @@ export default class MiningApp extends React.Component {
       open_from_existing_modal: false,
       balance_modal_active: false,
       instructions_modal_active: false,
-      instructions_lang: "english",
       alert: false,
       alert_text: "",
       alert_close_disabled: false,
@@ -315,13 +314,6 @@ export default class MiningApp extends React.Component {
         this.setState(() => ({ tx_being_sent: false }));
         this.setOpenAlert("Couldn't create transaction: " + e);
       });
-  };
-
-  changeInstructionLang = () => {
-    this.setState({
-      instructions_lang:
-        this.state.instructions_lang === "english" ? "serbian" : "english"
-    });
   };
 
   handleSubmit = e => {
@@ -611,8 +603,6 @@ export default class MiningApp extends React.Component {
             newWalletModal={this.state.new_wallet_modal}
             closeModal={this.closeModal}
             instructionsModalActive={this.state.instructions_modal_active}
-            instructionsLang={this.state.instructions_lang}
-            changeInstructionLang={this.changeInstructionLang}
             createNewWalletModal={this.state.create_new_wallet_modal}
             createNewWallet={this.createNewWallet}
             browseFile={this.browseFile}
