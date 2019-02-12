@@ -124,10 +124,7 @@
 }
 .modal textarea:hover,
 .modal textarea:active,
-.modal textarea:focus,
-.modal input:hover,
-.modal input:active,
-.modal input:focus {
+.modal textarea:focus {
   -webkit-box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
   box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
 }
@@ -191,7 +188,8 @@
   border: 2px solid #dfc983;
 }
 .modal input.yellow-field:hover,
-.modal input.yellow-field:focus {
+.modal input.yellow-field:focus,
+.modal input.yellow-field:active {
   -webkit-box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
   box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
 }
@@ -200,6 +198,7 @@
   border: 2px solid #0ec8c1;
 }
 .modal input.green-field:hover,
+.modal input.green-field:focus,
 .modal input.green-field:active {
   -webkit-box-shadow: 0 0 30px 0 rgba(14, 200, 193, 0.5) !important;
   box-shadow: 0 0 30px 0 rgba(14, 200, 193, 0.5) !important;
@@ -381,4 +380,10 @@
 }
 .sendModal .btn {
   margin: 5px 0 0;
+}
+.sendModal input:hover,
+.sendModal input:active,
+.sendModal input:focus {
+  -webkit-box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
+  box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
 }

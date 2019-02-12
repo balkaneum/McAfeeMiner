@@ -30,7 +30,8 @@
 }
 .mining-bg-wrap .ring-outer,
 .mining-bg-wrap .ring-inner,
-.mining-bg-wrap .ring-center {
+.mining-bg-wrap .ring-center,
+.mining-bg-wrap .circles {
   position: absolute;
   width: 100%;
   z-index: 0;
