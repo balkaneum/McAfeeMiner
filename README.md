@@ -8,7 +8,8 @@ You can download the latest release from (https://github.com/balkaneum/McAfeeMin
 
 ## Development
 
-This project is a fork of Safex 1 Click Miner (https://github.com/safex/safex_miner)
+This project is a fork of Safex 1 Click Miner (https://github.com/safex/safex_miner).
+Node v10.13.0 is required when installing dependencies. For easily switching between Node versions, we suggest using [nvm](https://github.com/creationix/nvm).
 
 #### Backend:
 
@@ -21,7 +22,6 @@ Run Command Prompt as Administrator
 ```
 $ npm install --global --production windows-build-tools
 $ npm install
-$ .\node_modules\.bin\electron-rebuild.cmd
 $ npm run dev
 ```
 
@@ -43,6 +43,8 @@ $ npm run dev
 $ brew tap jmuncaster/homebrew-header-only
 $ brew install cmake boost zmq czmq zeromq jmuncaster/header-only/cppzmq openssl pkg-config
 $ npm install -g node-gyp
+$ export LDFLAGS="-L/usr/local/opt/openssl/lib"
+$ export CPPFLAGS="-I/usr/local/opt/openssl/include"
 $ npm install
 $ ./node_modules/.bin/electron-rebuild
 $ npm run dev
@@ -50,25 +52,33 @@ $ npm run dev
 
 ## Build:
 
-Run
+#### Windows
 
 ```
-npm run make-all-installers
+$ npm run make-win-installer
 ```
 
-to make all installers. This will work only on Mac because of Mac.
-
-You can also run
-
-```
-npm run make-win-installer
-npm run make-mac-installer
-npm run make-linux-installer
-```
-
-separately.
+#### Linux
 
 For linux builds, you will need to have `rpmbuild` available on system (`apt-get install rpm`).
+
+```
+$ npm run make-linux-installer
+```
+
+#### MacOS
+
+Log in the Apple Developer website https://developer.apple.com/.  
+Install Developer Tools v10.1  
+https://download.developer.apple.com/Developer_Tools/Command_Line_Tools_macOS_10.13_for_Xcode_10.1/Command_Line_Tools_macOS_10.13_for_Xcode_10.1.dmg  
+If you previousely exported open ssl flags, open new terminal window.
+Make sure you are using Node v10.13.0.
+
+Then run:
+
+```
+$ npm run make-mac-installer
+```
 
 ## License
 
