@@ -26,6 +26,8 @@ import {
 } from "../utils/wallet";
 import Header from "./partials/Header";
 import Modal from "./partials/Modal";
+import ReactTooltip from "react-tooltip";
+import axios from "axios";
 
 const { shell } = window.require("electron");
 const safex = window.require("safex-nodejs-libwallet");
@@ -116,6 +118,8 @@ export default class MiningApp extends React.Component {
       unlocked_balance: 0,
       tokens: 0,
       unlocked_tokens: 0,
+      sfx_price: 0,
+      sft_price: 0,
       balance_wallet: "",
       balance_view_key: "",
       balance_spend_key: "",
@@ -318,9 +322,12 @@ export default class MiningApp extends React.Component {
 
   handleSubmit = e => {
     e.preventDefault();
+    if (this.state.wallet_loaded) {
+      this.setWalletData();
+    }
     let miningAddress = e.target.mining_address.value;
     if (miningAddress === "") {
-      this.openInfoPopup("Please enter Safex address");
+      this.openInfoPopup("Please enter Safex address or load wallet");
       return false;
     }
     if (!inputValidate(miningAddress)) {
@@ -340,6 +347,10 @@ export default class MiningApp extends React.Component {
       !safex.addressValid(miningAddress, "mainnet")
     ) {
       this.openInfoPopup("Address is not valid");
+      return false;
+    }
+    if (this.state.wallet.wallet_connected === false) {
+      this.openInfoPopup("No connection to daemon");
       return false;
     }
     if (this.state.active) {
@@ -371,21 +382,63 @@ export default class MiningApp extends React.Component {
     }
   };
 
-  renderButton = ({ type, title, content, classes, disabled }) => (
-    <button
-      className={classes.join(" ")}
-      key={type}
-      onClick={this.setOpenModal.bind(this, type)}
-      title={title}
-      disabled={disabled}
-    >
-      {content.startsWith("images/") ? (
-        <img src={content} alt={content} />
-      ) : (
-        content
-      )}
-    </button>
+  renderButton = ({ type, title, content, classes, disabled, tooltip_text }) => (
+    <div className="button-wrap" key={type}>
+      <button
+        className={classes.join(" ")}
+        onClick={this.setOpenModal.bind(this, type)}
+        disabled={disabled}
+      >
+        {content.startsWith("images/") ? (
+          <div>
+            <span data-tip data-for={title}></span>
+            <img src={content} alt={content} />
+          </div>
+        ) : (
+          <div>
+            <span data-tip data-for={title}></span>
+            {content}
+          </div>
+        )}
+      </button>
+      <ReactTooltip id={title}>
+          <div>
+            <p>{tooltip_text}</p>
+            <p className={disabled ? "" : "hidden"}>(disabled when wallet is loaded)</p>
+          </div>
+      </ReactTooltip>
+    </div>
   );
+
+  fetchPrice = () => {
+    axios({
+      method: "get",
+      url: "https://api.coingecko.com/api/v3/coins/safex-cash"
+    })
+      .then(res => {
+        var sfx_price = parseFloat(
+          res.data.market_data.current_price.usd
+        ).toFixed(4);
+        this.setState({ sfx_price });
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+    axios({
+      method: "get",
+      url: "https://api.coingecko.com/api/v3/coins/safex-token"
+    })
+      .then(res => {
+        var sft_price = parseFloat(
+          res.data.market_data.current_price.usd
+        ).toFixed(4);
+        this.setState({ sft_price });
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
 
   render() {
     let cpu_options = [];
@@ -407,48 +460,51 @@ export default class MiningApp extends React.Component {
     const buttons = [
       {
         type: "new_wallet_modal",
-        title: "Generate New Wallet",
+        title: "generate-new-wallet-tooltip",
         content: "images/new.png",
         classes: ["modal-btn"],
-        disabled: false
+        disabled: false,
+        tooltip_text: 'Generate New Wallet'
       },
       {
         type: "create_new_wallet_modal",
-        title: "Create New Wallet File",
+        title: "create-new-wallet-file-tooltip",
         content: "images/new-wallet.png",
         classes: ["modal-btn"],
-        disabled:
-          this.state.wallet_loaded || this.state.active || this.state.stopping
+        disabled: this.state.wallet_loaded || this.state.active || this.state.stopping,
+        tooltip_text: "Create New Wallet File"
       },
       {
         type: "open_from_existing_modal",
-        title: "Open Wallet File",
+        title: "open-wallet-file-tooltip",
         content: "images/open-logo.png",
         classes: ["modal-btn"],
-        disabled:
-          this.state.wallet_loaded || this.state.active || this.state.stopping
+        disabled: this.state.wallet_loaded || this.state.active || this.state.stopping,
+        tooltip_text: "Open Wallet File" 
       },
       {
         type: "create_from_keys_modal",
-        title: "Create New Wallet From Keys",
+        title: "create-new-wallet-from-keys-tooltip",
         content: "images/create-from-keys.png",
         classes: ["modal-btn"],
-        disabled:
-          this.state.wallet_loaded || this.state.active || this.state.stopping
+        disabled: this.state.wallet_loaded || this.state.active || this.state.stopping,
+        tooltip_text: "Recover Wallet File From Keys"
       },
       {
         type: "balance_modal_active",
-        title: "Check Balance",
+        title: "check-balance-tooltip",
         content: "images/key.png",
         classes: ["modal-btn"],
-        disabled: false
+        disabled: false,
+        tooltip_text: "Check Balance"
       },
       {
         type: "instructions_modal_active",
-        title: "Instructions",
+        title: "instructions-tooltip",
         content: "?",
         classes: ["modal-btn", "instructions-btn"],
-        disabled: false
+        disabled: false,
+        tooltip_text: "Instructions"
       }
     ];
 
@@ -497,58 +553,104 @@ export default class MiningApp extends React.Component {
             <form onSubmit={this.handleSubmit}>
               <div className="address-wrap">
                 <img src="images/line-left.png" alt="Line Left" />
-                <input
-                  type="text"
-                  value={this.state.wallet.address}
-                  onChange={this.addressChange}
-                  placeholder="Safex Address"
-                  name="mining_address"
-                  id="mining_address"
-                  disabled={
-                    this.state.active || this.state.stopping ? "disabled" : ""
-                  }
-                  title={`Your Safex Address ${
-                    this.state.wallet.address === "" ? "will be shown here" : ""
-                  }`}
-                  readOnly={this.state.wallet_loaded ? "readOnly" : ""}
-                />
+                  <div
+                    id="address-inner"
+                    data-tip
+                    data-for="address-tooltip"
+                  >
+                    <input
+                      type="text"
+                      value={this.state.wallet.address}
+                      onChange={this.addressChange}
+                      placeholder="Safex Address"
+                      name="mining_address"
+                      id="mining_address"
+                      readOnly={this.state.wallet_loaded ? "readOnly" : ""}
+                    />
+                    <ReactTooltip id="address-tooltip">
+                      {
+                        this.state.wallet_loaded
+                          ?
+                            <div>
+                              <p className="yellow-text word-break">{this.state.wallet.address}</p>
+                              <p>This is <span className="yellow-text">Public Address</span> of your wallet.</p>
+                              <p>Public Address starts with Safex and</p>
+                              <p>contains between <span className="yellow-text">95 and 105</span> characters.</p>
+                              <p>This is address where you can receive</p>
+                              <p><span className="yellow-text">Safex Cash (SFX)</span> or <span className="yellow-text">Safex Tokens (SFT)</span>.</p>
+                              <p>This is address where all your <span className="yellow-text">Safex Cash (SFX)</span></p>
+                              <p>you mined will be available.</p>
+                            </div>
+                          :
+                            <div>
+                              <p>You can always enter your own safex address.</p>
+                              <p>Or load wallet to view your <span className="yellow-text">Public Address</span>.</p>
+                            </div>
+                      }
+                    </ReactTooltip>
+                  </div>
                 <img src="images/line-right.png" alt="Line Right" />
               </div>
-
-              <select
-                className="button-shine pool-url"
-                name="pool"
-                id="pool"
-                disabled={
-                  this.state.active || this.state.stopping ? "disabled" : ""
-                }
-                title={`Choose the pool you want to connect to ${
-                  this.state.active || this.state.stopping
-                    ? "(disabled while mining)"
-                    : ""
-                }`}
-              >
-                {pools_list}
-              </select>
+              
+              <div id="select-wrap">
+                <div 
+                  id="select-inner"
+                  data-tip
+                  data-for="pools-tooltip"
+                >
+                  <select
+                    className={this.state.active || this.state.stopping ? "button-shine pool-url disabled" : "button-shine pool-url"}
+                    name="pool"
+                    id="pool"
+                  >
+                    {pools_list}
+                  </select>
+                  <ReactTooltip id="pools-tooltip">
+                    {
+                      this.state.active || this.state.stopping
+                        ?
+                          <div>
+                            <p>Choose the <span className="yellow-text">pool</span> you want to connect to</p>
+                            <p>(disabled while mining)</p>
+                          </div>
+                        :
+                          <p>Choose the <span className="yellow-text">pool</span> you want to connect to</p>
+                    }
+                  </ReactTooltip>
+                </div>
+              </div>
 
               <div className="options">
-                <div className="input-group">
+                <div 
+                  className="input-group" 
+                  data-tip
+                  data-for="cpu-tooltip"
+                >
                   <p># CPU</p>
                   <select
                     name="cores"
                     id="cpuUsage"
-                    disabled={
-                      this.state.active || this.state.stopping ? "disabled" : ""
-                    }
-                    title={`Choose how much CPU power you want to use for mining ${
-                      this.state.active || this.state.stopping
-                        ? "(disabled while mining)"
-                        : ""
-                    }`}
+                    className={this.state.active || this.state.stopping ? "cpuUsage disabled" : "cpuUsage"}
                   >
                     {cpu_options}
                   </select>
                 </div>
+                <ReactTooltip id="cpu-tooltip">
+                  {
+                    this.state.active || this.state.stopping
+                      ?
+                        <div>
+                          <p>Choose how much <span className="yellow-text">CPU power</span> </p>
+                          <p>you want to use for mining</p>
+                          <p>(disabled while mining)</p>
+                        </div>
+                      :
+                        <div>
+                          <p>Choose how much <span className="yellow-text">CPU power</span> </p>
+                          <p>you want to use for mining</p>
+                        </div>
+                  }
+                </ReactTooltip>
               </div>
               {this.state.active ? (
                 <button
@@ -577,26 +679,36 @@ export default class MiningApp extends React.Component {
                   }
                 </div>
               )}
-              <p
-                className={`mining-info ${
-                  this.state.mining_info ? " active" : ""
-                }`}
-              >
+              <p className={`mining-info ${this.state.mining_info ? " active" : ""}`}>
                 {this.state.mining_info_text}
               </p>
             </form>
 
             <div className="hashrate">
-              <p className="blue-text">hashrate:</p>
+              <p className="blue-text">
+                <span data-tip data-for="hashrate-tooltip">hashrate:</span>
+              </p>
+              <ReactTooltip id="hashrate-tooltip">
+                <p><span className="yellow-text">Hashrate</span> determines your mining speed.</p>
+                <p>Mining will be faster with higher hashrate.</p>
+              </ReactTooltip>
+                
               <p className="white-text">{this.state.hashrate} H/s</p>
             </div>
-
-            <footer className="animated fadeIn">
-              <button onClick={this.footerLink} title="Visit Safex site">
-                <img src="images/safex-logo.png" alt="Powered by Safex" />
-              </button>
-            </footer>
           </div>
+
+          <footer className="animated fadeIn">
+            <button
+              onClick={this.footerLink}
+              data-tip
+              data-for="safex-tooltip"
+            >
+              <img src="images/safex-logo.png" alt="Powered by Safex" />
+            </button>
+            <ReactTooltip id="safex-tooltip">
+              <p>Visit <span className="yellow-text">Safex website</span></p>
+            </ReactTooltip>
+          </footer>
 
           <Modal
             modal={this.state.modal}
@@ -627,6 +739,8 @@ export default class MiningApp extends React.Component {
             alert={this.state.alert}
             alertText={this.state.alert_text}
             alertCloseDisabled={this.state.alert_close_disabled}
+            sfxPrice={this.state.sfx_price}
+            sftPrice={this.state.sft_price}
           />
         </div>
       </div>

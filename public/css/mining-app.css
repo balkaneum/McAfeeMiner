@@ -5,11 +5,10 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  -webkit-app-region: drag;
 }
 .mining-app-inner {
   width: 100%;
-  height: 450px;
+  height: 500px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -54,22 +53,32 @@
 .main.fadeIn {
   animation-delay: 0.3s;
 }
-.btns-wrap {
-  margin-bottom: 8px;
+.main .btns-wrap {
+  margin: 5px 0 10px;
   text-align: center;
-  -webkit-app-region: no-drag;
+}
+.main .button-wrap {
+  padding: 0 0 0 15px;
+  display: inline-block;
+  position: relative;
+}
+.main .button-wrap:first-of-type {
+  padding: 0;
 }
 .modal-btn {
-  padding: 0 0 0 12px;
-  z-index: 3;
+  position: relative;
   background-color: transparent;
   border: 0px;
-}
-.modal-btn:first-of-type {
   padding: 0;
 }
 .modal-btn:hover {
   cursor: pointer;
+}
+.button-wrap .modal-btn span {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
 }
 .balance-wallet-btn {
   border-radius: 7px;
@@ -110,7 +119,6 @@
   border: 0px none;
   font-weight: 600;
   font-size: 23px;
-  padding: 0 0 0 12px;
   line-height: 1;
   color: #c8c8c8;
   position: relative;
@@ -131,8 +139,17 @@
   justify-content: space-between;
   margin-bottom: 12px;
 }
+#address-inner {
+  width: calc(100% - 390px);
+  display: inline-block;
+  overflow: hidden;
+  position: absolute;
+  left: 197px;
+  z-index: 1;
+  padding: 15px;
+}
 .address-wrap input {
-  width: calc(100% - 420px);
+  width: 100%;
   text-align: center;
   z-index: 2;
   display: inline-block;
@@ -142,8 +159,6 @@
   background: url(../images/input-bg.png) repeat-y top left;
   background-size: 100% 100%;
   color: #fff;
-  position: absolute;
-  left: 212px;
 }
 .address-wrap img {
   width: 272px;
@@ -159,7 +174,6 @@
   -moz-user-select: initial; /* Firefox */
   -ms-user-select: initial; /* Internet Explorer/Edge */
   user-select: initial; /* Non-prefixed version, currently supported by Chrome and Opera */
-  -webkit-app-region: no-drag;
 }
 .main form input:hover,
 .main form input:active,
@@ -200,7 +214,10 @@
   font-size: 11px;
   text-transform: uppercase;
 }
-.main form .pool-url {
+#select-inner {
+  display: inline-block;
+}
+.main form #pool {
   background: rgba(10, 26, 45, 0.5);
   padding: 6px 10px;
   color: #fff;
@@ -214,19 +231,24 @@
   height: 30px;
   -webkit-appearance: none;
   -moz-appearance: none;
-  -webkit-app-region: no-drag;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
 }
-.main form .pool-url:hover {
+.main form #pool:hover {
   cursor: pointer;
-  box-shadow: 0 0 20px 0 rgba(255, 214, 22, 0.8) !important;
 }
-.main form .pool-url:focus {
+.main form #pool:focus {
   outline: none;
 }
-.main form .pool-url[disabled] {
+.main form #pool.disabled {
+  pointer-events: none;
   color: rgba(255, 255, 255, 0.5);
 }
-.main form .pool-url[disabled]:hover {
+.main form #pool.disabled:hover {
   box-shadow: none !important;
   cursor: initial;
 }
@@ -234,7 +256,7 @@
   display: flex;
   flex-direction: row;
   justify-content: center;
-  padding: 13.2px 0;
+  padding: 15px 0;
 }
 .custom-checkbox input[type="checkbox"] {
   display: none;
@@ -282,6 +304,12 @@
   -o-transition: all ease 0.3s;
   -moz-transition: all ease 0.3s;
   -webkit-transition: all ease 0.3s;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
 }
 .main form #cpuUsage:hover {
   cursor: pointer;
@@ -291,10 +319,11 @@
   outline: none;
   border: 1px solid #dfc983;
 }
-.main form #cpuUsage[disabled] {
+.main form #cpuUsage.disabled {
+  pointer-events: none;
   color: rgba(255, 255, 255, 0.5);
 }
-.main form #cpuUsage[disabled]:hover {
+.main form #cpuUsage.disabled:hover {
   box-shadow: none !important;
   cursor: initial;
 }
@@ -313,7 +342,6 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  -webkit-app-region: no-drag;
 }
 .submit {
   background: url(../images/submit-border.png) no-repeat top left / cover;
@@ -333,7 +361,12 @@
   -webkit-transition: all 0.2s ease-in;
   -moz-transition: all 0.2s ease-in;
   transition: all 0.2s ease-in;
-  -webkit-app-region: no-drag;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
 }
 .submit[disabled]:hover {
   cursor: pointer;
@@ -419,16 +452,19 @@
 }
 
 /* Footer */
-.main footer {
+footer {
   position: relative;
   width: 100%;
   text-align: right;
   z-index: 2;
+  overflow: hidden;
+  min-height: 38px;
+  bottom: 0;
 }
-.main footer.fadeIn {
+footer.fadeIn {
   animation-delay: 0.8s;
 }
-.main footer p {
+footer p {
   font-family: "Rift Soft", Helvetica, Arial, sans-serif;
   color: #1caacb;
   text-transform: uppercase;
@@ -438,7 +474,7 @@
   position: relative;
   right: -5px;
 }
-.main footer h3 {
+footer h3 {
   font-family: "Rift Soft", Helvetica, Arial, sans-serif;
   color: #1caacb;
   margin: 0;
@@ -448,23 +484,22 @@
   right: -5px;
   font-weight: 600;
 }
-.main footer button {
+footer button {
   display: inline-block;
   position: absolute;
   right: 15px;
-  bottom: -15px;
+  bottom: 0px;
   background: transparent;
   border: 0px;
   padding: 0;
-  -webkit-app-region: no-drag;
 }
-.main footer button:hover {
+footer button:hover {
   cursor: pointer;
 }
-.main footer button:hover img {
+footer button:hover img {
   opacity: 1;
 }
-.main footer img {
+footer img {
   width: 130px;
   opacity: 0.7;
   transition: all ease 0.3s;
@@ -474,7 +509,7 @@
 }
 
 @media (min-width: 800px) {
-  .main footer {
+  footer {
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;

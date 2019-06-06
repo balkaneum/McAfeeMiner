@@ -2,7 +2,7 @@
 header {
   text-align: center;
   width: 100%;
-  padding: 15px 0 0;
+  padding: 30px 0 0;
   position: relative;
   animation-delay: 0.3s;
 }
@@ -10,10 +10,8 @@ header .buttons-wrap {
   position: absolute;
   top: 15px;
   right: 15px;
-  -webkit-app-region: no-drag;
 }
 header .buttons-wrap button {
-  -webkit-app-region: no-drag;
   animation-delay: 0.8s;
 }
 header .close {
@@ -86,8 +84,14 @@ header p {
   color: #fff;
   position: absolute;
   top: 15px;
-  left: 15px;
+  right: 15px;
   margin-bottom: 0;
+  -webkit-touch-callout: initial; /* iOS Safari */
+  -webkit-user-select: initial; /* Safari */
+  -khtml-user-select: initial; /* Konqueror HTML */
+  -moz-user-select: initial; /* Firefox */
+  -ms-user-select: initial; /* Internet Explorer/Edge */
+  user-select: initial; /* Non-prefixed version, currently supported by Chrome and Opera */
 }
 header p.fadeIn {
   animation-delay: 0.8s;

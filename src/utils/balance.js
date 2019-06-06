@@ -45,16 +45,17 @@ function newBlockCallback(target, height) {
 }
 
 function balanceCheck(target) {
+  target.fetchPrice();
   if (target.state.wallet_loaded) {
     let wallet = target.state.wallet_meta;
     target.setOpenAlert(
-      "Please wait while blockchain is being updated... ",
+      "Please wait while blockchain is being updated. Don't close the application until the process is complete. This may take a while, please be patient.",
       true
     );
     target.setWalletData();
     if (wallet.daemonBlockchainHeight() - wallet.blockchainHeight() > 10) {
       target.setOpenAlert(
-        "Please wait while blockchain is being updated... ",
+        "Please wait while blockchain is being updated. Don't close the application until the process is complete. This may take a while, please be patient. ",
         true
       );
     }
@@ -65,7 +66,7 @@ function balanceCheck(target) {
 function rescanBalance(target) {
   let wallet = target.state.wallet_meta;
   target.setOpenAlert(
-    "Rescanning, this may take some time, please wait ",
+    "Rescan started. Don't close the application until the process is complete. This may take a while, please be patient. ",
     true
   );
   wallet.off("updated");
@@ -99,6 +100,8 @@ function walletData(target) {
   target.setState({
     wallet: {
       address: wallet.address(),
+      spend_key: wallet.secretSpendKey(),
+      view_key: wallet.secretViewKey(),
       balance: roundAmount(
         Math.abs(wallet.balance() - wallet.unlockedBalance())
       ),

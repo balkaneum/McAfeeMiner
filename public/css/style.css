@@ -28,7 +28,7 @@
   font-style: normal;
   font-weight: 400;
 }
-* {
+img {
   -webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none; /* Safari */
   -khtml-user-select: none; /* Konqueror HTML */
@@ -59,6 +59,45 @@ body {
 }
 body img {
   pointer-events: none;
+}
+.__react_component_tooltip {
+  background-color: rgba(0, 0, 0, 0.95) !important;
+  border: 1px solid #dfc983;
+  padding: 10px 21px 8px;
+  opacity: 1;
+}
+.__react_component_tooltip.type-dark.place-top:after {
+  border-top-color: #dfc983 !important;
+}
+.__react_component_tooltip.type-dark.place-right:after {
+  border-right-color: #dfc983 !important;
+}
+.__react_component_tooltip.type-dark.place-bottom:after {
+  border-bottom-color: #dfc983 !important;
+}
+.__react_component_tooltip.type-dark.place-left:after {
+  border-left-color: #dfc983 !important;
+}
+.__react_component_tooltip p {
+  font-size: 15px !important;
+  margin-bottom: 0px !important;
+  font-family: "Avenir", sans-serif !important;
+  color: #fff;
+  text-transform: initial !important;
+  letter-spacing: 0 !important;
+  line-height: 1.2;
+  right: 0;
+}
+.__react_component_tooltip .yellow-text {
+  color: #dfc983;
+  font-weight: 600;
+}
+.__react_component_tooltip .word-break {
+  word-break: break-word;
+  width: 470px;
+}
+.__react_component_tooltip.type-dark.place-top:after {
+  border-top-color: rgba(0, 0, 0, 0.95);
 }
 .button-shine {
   position: relative;

@@ -15,6 +15,9 @@
   visibility: visible;
   opacity: 1;
 }
+.alert p.disabled {
+  padding-right: 0;
+}
 .alert p {
   background: transparent;
   border: 0px none;
@@ -25,10 +28,4 @@
   text-transform: initial;
   line-height: 1.2;
   text-align: left;
-  -webkit-touch-callout: initial; /* iOS Safari */
-  -webkit-user-select: initial; /* Safari */
-  -khtml-user-select: initial; /* Konqueror HTML */
-  -moz-user-select: initial; /* Firefox */
-  -ms-user-select: initial; /* Internet Explorer/Edge */
-  user-select: initial; /* Non-prefixed version, currently supported by Chrome and Opera */
 }
