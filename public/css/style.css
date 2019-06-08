@@ -28,6 +28,13 @@
   font-style: normal;
   font-weight: 400;
 }
+@font-face {
+  font-family: "Atrament";
+  src: url("../fonts/Atrament-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+}
+
 img {
   -webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none; /* Safari */
@@ -95,6 +102,9 @@ body img {
 .__react_component_tooltip .word-break {
   word-break: break-word;
   width: 470px;
+}
+.__react_component_tooltip .mb-10 {
+  margin-bottom: 10px !important;
 }
 .__react_component_tooltip.type-dark.place-top:after {
   border-top-color: rgba(0, 0, 0, 0.95);

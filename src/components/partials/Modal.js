@@ -15,7 +15,8 @@ export default class Modal extends React.Component {
       spendkey_sec: "",
       viewkey_sec: "",
       exported: false,
-      instructions_lang: "english"
+      instructions_lang: "english", 
+      mixin: 6,
     };
   }
 
@@ -70,10 +71,24 @@ export default class Modal extends React.Component {
     });
   };
 
-  
+  inputOnChange = (target, e) => {
+    this.setState({
+      [target]: e.target.value
+    });
+  };
 
   render() {
     let modal;
+    let mixinArray = [];
+
+    for (var i = 0; i <= 8; i++) {
+      mixinArray.push(
+        <option key={i} value={i}>
+          {i}
+        </option>
+      );
+    }
+    mixinArray.reverse();
 
     if (this.props.newWalletModal) {
       modal = (
@@ -557,21 +572,108 @@ export default class Modal extends React.Component {
                 this.props.sendCashOrToken(e, this.props.send_cash_or_token);
               }}
             >
-              <label htmlFor="send_to">Destination</label>
-              <textarea
-                name="send_to"
-                placeholder="Enter Destination Address"
-                rows="2"
-              />
-              <label htmlFor="amount">Amount</label>
-              <input name="amount" placeholder="Enter Amount" />
-              <label htmlFor="paymentid">(Optional) Payment ID</label>
-              <input 
-                name="paymentid" 
-                placeholder="(Optional) Payment ID"
-                data-tip
-                data-for="payment-tooptip"
-              />
+              <div className="form-group">
+                <label htmlFor="send_to">Destination Address</label>
+                <textarea
+                  name="send_to"
+                  placeholder="Enter Destination Address"
+                  rows="2"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="amount">Amount</label>
+                <input name="amount" placeholder="Enter Amount" />
+                {this.props.send_cash_or_token === 0 ? (
+                  <div
+                    data-tip
+                    data-for="cash-amount-tooptip"
+                    className="button-shine question-wrap"
+                  >
+                    <span>?</span>
+                  </div>
+                ) : (
+                    <div
+                      data-tip
+                      data-for="token-amount-tooptip"
+                      className="button-shine question-wrap"
+                    >
+                      <span>?</span>
+                    </div>
+                  )}
+                <ReactTooltip id="cash-amount-tooptip">
+                  <p><span className="yellow-text">Safex Cash fee</span> will be added to sending amount.</p>
+                </ReactTooltip>
+                <ReactTooltip id="token-amount-tooptip">
+                  <p className="mb-10">Token transaction does not accept decimal values.</p>
+                  <p>Token transaction requires <span className="yellow-text">Safex Cash fee</span>.</p>
+                </ReactTooltip>
+              </div>
+              
+              <div className="form-group">
+                <label id="mixin-label" htmlFor="mixin">
+                  Transaction Mixin (Optional)
+                </label>
+                <select
+                  name="mixin"
+                  value={this.state.mixin}
+                  onChange={this.inputOnChange.bind(this, "mixin")}
+                >
+                  {mixinArray}
+                </select>
+                <div
+                  data-tip
+                  data-for="mixin-tooptip"
+                  className="button-shine question-wrap"
+                  id="mixin-question-wrap"
+                >
+                  <span>?</span>
+                </div>
+                <ReactTooltip id="mixin-tooptip">
+                  <p><span className="yellow-text">Transaction Mixin</span>{" "} determines how many{" "}</p>
+                  <p>outputs transaction is going to have.</p>
+                  <p>Lower mixin will result in smaller fees.</p>
+                  <p>For large transactions we recommend</p>
+                  <p>lowering the transaction mixin.</p>
+                  <p className="mb-10">
+                    Default network mixin is{" "}
+                    <span className="yellow-text">6</span>.
+                    </p>
+                  <p className="yellow-text">
+                    *Consistent use of low ring sizes
+                    </p>
+                  <p className="yellow-text">
+                    may affect your traceability.
+                    </p>
+                </ReactTooltip>
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="paymentid">Payment ID (Optional)</label>
+                <input
+                  name="paymentid"
+                  placeholder="(Optional) Enter Payment ID"
+                  data-tip
+                  data-for="payment-tooptip"
+                />
+                <div
+                  data-tip
+                  data-for="paymentid-tooptip"
+                  className="button-shine question-wrap"
+                >
+                  <span>?</span>
+                </div>
+                <ReactTooltip id="paymentid-tooptip">
+                  <p><span className="yellow-text">Payment ID</span> is additional reference number attached to the transaction.</p>
+                  <p>It is given by exchanges and web shops to differentiate </p>
+                  <p className="mb-10">and track particular deposits and purchases.</p>
+                  <p className="mb-10">
+                    <span className="yellow-text">Payment ID</span> format should be <span className="yellow-text">16 or 64 digit Hex</span> character string.
+                  </p>
+                  <p>Payment ID is <span className="yellow-text"> not required</span>for regular user transactions.</p>
+                </ReactTooltip>
+              </div>
+              
               <ReactTooltip id="payment-tooptip">
                 <p><span className="yellow-text">Payment ID</span> is additional reference number</p>
                 <p>attached to the transaction.</p>
@@ -582,6 +684,7 @@ export default class Modal extends React.Component {
                 <p><span className="yellow-text">16 or 64 digit Hex</span> character string.</p>
                 <p>It is <span className="yellow-text">not required</span> for regular user transactions.</p>
               </ReactTooltip>
+              
               <button
                 className="btn button-shine"
                 type="submit"

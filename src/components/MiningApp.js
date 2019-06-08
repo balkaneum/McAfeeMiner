@@ -251,9 +251,12 @@ export default class MiningApp extends React.Component {
 
   sendCashOrToken = (e, cash_or_token) => {
     e.preventDefault();
-    let sendingAddress = e.target.send_to.value;
+    let sendingAddressInput = e.target.send_to.value;
+    let sendingAddress = sendingAddressInput.replace(/\s+/g, "");
     let amount = e.target.amount.value * 10000000000;
     let paymentid = e.target.paymentid.value;
+    let paymentidInput = paymentid.replace(/\s+/g, "");
+    let mixin = e.target.mixin.value;
     this.setState({ cash_or_token });
     if (sendingAddress === "") {
       this.setOpenAlert("Enter destination address");
@@ -263,15 +266,47 @@ export default class MiningApp extends React.Component {
       this.setOpenAlert("Enter Amount");
       return false;
     }
-    if (paymentid !== "") {
+    if (isNaN(amount)) {
+      this.setOpenAlert("Enter valid amount");
+      return false;
+    }
+    if (
+      process.env.NODE_ENV !== "development" &&
+      !safex.addressValid(sendingAddress, "mainnet")
+    ) {
+      this.props.setOpenAlert("Enter valid Safex address");
+      return false;
+    }
+    if (
+      process.env.NODE_ENV === "development" &&
+      !safex.addressValid(sendingAddress, "testnet")
+    ) {
+      this.props.setOpenAlert("Enter valid Safex address");
+      return false;
+    }
+    if (
+      (cash_or_token === 0 &&
+        parseFloat(e.target.amount.value) + parseFloat(0.1) >
+        this.state.wallet.unlocked_balance) ||
+      this.state.wallet.unlocked_balance < parseFloat(0.1)
+    ) {
+      this.setOpenAlert("Not enough available Safex Cash to complete the transaction");
+      return false;
+    }
+    if (paymentidInput !== "") {
+      if (paymentidInput.length !== 64) {
+        this.setOpenAlert("Payment ID should contain 64 characters");
+        return false;
+      }
       this.setState(() => ({
         tx_being_sent: true
       }));
       this.sendTransaction({
         address: sendingAddress,
         amount: amount,
-        paymentId: paymentid,
-        tx_type: cash_or_token
+        paymentId: paymentidInput,
+        tx_type: cash_or_token,
+        mixin: mixin
       });
     } else {
       this.setState(() => ({
@@ -280,7 +315,8 @@ export default class MiningApp extends React.Component {
       this.sendTransaction({
         address: sendingAddress,
         amount: amount,
-        tx_type: cash_or_token
+        tx_type: cash_or_token,
+        mixin: mixin
       });
     }
   };
@@ -741,6 +777,7 @@ export default class MiningApp extends React.Component {
             alertCloseDisabled={this.state.alert_close_disabled}
             sfxPrice={this.state.sfx_price}
             sftPrice={this.state.sft_price}
+            mixin={this.state.mixin}
           />
         </div>
       </div>

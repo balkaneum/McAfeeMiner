@@ -86,14 +86,16 @@
   color: #fff !important;
 }
 .modal .form-group {
-  margin-bottom: 0;
-  margin-top: 5px;
+  margin-bottom: 20px;
+  margin-top: 0;
 }
 .modal label {
   width: 100%;
   text-transform: capitalize;
   font-size: 15px;
   margin-bottom: 0;
+  display: inline-block;
+  text-align: center;
 }
 .modal textarea {
   display: inline-block;
@@ -163,7 +165,7 @@
   border: 0px none;
   border-radius: 5px;
   padding: 5px 10px;
-  margin: 0 0 15px;
+  margin: 0 0 20px;
   font-size: 15px;
   background: url(../images/input-bg.png) repeat-y top left;
   background-size: 100% 100%;
@@ -416,12 +418,142 @@
   margin-top: 0;
   width: calc(50% - 7.5px);
 }
+.sendModal .form-group {
+  display: flex;
+  align-items: center;
+  position: relative;
+  min-height: 31px;
+  margin-bottom: 16px;
+}
+.sendModal form {
+  margin-top: 15px;
+}
+.sendModal label {
+  width: 210px;
+  text-align: left;
+}
 .sendModal .btn {
-  margin: -1px 0 0;
+  margin: 1px 0 0;
+}
+.sendModal input {
+  width: 64%;
+  margin: 0;
+  text-align: left;
+  /* left: -30px; */
+  /* position: relative; */
+}
+.sendModal textarea {
+  width: calc(100% - 200px);
+  margin: 0;
+  text-align: left;
+  /* position: relative; */
+  /* left: -20px; */
 }
 .sendModal input:hover,
 .sendModal input:active,
 .sendModal input:focus {
   -webkit-box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
   box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
+}
+.sendModal .form-group .question-wrap {
+  position: absolute;
+  top: -1px;
+  right: 0;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #dfc983;
+  border-radius: 50%;
+  transition: all ease 0.3s;
+  -o-transition: all ease 0.3s;
+  -moz-transition: all ease 0.3s;
+  -webkit-transition: all ease 0.3s;
+}
+.sendModal .form-group .question-wrap:hover {
+  -webkit-box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
+  box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
+  cursor: pointer;
+}
+.sendModal .form-group .question-wrap:active {
+  -webkit-box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
+  box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
+}
+.sendModal .form-group .question-wrap:focus {
+  outline: 0px none;
+}
+.sendModal #mixin-label {
+  position: relative;
+  z-index: initial;
+  text-align: left;
+  width: 250px;
+}
+.sendModal .form-group .question-wrap span {
+  position: relative;
+  top: -7px;
+  left: -0px;
+  font-size: 19px;
+  transition: all ease 0.3s;
+  -o-transition: all ease 0.3s;
+  -moz-transition: all ease 0.3s;
+  -webkit-transition: all ease 0.3s;
+  font-family: "Atrament", Helvetica, Arial, sans-serif;
+  pointer-events: none;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+}
+.sendModal select {
+  /* background: rgba(255, 255, 255, 0.24) url(../images/select-bg.png) no-repeat top 10px right 3px / contain; */
+  background: url(../images/input-bg.png) repeat-y top left;
+  background-size: 100% 100%;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  width: 64%;
+  left: 210px;
+  top: 0;
+  text-align-last: left;
+  border: 0px none;
+  border-radius: 5px !important;
+  display: inline-block;
+  font-size: 18px;
+  position: absolute;
+  height: 31px;
+  z-index: 2;
+  margin: 0;
+  padding: 0 10px;
+  color: #fff;
+  -webkit-appearance: none;
+  -webkit-border-radius: 0px;
+  transition: all ease 0.3s;
+  -o-transition: all ease 0.3s;
+  -moz-transition: all ease 0.3s;
+  -webkit-transition: all ease 0.3s;
+}
+.sendModal select:hover {
+  -webkit-box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
+  box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
+}
+.sendModal select:focus {
+  outline: 0px none;
+}
+.sendModal textarea::-webkit-input-placeholder,
+.sendModal input::-webkit-input-placeholder {
+  /* Chrome/Opera/Safari */
+  text-align: left;
+}
+.sendModal textarea::-moz-placeholder,
+.sendModal input::-moz-placeholder {
+  /* Firefox 19+ */
+  text-align: left;
+}
+.sendModal textarea:-moz-placeholder,
+.sendModal input:-moz-placeholder {
+  /* Firefox 18- */
+  text-align: left;
+}
+.sendModal textarea:-ms-input-placeholder,
+.sendModal input:-ms-input-placeholder {
+  /* IE 10+ */
+  text-align: left;
 }
