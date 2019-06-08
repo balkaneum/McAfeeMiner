@@ -471,32 +471,40 @@ export default class Modal extends React.Component {
                 >
                   <img src="images/refresh.png" alt="refresh" />
                 </button>
-                <ReactTooltip id="rescan-tooltip">
+                <ReactTooltip place="right" id="rescan-tooltip">
                   <p><span className="yellow-text">Rescan</span> blockchain from the begining.</p>
                   <p>This is performed when your wallet file is created.</p>
                   <p>Use this if you suspect your wallet file is corrupted or missing data.</p>
                   <p>It may take a lot of time to complete.</p>
                 </ReactTooltip>
               </div>
-              <label htmlFor="selected_balance_address">
-                Safex Wallet Address
-              </label>
-              <textarea
-                placeholder="Safex Wallet Address"
-                name="selected_balance_address"
-                defaultValue={this.props.wallet.address}
-                rows="2"
-                data-tip
-                data-for="address-tooptip"
-                readOnly
-              />
 
-              <ReactTooltip id="address-tooptip">
-                <p>This is <span className="yellow-text">Public Address</span> of your wallet.</p>
-                <p>Public Address starts with Safex and contains between <span className="yellow-text">95</span> and <span className="yellow-text">105</span> characters.</p>
-                <p>This is address where you can receive <span className="yellow-text">Safex Cash (SFX)</span> or <span className="yellow-text">Safex Tokens (SFT)</span>.</p>
-                <p>This is address where all your <span className="yellow-text">Safex Cash (SFX)</span> you mined will be available.</p>
-              </ReactTooltip>
+              <div className="address-group">
+                <label htmlFor="selected_balance_address" id="wallet-label">
+                  Safex Address
+                </label>
+                <textarea
+                  placeholder="Safex Wallet Address"
+                  name="selected_balance_address"
+                  defaultValue={this.props.wallet.address}
+                  rows="2"
+                  readOnly
+                />
+                <div
+                  data-tip
+                  data-for="address-tooptip"
+                  className="button-shine question-wrap"
+                >
+                  <span>?</span>
+                </div>
+                <ReactTooltip place="left" id="address-tooptip">
+                  <p>This is <span className="yellow-text">Public Address</span> of your wallet.</p>
+                  <p>Public Address starts with Safex and contains between <span className="yellow-text">95 and 105</span> characters.</p>
+                  <p>This is address where you can receive <span className="yellow-text">Safex Cash (SFX)</span> or <span className="yellow-text">Safex Tokens (SFT)</span>.</p>
+                  <p>This is address where all your <span className="yellow-text">Safex Cash (SFX)</span> you mined will be available.</p>
+                </ReactTooltip>
+              </div>
+
 
               <div className="groups-wrap">
                 <div className="form-group">

@@ -609,14 +609,9 @@ export default class MiningApp extends React.Component {
                         this.state.wallet_loaded
                           ?
                             <div>
-                              <p className="yellow-text word-break">{this.state.wallet.address}</p>
                               <p>This is <span className="yellow-text">Public Address</span> of your wallet.</p>
-                              <p>Public Address starts with Safex and</p>
-                              <p>contains between <span className="yellow-text">95 and 105</span> characters.</p>
-                              <p>This is address where you can receive</p>
-                              <p><span className="yellow-text">Safex Cash (SFX)</span> or <span className="yellow-text">Safex Tokens (SFT)</span>.</p>
-                              <p>This is address where all your <span className="yellow-text">Safex Cash (SFX)</span></p>
-                              <p>you mined will be available.</p>
+                              <p className="mb-10">Public Address starts with Safex and contains between <span className="yellow-text">95 and 105</span> characters.</p>
+                              <p>This is address where you can receive <span className="yellow-text">Safex Cash (SFX)</span> or <span className="yellow-text">Safex Tokens (SFT)</span>.</p>
                             </div>
                           :
                             <div>

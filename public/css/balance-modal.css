@@ -200,3 +200,63 @@
   text-align: left;
   margin-bottom: 0;
 }
+.balance-modal .address-group {
+  display: flex;
+  align-items: center;
+  position: relative;
+  min-height: 31px;
+  margin-top: 26px;
+  margin-bottom: 16px;
+}
+.balance-modal .address-group .question-wrap {
+  position: absolute;
+  top: 8px;
+  right: 0;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #dfc983;
+  border-radius: 50%;
+  transition: all ease 0.3s;
+  -o-transition: all ease 0.3s;
+  -moz-transition: all ease 0.3s;
+  -webkit-transition: all ease 0.3s;
+}
+.balance-modal .address-group .question-wrap:hover {
+  -webkit-box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
+  box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
+  cursor: pointer;
+}
+.balance-modal .address-group .question-wrap:active {
+  -webkit-box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
+  box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
+}
+.balance-modal .address-group .question-wrap:focus {
+  outline: 0px none;
+}
+.balance-modal #wallet-label {
+  position: relative;
+  z-index: initial;
+  text-align: left;
+  width: 110px;
+}
+.balance-modal .address-group textarea {
+  width: calc(100% - 160px);
+}
+.balance-modal .address-group .question-wrap span {
+  position: relative;
+  top: -7px;
+  left: -0px;
+  font-size: 19px;
+  transition: all ease 0.3s;
+  -o-transition: all ease 0.3s;
+  -moz-transition: all ease 0.3s;
+  -webkit-transition: all ease 0.3s;
+  font-family: "Atrament", Helvetica, Arial, sans-serif;
+  pointer-events: none;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+}

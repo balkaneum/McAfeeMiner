@@ -426,17 +426,17 @@
   margin-bottom: 16px;
 }
 .sendModal form {
-  margin-top: 15px;
+  margin-top: 20px;
 }
 .sendModal label {
-  width: 210px;
+  width: 200px;
   text-align: left;
 }
 .sendModal .btn {
-  margin: 1px 0 0;
+  margin: 0;
 }
 .sendModal input {
-  width: 64%;
+  width: 65%;
   margin: 0;
   text-align: left;
   /* left: -30px; */
@@ -446,8 +446,6 @@
   width: calc(100% - 200px);
   margin: 0;
   text-align: left;
-  /* position: relative; */
-  /* left: -20px; */
 }
 .sendModal input:hover,
 .sendModal input:active,
@@ -509,8 +507,8 @@
   background: url(../images/input-bg.png) repeat-y top left;
   background-size: 100% 100%;
   font-family: "Avenir", Helvetica, Arial, sans-serif;
-  width: 64%;
-  left: 210px;
+  width: 65%;
+  left: 200px;
   top: 0;
   text-align-last: left;
   border: 0px none;
