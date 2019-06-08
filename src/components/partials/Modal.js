@@ -630,21 +630,14 @@ export default class Modal extends React.Component {
                   <span>?</span>
                 </div>
                 <ReactTooltip id="mixin-tooptip">
-                  <p><span className="yellow-text">Transaction Mixin</span>{" "} determines how many{" "}</p>
-                  <p>outputs transaction is going to have.</p>
-                  <p>Lower mixin will result in smaller fees.</p>
-                  <p>For large transactions we recommend</p>
-                  <p>lowering the transaction mixin.</p>
-                  <p className="mb-10">
-                    Default network mixin is{" "}
+                  <p><span className="yellow-text">Transaction Mixin</span>{" "} determines how many outputs transaction is going to have.</p>
+                  <p>Lower mixin will result in smaller fees. For large transactions we recommend</p>
+                  <p className="mb-10">lowering the transaction mixin. Default network mixin is{" "}
                     <span className="yellow-text">6</span>.
-                    </p>
+                  </p>
                   <p className="yellow-text">
-                    *Consistent use of low ring sizes
-                    </p>
-                  <p className="yellow-text">
-                    may affect your traceability.
-                    </p>
+                    *Consistent use of low ring sizes may affect your traceability.
+                  </p>
                 </ReactTooltip>
               </div>
               
@@ -652,9 +645,7 @@ export default class Modal extends React.Component {
                 <label htmlFor="paymentid">Payment ID (Optional)</label>
                 <input
                   name="paymentid"
-                  placeholder="(Optional) Enter Payment ID"
-                  data-tip
-                  data-for="payment-tooptip"
+                  placeholder="Enter Payment ID"
                 />
                 <div
                   data-tip
@@ -665,24 +656,21 @@ export default class Modal extends React.Component {
                 </div>
                 <ReactTooltip id="paymentid-tooptip">
                   <p><span className="yellow-text">Payment ID</span> is additional reference number attached to the transaction.</p>
-                  <p>It is given by exchanges and web shops to differentiate </p>
-                  <p className="mb-10">and track particular deposits and purchases.</p>
+                  <p>It is given by exchanges and web shops to differentiate and track</p>
+                  <p className="mb-10">particular deposits and purchases.</p>
                   <p className="mb-10">
                     <span className="yellow-text">Payment ID</span> format should be <span className="yellow-text">16 or 64 digit Hex</span> character string.
                   </p>
-                  <p>Payment ID is <span className="yellow-text"> not required</span>for regular user transactions.</p>
+                  <p>Payment ID is <span className="yellow-text">not required</span> for regular user transactions.</p>
                 </ReactTooltip>
               </div>
               
               <ReactTooltip id="payment-tooptip">
-                <p><span className="yellow-text">Payment ID</span> is additional reference number</p>
-                <p>attached to the transaction.</p>
-                <p>It is given by exchanges and web</p>
-                <p>shops to differentiate and track</p>
-                <p>particular deposits and purchases.</p>
-                <p><span className="yellow-text">Payment ID</span> format should be</p>
-                <p><span className="yellow-text">16 or 64 digit Hex</span> character string.</p>
-                <p>It is <span className="yellow-text">not required</span> for regular user transactions.</p>
+                <p><span className="yellow-text">Payment ID</span> is additional reference number attached to the transaction.</p>
+                <p>It is given by exchanges and web shops to differentiate and track</p>
+                <p className="mb-10">particular deposits and purchases.</p>
+                <p><span className="yellow-text">Payment ID</span> format should be <span className="yellow-text">16 or 64 digit Hex</span> character string.</p>
+                <p>Payment ID is <span className="yellow-text">not required</span> for regular user transactions.</p>
               </ReactTooltip>
               
               <button

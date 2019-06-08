@@ -326,6 +326,7 @@ export default class MiningApp extends React.Component {
     wallet
       .createTransaction(args)
       .then(tx => {
+        console.log(args)
         let txId = tx.transactionsIds();
         tx.commit()
           .then(() => {
