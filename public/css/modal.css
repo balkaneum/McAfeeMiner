@@ -357,7 +357,6 @@
   margin-bottom: 5px;
 }
 
-
 /* Create From Keys Modal */
 .openCreateFromKeysModal .form-wrap {
   display: flex;
@@ -439,8 +438,11 @@
   width: 65%;
   margin: 0;
   text-align: left;
-  /* left: -30px; */
-  /* position: relative; */
+}
+.sendModal input::-webkit-inner-spin-button,
+.sendModal input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 .sendModal textarea {
   width: calc(100% - 200px);
