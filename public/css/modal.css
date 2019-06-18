@@ -577,7 +577,7 @@
 
 /* Fee Modal */
 .feeModal form {
-  margin: 15px 0 20px;
+  margin: 12px 0 15px;
 }
 .feeModal p {
   font-size: 16px;
@@ -587,6 +587,7 @@
 .feeModal h6 {
   text-transform: initial;
   font-size: 14px;
+  margin-bottom: 0;
 }
 
 .confirmModal p {
