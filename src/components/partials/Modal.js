@@ -507,8 +507,8 @@ export default class Modal extends React.Component {
                     the begining.
                   </p>
                   <p>This is performed when your wallet file is created.</p>
-                  <p>Use this if you suspect your wallet file is corrupted</p>
-                  <p className="mb-10">or missing data.</p>
+                  <p>Use this if you suspect your wallet file is </p>
+                  <p className="mb-10">corrupted or missing data.</p>
                   <p>It may take a lot of time to complete.</p>
                 </ReactTooltip>
               </div>
@@ -558,6 +558,28 @@ export default class Modal extends React.Component {
                   <label htmlFor="balance">Pending Cash</label>
                   <div className="yellow-field">
                     <span>SFX {this.props.wallet.balance}</span>
+                    <div
+                      data-tip
+                      data-for="pending-tooptip"
+                      className="button-shine question-wrap"
+                    >
+                      <span>?</span>
+                    </div>
+                    <ReactTooltip id="pending-tooptip">
+                      <p>
+                        Due to the way{" "}
+                        <span className="yellow-text">Safex blockchain</span>{" "}
+                        works, part or all of your remaining balance
+                      </p>
+                      <p>
+                        after a transaction may go into pending status for a
+                        short period of time.
+                      </p>
+                      <p>
+                        This is normal and status will become available after{" "}
+                        <span className="yellow-text">10</span> blocks.
+                      </p>
+                    </ReactTooltip>
                   </div>
                   <label htmlFor="unlocked_balance">Available Cash</label>
                   <div className="green-field">

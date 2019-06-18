@@ -193,6 +193,7 @@
   box-shadow: none !important;
 }
 .modal .yellow-field {
+  position: relative;
   background: rgba(223, 201, 131, 0.5);
   border: 2px solid #dfc983;
   text-align: left;
@@ -209,6 +210,19 @@
 .modal .yellow-field:active {
   -webkit-box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
   box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
+}
+.modal .yellow-field .question-wrap {
+  top: 2px;
+  right: 2px;
+  padding: 5.5px 10px 5px;
+  width: 28px;
+  height: 28px;
+}
+.modal .yellow-field .question-wrap span {
+  top: -3px;
+}
+#pending-tooptip p {
+  text-align: center;
 }
 .modal .green-field {
   background: rgba(14, 200, 193, 0.5);

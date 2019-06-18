@@ -98,6 +98,7 @@ body img {
 .__react_component_tooltip .yellow-text {
   color: #dfc983;
   font-weight: 600;
+  margin-right: 0 !important;
 }
 .__react_component_tooltip .word-break {
   word-break: break-word;
