@@ -641,7 +641,14 @@ export default class Modal extends React.Component {
       modal = (
         <div className={`sendModal ${this.props.sendModal ? "active" : ""}`}>
           <div className="sendModalInner">
-            <span className="close" onClick={this.props.setCloseSendPopup}>
+            <span
+              className="close"
+              onClick={
+                this.props.txBeingSent || this.props.sendDisabled
+                  ? ""
+                  : this.props.setCloseSendPopup
+              }
+            >
               X
             </span>
             <h3>
@@ -939,7 +946,13 @@ export default class Modal extends React.Component {
         </div>
         <div
           className={"backdrop" + addClass(this.props.modal, "active")}
-          onClick={this.props.alertCloseDisabled ? "" : this.closeModals}
+          onClick={
+            this.props.alertCloseDisabled ||
+            this.props.txBeingSent ||
+            this.props.sendDisabled
+              ? ""
+              : this.closeModals
+          }
         />
       </div>
     );
