@@ -576,8 +576,8 @@ export default class Modal extends React.Component {
                         short period of time.
                       </p>
                       <p>
-                        This is normal and status will become available after{" "}
-                        <span className="yellow-text">10</span> blocks.
+                        This is normal and pending coins will become available
+                        after <span className="yellow-text">10</span> blocks.
                       </p>
                     </ReactTooltip>
                   </div>
