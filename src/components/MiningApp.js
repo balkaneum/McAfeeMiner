@@ -1,11 +1,10 @@
 import React from "react";
 import {
-  updatedCallback,
   refreshCallback,
-  newBlockCallback,
   balanceCheck,
   rescanBalance,
-  walletData
+  walletData,
+  roundAmount
 } from "../utils/balance";
 import {
   openSendPopup,
@@ -109,6 +108,8 @@ export default class MiningApp extends React.Component {
       open_from_existing_modal: false,
       balance_modal_active: false,
       instructions_modal_active: false,
+      fee_modal: false,
+      confirm_modal: false,
       alert: false,
       alert_text: "",
       alert_close_disabled: false,
@@ -126,9 +127,9 @@ export default class MiningApp extends React.Component {
       send_cash_or_token: false,
       tick_handle: null,
       tx_being_sent: false,
+      fee: 0,
 
       //wallet state settings
-      wallet_meta: null,
       wallet: {
         address: "",
         spend_key: "",
@@ -145,6 +146,9 @@ export default class MiningApp extends React.Component {
       wallet_password: "",
       filepath: ""
     };
+
+    this.wallet_meta = null;
+    this.tx = null;
   }
 
   //first step select wallet path, if exists, set password
@@ -179,9 +183,9 @@ export default class MiningApp extends React.Component {
 
   closeWallet = () => {
     if (this.state.wallet_loaded) {
-      this.state.wallet_meta.pauseRefresh();
-      this.state.wallet_meta.off();
-      this.state.wallet_meta.close(true);
+      this.wallet_meta.pauseRefresh();
+      this.wallet_meta.off();
+      this.wallet_meta.close(true);
       this.setState({ wallet_loaded: false });
       clearTimeout(this.state.tick_handle);
     }
@@ -217,6 +221,33 @@ export default class MiningApp extends React.Component {
     closeSendPopup(this);
   };
 
+  setOpenFeeModal = () => {
+    this.setOpenModal("fee_modal", "", false);
+  };
+
+  setOpenConfirmModal = (alert, disabled) => {
+    this.setOpenModal("confirm_modal", alert, disabled);
+  };
+
+  setCloseMyModal = () => {
+    this.setState({
+      modal: false,
+      send_disabled: true
+    });
+    setTimeout(() => {
+      this.setState({
+        send_modal: false,
+        confirm_modal: false,
+        fee_modal: false
+      });
+    }, 300);
+    setTimeout(() => {
+      this.setState({
+        button_disabled: false
+      });
+    }, 1000);
+  };
+
   closeModal = () => {
     closeModal(this);
   };
@@ -233,14 +264,6 @@ export default class MiningApp extends React.Component {
     refreshCallback(this);
   };
 
-  startNewBlockCallback = height => {
-    newBlockCallback(this, height);
-  };
-
-  startUpdatedCallback = () => {
-    updatedCallback(this);
-  };
-
   startRescanBalance = () => {
     rescanBalance(this);
   };
@@ -249,7 +272,7 @@ export default class MiningApp extends React.Component {
     walletData(this);
   };
 
-  sendCashOrToken = (e, cash_or_token) => {
+  sendCashOrToken = (e, send_cash_or_token) => {
     e.preventDefault();
     let sendingAddressInput = e.target.send_to.value;
     let sendingAddress = sendingAddressInput.replace(/\s+/g, "");
@@ -257,7 +280,7 @@ export default class MiningApp extends React.Component {
     let paymentid = e.target.paymentid.value;
     let paymentidInput = paymentid.replace(/\s+/g, "");
     let mixin = e.target.mixin.value;
-    this.setState({ cash_or_token });
+    this.setState({ send_cash_or_token });
     if (sendingAddress === "") {
       this.setOpenAlert("Enter destination address");
       return false;
@@ -285,7 +308,7 @@ export default class MiningApp extends React.Component {
       return false;
     }
     if (
-      (cash_or_token === 0 &&
+      (send_cash_or_token === 0 &&
         parseFloat(e.target.amount.value) + parseFloat(0.1) >
           this.state.wallet.unlocked_balance) ||
       this.state.wallet.unlocked_balance < parseFloat(0.1)
@@ -307,7 +330,7 @@ export default class MiningApp extends React.Component {
         address: sendingAddress,
         amount: amount,
         paymentId: paymentidInput,
-        tx_type: cash_or_token,
+        tx_type: send_cash_or_token,
         mixin: mixin
       });
     } else {
@@ -317,45 +340,93 @@ export default class MiningApp extends React.Component {
       this.sendTransaction({
         address: sendingAddress,
         amount: amount,
-        tx_type: cash_or_token,
+        tx_type: send_cash_or_token,
         mixin: mixin
       });
     }
   };
 
   sendTransaction = args => {
-    let wallet = this.state.wallet_meta;
+    let wallet = this.wallet_meta;
     wallet
       .createTransaction(args)
       .then(tx => {
+        let fee = roundAmount(tx.fee());
+        this.setState(() => ({
+          fee: fee,
+          send_tx_disabled: false,
+          tx_being_sent: false
+        }));
+        this.tx = tx;
+        this.setOpenFeeModal();
+        localStorage.setItem("args", JSON.stringify(args));
         console.log(args);
-        let txId = tx.transactionsIds();
-        tx.commit()
-          .then(() => {
-            if (this.state.cash_or_token === 0) {
-              this.setOpenAlert(
-                "Transaction commited successfully, Your cash transaction ID is: " +
-                  txId
-              );
-            } else {
-              this.setOpenAlert(
-                "Transaction commited successfully, Your token transaction ID is: " +
-                  txId
-              );
-            }
-            this.setState(() => ({ tx_being_sent: false }));
-            setTimeout(() => {
-              this.setWalletData();
-            }, 300);
-          })
-          .catch(e => {
-            this.setState(() => ({ tx_being_sent: false }));
-            this.setOpenAlert("Error on commiting transaction: " + e);
-          });
       })
       .catch(e => {
-        this.setState(() => ({ tx_being_sent: false }));
-        this.setOpenAlert("Couldn't create transaction: " + e);
+        this.setState({
+          send_tx_disabled: false
+        });
+        if (e.startsWith("not enough money to transfer, available only")) {
+          this.setOpenAlert(
+            "There is not enough SFX or outputs available to fulfil this transaction + fee. Please consider reducing the size of the transaction.",
+            false
+          );
+        } else {
+          this.setOpenAlert("" + e, false);
+        }
+        console.log("" + e);
+      });
+  };
+
+  commitTx = e => {
+    e.preventDefault();
+    let tx = this.tx;
+    let txId = tx.transactionsIds();
+
+    this.setState(() => ({
+      tx_being_sent: true,
+      alert_close_disabled: true
+    }));
+    tx.commit()
+      .then(() => {
+        if (!txId) {
+          this.setOpenAlert("Unable to create transaction id ", false);
+          return false;
+        }
+        this.setState({
+          tx_being_sent: false,
+          alert_close_disabled: false
+        });
+        if (this.state.send_cash_or_token === 0) {
+          this.setOpenConfirmModal(
+            "Transaction commited successfully, Your cash transaction ID is: " +
+              txId,
+            false
+          );
+          this.tx = null;
+        } else {
+          this.setOpenConfirmModal(
+            "Transaction commited successfully, Your token transaction ID is: " +
+              txId,
+            false
+          );
+          this.tx = null;
+        }
+        setTimeout(() => {
+          this.setWalletData();
+          this.setState({
+            mixin: 6
+          });
+          console.log("reset mixin " + this.state.mixin);
+          localStorage.removeItem("args");
+        }, 300);
+      })
+      .catch(e => {
+        this.setState(() => ({
+          tx_being_sent: false,
+          alert_close_disabled: false
+        }));
+        this.setOpenAlert("" + e, false);
       });
   };
 
@@ -816,6 +887,11 @@ export default class MiningApp extends React.Component {
             sfxPrice={this.state.sfx_price}
             sftPrice={this.state.sft_price}
             mixin={this.state.mixin}
+            confirmModal={this.state.confirm_modal}
+            feeModal={this.state.fee_modal}
+            fee={this.state.fee}
+            setCloseMyModal={this.setCloseMyModal}
+            commitTx={this.commitTx}
           />
         </div>
       </div>

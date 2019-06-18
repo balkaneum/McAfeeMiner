@@ -175,6 +175,17 @@ function closeModal(target) {
       alert: false,
       alert_close_disabled: false
     });
+  } else if (target.state.confirm_modal) {
+    target.setState({
+      confirm_modal: false,
+      fee_modal: false,
+      send_modal: false,
+      balance_modal_active: true
+    });
+  } else if (target.state.send_modal && target.state.fee_modal) {
+    target.setState({
+      fee_modal: false
+    });
   } else if (target.state.send_modal) {
     target.setState({
       send_modal: false
@@ -199,6 +210,8 @@ function closeAllModals(target) {
       open_from_existing_modal: false,
       balance_modal_active: false,
       instructions_modal_active: false,
+      confirm_modal: false,
+      fee_modal: false,
       alert: false,
       alert_close_disabled: false
     });

@@ -364,8 +364,11 @@
   justify-content: space-between;
 }
 .openCreateFromKeysModal .form-group {
-  margin-top: 0;
+  margin: 0;
   width: calc(50% - 7.5px);
+}
+.openCreateFromKeysModal input {
+  margin: 0 0 15px;
 }
 
 /* Send Modal */
@@ -556,4 +559,22 @@
 .sendModal input:-ms-input-placeholder {
   /* IE 10+ */
   text-align: left;
+}
+
+/* Fee Modal */
+.feeModal form {
+  margin: 15px 0 20px;
+}
+.feeModal p {
+  font-size: 16px;
+  text-transform: initial;
+  margin-bottom: 0;
+}
+.feeModal h6 {
+  text-transform: initial;
+  font-size: 14px;
+}
+
+.confirmModal p {
+  font-size: 16px;
 }

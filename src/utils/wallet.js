@@ -52,16 +52,11 @@ function create_new_wallet(target, e) {
     safex
       .createWallet(args)
       .then(wallet => {
+        target.wallet_meta = wallet;
         target.setState({
           wallet_loaded: true,
-          wallet_meta: wallet,
           mining_info: false
         });
-        console.log("wallet address  " + target.state.wallet.address);
-        console.log(
-          "wallet spend private key  " + target.state.wallet.spend_key
-        );
-        console.log("wallet view private key  " + target.state.wallet.view_key);
         wallet.on("refreshed", () => {
           console.log("Wallet File successfully created!");
           target.setWalletData();
@@ -155,9 +150,9 @@ function create_new_wallet_from_keys(target, e) {
       .createWalletFromKeys(args)
       .then(wallet => {
         console.log("Create wallet from keys performed!");
+        target.wallet_meta = wallet;
         target.setState({
           wallet_loaded: true,
-          wallet_meta: wallet,
           mining_info: false
         });
         console.log("wallet address: " + target.state.wallet.address);
@@ -208,15 +203,18 @@ function open_from_wallet_file(target, e) {
     network: env.NETWORK,
     daemonAddress: env.ADDRESS
   };
-  target.setOpenAlert("Please wait while your wallet file is loaded. Don't close the application until the process is complete. This may take a while, please be patient.", true);
+  target.setOpenAlert(
+    "Please wait while your wallet file is loaded. Don't close the application until the process is complete. This may take a while, please be patient.",
+    true
+  );
   safex
     .openWallet(args)
     .then(wallet => {
+      target.wallet_meta = wallet;
       target.setState({
         wallet_loaded: true,
-        wallet_meta: wallet,
         alert_close_disabled: true,
-        mining_info: false,
+        mining_info: false
       });
       target.setWalletData();
       target.closeAllModals();

@@ -82,7 +82,10 @@ export default class Modal extends React.Component {
   };
 
   closeModals = () => {
-    if (this.props.sendModal && this.props.alert) {
+    if (
+      (this.props.sendModal && this.props.alert) ||
+      (this.props.sendModal && this.props.feeModal)
+    ) {
       this.props.closeModal();
     } else {
       setTimeout(() => {
@@ -812,6 +815,78 @@ export default class Modal extends React.Component {
                 Send
               </button>
             </form>
+          </div>
+        </div>
+      );
+    }
+    if (this.props.feeModal) {
+      modal = (
+        <div className={"feeModal" + addClass(this.props.feeModal, "active")}>
+          {this.props.alertCloseDisabled ? (
+            <span className="hidden" />
+          ) : (
+            <span className="close" onClick={this.closeModals}>
+              X
+            </span>
+          )}
+          <div className="mainAlertPopupInner">
+            <p>
+              Your approximate transaction fee is: {this.props.fee} SFX ($
+              {parseFloat(this.props.fee * this.props.sfxPrice).toFixed(4)})
+            </p>
+            <p>Are you sure you want to proceed with this transaction?</p>
+
+            <form onSubmit={this.props.commitTx}>
+              <button
+                type="button"
+                className="cancel-btn btn button-shine"
+                onClick={this.closeModals}
+                disabled={
+                  this.props.txBeingSent || this.props.sendDisabled
+                    ? "disabled"
+                    : ""
+                }
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="confirm-btn btn button-shine"
+                disabled={
+                  this.props.txBeingSent || this.props.sendDisabled
+                    ? "disabled"
+                    : ""
+                }
+              >
+                Send
+              </button>
+            </form>
+            <h6>
+              Due to the way Safex blockchain works, part or all of your
+              remaining balance after a transaction may go into pending status
+              for a short period of time. This is normal and status will become
+              available after 10 blocks.
+            </h6>
+          </div>
+        </div>
+      );
+    }
+    if (this.props.confirmModal) {
+      modal = (
+        <div
+          className={
+            "confirmModal" + addClass(this.props.confirmModal, "active")
+          }
+        >
+          {this.props.alertCloseDisabled ? (
+            <span className="hidden" />
+          ) : (
+            <span className="close" onClick={this.closeModals}>
+              X
+            </span>
+          )}
+          <div className="mainAlertPopupInner">
+            <p>{this.props.alertText}</p>
           </div>
         </div>
       );

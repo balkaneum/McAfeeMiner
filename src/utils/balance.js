@@ -1,20 +1,51 @@
-function updatedCallback(target) {
-  console.log("UPDATED");
-  target.state.wallet_meta
-    .store()
-    .then(() => {
-      console.log("Wallet stored");
-      target.setCloseAlert();
-    })
-    .catch(e => {
-      console.log("Unable to store wallet: " + e);
-    });
-}
+// function updatedCallback(target) {
+//   console.log("UPDATED");
+//   target.wallet_meta
+//     .store()
+//     .then(() => {
+//       console.log("Wallet stored");
+//       target.setCloseAlert();
+//     })
+//     .catch(e => {
+//       console.log("Unable to store wallet: " + e);
+//     });
+// }
+
+// function refreshCallback(target) {
+//   console.log("wallet refreshed");
+//   let wallet = target.wallet_meta;
+//   target.setWalletData();
+//   wallet
+//     .store()
+//     .then(() => {
+//       console.log("Wallet stored");
+//       target.setCloseAlert();
+//     })
+//     .catch(e => {
+//       console.log("Unable to store wallet: " + e);
+//       target.setOpenAlert("Unable to store wallet: " + e);
+//     });
+//   wallet.off("refreshed");
+//   setTimeout(() => {
+//     wallet.on("newBlock", target.startNewBlockCallback);
+//     wallet.on("updated", target.startUpdatedCallback);
+//   }, 300);
+// }
 
 function refreshCallback(target) {
-  console.log("wallet refreshed");
-  let wallet = target.state.wallet_meta;
-  target.setWalletData();
+  console.log("Wallet refreshed");
+  let wallet = target.wallet_meta;
+
+  let syncedHeight =
+    wallet.daemonBlockchainHeight() - wallet.blockchainHeight() < 10;
+  if (syncedHeight) {
+    console.log("syncedHeight up to date...");
+    if (wallet.synchronized()) {
+      console.log("refreshCallback wallet synchronized, setting state...");
+      target.setWalletData();
+    }
+  }
+
   wallet
     .store()
     .then(() => {
@@ -22,32 +53,26 @@ function refreshCallback(target) {
       target.setCloseAlert();
     })
     .catch(e => {
-      console.log("Unable to store wallet: " + e);
-      target.setOpenAlert("Unable to store wallet: " + e);
+      target.setOpenAlert("" + e);
     });
-  wallet.off("refreshed");
-  setTimeout(() => {
-    wallet.on("newBlock", target.startNewBlockCallback);
-    wallet.on("updated", target.startUpdatedCallback);
-  }, 300);
 }
 
-function newBlockCallback(target, height) {
-  let wallet = target.state.wallet_meta;
-  let syncedHeight = wallet.daemonBlockchainHeight() - height < 10;
-  if (syncedHeight) {
-    console.log("syncedHeight up to date...");
-    if (wallet.synchronized()) {
-      console.log("newBlock wallet synchronized, setting state...");
-      target.setWalletData();
-    }
-  }
-}
+// function newBlockCallback(target, height) {
+//   let wallet = target.wallet_meta;
+//   let syncedHeight = wallet.daemonBlockchainHeight() - height < 10;
+//   if (syncedHeight) {
+//     console.log("syncedHeight up to date...");
+//     if (wallet.synchronized()) {
+//       console.log("newBlock wallet synchronized, setting state...");
+//       target.setWalletData();
+//     }
+//   }
+// }
 
 function balanceCheck(target) {
   target.fetchPrice();
   if (target.state.wallet_loaded) {
-    let wallet = target.state.wallet_meta;
+    let wallet = target.wallet_meta;
     target.setOpenAlert(
       "Please wait while blockchain is being updated. Don't close the application until the process is complete. This may take a while, please be patient.",
       true
@@ -64,7 +89,7 @@ function balanceCheck(target) {
 }
 
 function rescanBalance(target) {
-  let wallet = target.state.wallet_meta;
+  let wallet = target.wallet_meta;
   target.setOpenAlert(
     "Rescan started. Don't close the application until the process is complete. This may take a while, please be patient. ",
     true
@@ -89,14 +114,13 @@ function rescanBalance(target) {
           console.log("Unable to store wallet: " + e);
           target.setOpenAlert("Unable to store wallet: " + e);
         });
-      wallet.on("newBlock", target.newBlockCallback);
-      wallet.on("updated", target.updatedCallback);
+      wallet.on("newBlock", target.refreshCallback);
     }, 1000);
   }, 1000);
 }
 
 function walletData(target) {
-  let wallet = target.state.wallet_meta;
+  let wallet = target.wallet_meta;
   target.setState({
     wallet: {
       address: wallet.address(),
@@ -124,9 +148,7 @@ function roundAmount(balance) {
 }
 
 export {
-  updatedCallback,
   refreshCallback,
-  newBlockCallback,
   balanceCheck,
   rescanBalance,
   walletData,
