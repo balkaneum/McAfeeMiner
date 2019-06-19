@@ -1,37 +1,3 @@
-// function updatedCallback(target) {
-//   console.log("UPDATED");
-//   target.wallet_meta
-//     .store()
-//     .then(() => {
-//       console.log("Wallet stored");
-//       target.setCloseAlert();
-//     })
-//     .catch(e => {
-//       console.log("Unable to store wallet: " + e);
-//     });
-// }
-
-// function refreshCallback(target) {
-//   console.log("wallet refreshed");
-//   let wallet = target.wallet_meta;
-//   target.setWalletData();
-//   wallet
-//     .store()
-//     .then(() => {
-//       console.log("Wallet stored");
-//       target.setCloseAlert();
-//     })
-//     .catch(e => {
-//       console.log("Unable to store wallet: " + e);
-//       target.setOpenAlert("Unable to store wallet: " + e);
-//     });
-//   wallet.off("refreshed");
-//   setTimeout(() => {
-//     wallet.on("newBlock", target.startNewBlockCallback);
-//     wallet.on("updated", target.startUpdatedCallback);
-//   }, 300);
-// }
-
 function refreshCallback(target) {
   console.log("Wallet refreshed");
   let wallet = target.wallet_meta;
@@ -50,24 +16,17 @@ function refreshCallback(target) {
     .store()
     .then(() => {
       console.log("Wallet stored");
-      target.setCloseAlert();
+      if (target.state.send_modal && target.state.alert) {
+        return false;
+      } else {
+        target.setCloseAlert();
+        console.log("checkpoint");
+      }
     })
     .catch(e => {
       target.setOpenAlert("" + e);
     });
 }
-
-// function newBlockCallback(target, height) {
-//   let wallet = target.wallet_meta;
-//   let syncedHeight = wallet.daemonBlockchainHeight() - height < 10;
-//   if (syncedHeight) {
-//     console.log("syncedHeight up to date...");
-//     if (wallet.synchronized()) {
-//       console.log("newBlock wallet synchronized, setting state...");
-//       target.setWalletData();
-//     }
-//   }
-// }
 
 function balanceCheck(target) {
   target.fetchPrice();

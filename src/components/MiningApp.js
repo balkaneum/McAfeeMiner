@@ -276,6 +276,7 @@ export default class MiningApp extends React.Component {
     e.preventDefault();
     let sendingAddressInput = e.target.send_to.value;
     let sendingAddress = sendingAddressInput.replace(/\s+/g, "");
+    let amountInput = e.target.amount.value;
     let amount = e.target.amount.value * 10000000000;
     let paymentid = e.target.paymentid.value;
     let paymentidInput = paymentid.replace(/\s+/g, "");
@@ -285,11 +286,7 @@ export default class MiningApp extends React.Component {
       this.setOpenAlert("Enter destination address");
       return false;
     }
-    if (amount === "") {
-      this.setOpenAlert("Enter Amount");
-      return false;
-    }
-    if (isNaN(amount)) {
+    if (amountInput === "" || isNaN(amountInput)) {
       this.setOpenAlert("Enter valid amount");
       return false;
     }
@@ -297,14 +294,14 @@ export default class MiningApp extends React.Component {
       process.env.NODE_ENV !== "development" &&
       !safex.addressValid(sendingAddress, "mainnet")
     ) {
-      this.props.setOpenAlert("Enter valid Safex address");
+      this.setOpenAlert("Enter valid Safex address");
       return false;
     }
     if (
       process.env.NODE_ENV === "development" &&
       !safex.addressValid(sendingAddress, "testnet")
     ) {
-      this.props.setOpenAlert("Enter valid Safex address");
+      this.setOpenAlert("Enter valid Safex address");
       return false;
     }
     if (
