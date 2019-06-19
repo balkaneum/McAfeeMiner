@@ -82,12 +82,8 @@ export default class Modal extends React.Component {
   };
 
   closeModals = () => {
-    if (
-      (this.props.sendModal && this.props.alert) ||
-      (this.props.sendModal && this.props.feeModal)
-    ) {
+    if (this.props.confirmModal) {
       this.props.closeModal();
-    } else {
       setTimeout(() => {
         this.setState({
           password: "",
@@ -97,6 +93,7 @@ export default class Modal extends React.Component {
           paymentid: ""
         });
       }, 300);
+    } else {
       this.props.closeModal();
     }
   };
