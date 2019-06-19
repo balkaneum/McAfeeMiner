@@ -372,6 +372,10 @@ export default class MiningApp extends React.Component {
             false
           );
         } else {
+          this.setState(() => ({
+            send_tx_disabled: false,
+            tx_being_sent: false
+          }));
           this.setOpenAlert("" + e, false);
         }
         console.log("" + e);

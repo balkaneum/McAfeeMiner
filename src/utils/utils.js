@@ -175,6 +175,7 @@ function closeModal(target) {
       alert: false,
       alert_close_disabled: false
     });
+    console.log("checkpoint 1");
   } else if (target.state.confirm_modal) {
     target.setState({
       confirm_modal: false,
@@ -182,16 +183,22 @@ function closeModal(target) {
       send_modal: false,
       balance_modal_active: true
     });
+    console.log("checkpoint 2");
   } else if (target.state.send_modal && target.state.fee_modal) {
     target.setState({
       fee_modal: false
     });
+    console.log("checkpoint 3");
   } else if (target.state.send_modal) {
     target.setState({
-      send_modal: false
+      send_modal: false,
+      send_tx_disabled: false,
+      tx_being_sent: false
     });
+    console.log("checkpoint 4");
   } else {
     target.closeAllModals();
+    console.log("checkpoint 5");
   }
 }
 
