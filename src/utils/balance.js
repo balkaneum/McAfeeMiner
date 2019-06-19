@@ -20,7 +20,7 @@ function refreshCallback(target) {
         return false;
       } else {
         target.setCloseAlert();
-        console.log("checkpoint");
+        console.log("wallet stored checkpoint");
       }
     })
     .catch(e => {
