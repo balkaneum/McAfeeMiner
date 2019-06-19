@@ -82,7 +82,7 @@ export default class Modal extends React.Component {
   };
 
   closeModals = () => {
-    if (this.props.feeModal && this.props.confirmModal) {
+    if ((this.props.feeModal && this.props.confirmModal) || (this.props.sendModal && this.props.alert === false && this.props.feeModal === false)) {
       this.props.closeModal();
       setTimeout(() => {
         this.setState({
