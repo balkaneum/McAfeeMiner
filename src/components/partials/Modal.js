@@ -841,7 +841,7 @@ export default class Modal extends React.Component {
                 type="submit"
                 disabled={this.props.txBeingSent ? "disabled" : ""}
               >
-                Send
+                {this.props.txBeingSent ? "Wait" : "Send"}
               </button>
             </form>
           </div>
