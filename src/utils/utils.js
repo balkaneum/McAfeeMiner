@@ -44,6 +44,10 @@ function structureSafexKeys(spend, view) {
  * Open Send Cash Popup
  */
 function openSendPopup(target, send_cash_or_token) {
+  if (target.state.wallet.wallet_connected === false) {
+    target.setOpenAlert("No connection to daemon");
+    return false;
+  }
   target.setState({
     modal: true,
     send_modal: true,
