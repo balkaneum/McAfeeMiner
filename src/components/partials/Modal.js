@@ -715,7 +715,7 @@ export default class Modal extends React.Component {
                       "$ " + parseFloat(this.state.amount * this.props.sftPrice).toFixed(2)
                   }
                 </span>
-                <ReactTooltip place="left" id="amount-tooptip">
+                <ReactTooltip id="amount-tooptip">
                   {
                     this.props.cash_or_token === 0
                       ?
