@@ -458,6 +458,8 @@
   text-align: left;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
+  overflow: hidden;
+  white-space: nowrap;
 }
 .sendModal .btn {
   margin: 0;
