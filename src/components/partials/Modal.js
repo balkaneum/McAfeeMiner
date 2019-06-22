@@ -699,37 +699,39 @@ export default class Modal extends React.Component {
                   type="number"
                   onChange={this.inputOnChange.bind(this, "amount")}
                 />
-                {this.props.send_cash_or_token === 0 ? (
-                  <div
-                    data-tip
-                    data-for="cash-amount-tooptip"
-                    className="button-shine question-wrap"
-                  >
-                    <span>?</span>
-                  </div>
-                ) : (
-                  <div
-                    data-tip
-                    data-for="token-amount-tooptip"
-                    className="button-shine question-wrap"
-                  >
-                    <span>?</span>
-                  </div>
-                )}
-                <ReactTooltip id="cash-amount-tooptip">
-                  <p>
-                    <span className="yellow-text">Safex Cash fee</span> will be
-                    added to sending amount.
-                  </p>
-                </ReactTooltip>
-                <ReactTooltip id="token-amount-tooptip">
-                  <p className="mb-10">
-                    Token transaction does not accept decimal values.
-                  </p>
-                  <p>
-                    Token transaction requires{" "}
-                    <span className="yellow-text">Safex Cash fee</span>.
-                  </p>
+                <div
+                  data-tip
+                  data-for="amount-tooptip"
+                  className="button-shine question-wrap"
+                >
+                  <span>?</span>
+                </div>
+                <span id="dollarAmount">
+                  { 
+                    this.props.send_cash_or_token === 0
+                    ?
+                      "$ " + parseFloat(this.state.amount * this.props.sfxPrice).toFixed(2)
+                    :
+                      "$ " + parseFloat(this.state.amount * this.props.sftPrice).toFixed(2)
+                  }
+                </span>
+                <ReactTooltip place="left" id="amount-tooptip">
+                  {
+                    this.props.cash_or_token === 0
+                      ?
+                      <p>
+                        <span className="yellow-text">Safex Cash fee</span> will be added to sending amount.
+                      </p>
+                      :
+                      <div>
+                        <p className="mb-10">
+                          Token transaction does not accept decimal values.
+                        </p>
+                        <p>
+                          Token transaction requires <span className="yellow-text">Safex Cash fee</span>.
+                        </p>
+                      </div>
+                  }
                 </ReactTooltip>
               </div>
 

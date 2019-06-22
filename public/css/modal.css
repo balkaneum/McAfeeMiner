@@ -448,6 +448,17 @@
   width: 200px;
   text-align: left;
 }
+.sendModal #dollarAmount {
+  position: absolute;
+  right: 54px;
+  width: 150px;
+  background: rgba(255, 255, 255, .3);
+  line-height: 1;
+  padding: 7px 10px;
+  text-align: left;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
 .sendModal .btn {
   margin: 0;
 }
