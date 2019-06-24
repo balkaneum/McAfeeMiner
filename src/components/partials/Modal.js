@@ -924,35 +924,73 @@ export default class Modal extends React.Component {
             </span>
           )}
           <div className="mainAlertPopupInner">
-            <p>
-              <span className="left-span">Sending amount:</span>
-              <span>
-                {parseFloat(this.state.amount).toFixed(2)} SFX ($
-                {parseFloat(this.state.amount * this.props.sfxPrice).toFixed(3)}
-                )
-              </span>
-            </p>
-            <p>
-              <span className="left-span">Approximate transaction fee:</span>
-              <span>
-                {this.props.fee} SFX ($
-                {parseFloat(this.props.fee * this.props.sfxPrice).toFixed(3)})
-              </span>
-            </p>
-            <p className="mb-10">
-              <span className="left-span">Total amount:</span>
-              <span>
-                {parseFloat(
-                  parseFloat(this.state.amount) + parseFloat(this.props.fee)
-                ).toFixed(2)}{" "}
-                SFX ($
-                {parseFloat(
-                  (parseFloat(this.state.amount) + parseFloat(this.props.fee)) *
-                    this.props.sfxPrice
-                ).toFixed(3)}
-                )
-              </span>
-            </p>
+            {
+              this.props.send_cash_or_token === 0
+              ?
+                <div>
+                  <p>
+                    <span className="left-span">Sending amount:</span>
+                    <span>
+                      {parseFloat(this.state.amount).toFixed(2)} SFX ($
+                      {parseFloat(this.state.amount * this.props.sfxPrice).toFixed(3)}
+                      )
+                    </span>
+                  </p>
+                  <p>
+                    <span className="left-span">Approximate transaction fee:</span>
+                    <span>
+                      {this.props.fee} SFX ($
+                       {parseFloat(this.props.fee * this.props.sfxPrice).toFixed(3)})
+                    </span>
+                  </p>
+                  <p className="mb-10">
+                    <span className="left-span">Total amount:</span>
+                    <span>
+                      {parseFloat(
+                        parseFloat(this.state.amount) + parseFloat(this.props.fee)
+                      ).toFixed(2)}{" "}
+                      SFX ($
+                      {parseFloat(
+                        (parseFloat(this.state.amount) + parseFloat(this.props.fee)) *
+                        this.props.sfxPrice
+                      ).toFixed(3)}
+                      )
+                    </span>
+                  </p>
+                </div>
+              : 
+                <div>
+                  <p>
+                    <span className="left-span">Sending amount:</span>
+                    <span>
+                      {parseFloat(this.state.amount).toFixed(2)} SFT ($
+                      {parseFloat(this.state.amount * this.props.sftPrice).toFixed(3)}
+                      )
+                    </span>
+                  </p>
+                  <p>
+                    <span className="left-span">Approximate transaction fee:</span>
+                    <span>
+                      {this.props.fee} SFX ($
+                       {parseFloat(this.props.fee * this.props.sfxPrice).toFixed(3)})
+                    </span>
+                  </p>
+                  <p className="mb-10">
+                    <span className="left-span">Total amount:</span>
+                    <span>
+                      {parseFloat(this.state.amount) + 
+                        " SFT + " + this.props.fee + 
+                        " SFX " + 
+                        " ($" + 
+                        parseFloat(
+                        ((parseFloat(this.state.amount) + parseFloat(this.props.fee)) *
+                        this.props.sftPrice) + + parseFloat(this.props.fee * this.props.sfxPrice)
+                      ).toFixed(3) + ")"}
+                    </span>
+                  </p>
+                </div>
+            }
+            
             <p>Are you sure you want to proceed with this transaction?</p>
 
             <form onSubmit={this.props.commitTx}>
