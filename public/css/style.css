@@ -35,6 +35,9 @@
   font-style: normal;
 }
 
+.mb-10 {
+  margin-bottom: 10px !important;
+}
 img {
   -webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none; /* Safari */
@@ -71,7 +74,7 @@ body img {
   background-color: rgba(0, 0, 0, 0.95) !important;
   border: 1px solid #dfc983;
   padding: 10px 21px 8px;
-  opacity: 1;
+  opacity: 1 !important;
 }
 .__react_component_tooltip.type-dark.place-top:after {
   border-top-color: #dfc983 !important;
@@ -104,9 +107,9 @@ body img {
   word-break: break-word;
   width: 470px;
 }
-.__react_component_tooltip .mb-10 {
+/* .__react_component_tooltip .mb-10 {
   margin-bottom: 10px !important;
-}
+} */
 .__react_component_tooltip.type-dark.place-top:after {
   border-top-color: rgba(0, 0, 0, 0.95);
 }

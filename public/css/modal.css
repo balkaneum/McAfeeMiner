@@ -247,6 +247,7 @@
   font-size: 14px;
   line-height: 1.2;
   margin-right: 15px;
+  text-transform: initial;
 }
 .modal #new-wallet {
   margin-bottom: 10px;
@@ -450,9 +451,9 @@
 }
 .sendModal #dollarAmount {
   position: absolute;
-  right: 54px;
+  right: 50px;
   width: 150px;
-  background: rgba(255, 255, 255, .3);
+  background: rgba(255, 255, 255, 0.3);
   line-height: 1;
   padding: 7px 10px;
   text-align: left;
@@ -465,7 +466,7 @@
   margin: 0;
 }
 .sendModal input {
-  width: 65%;
+  width: calc(65% + 4px);
   margin: 0;
   text-align: left;
 }
@@ -475,7 +476,7 @@
   margin: 0;
 }
 .sendModal textarea {
-  width: calc(100% - 200px);
+  width: calc(100% - 250px);
   margin: 0;
   text-align: left;
 }
@@ -484,6 +485,9 @@
 .sendModal input:focus {
   -webkit-box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
   box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
+}
+.sendModal #amount {
+  padding: 5px 160px 5px 10px;
 }
 .sendModal .form-group .question-wrap {
   position: absolute;
@@ -539,7 +543,7 @@
   background: url(../images/input-bg.png) repeat-y top left;
   background-size: 100% 100%;
   font-family: "Avenir", Helvetica, Arial, sans-serif;
-  width: 65%;
+  width: calc(65% + 5px);
   left: 200px;
   top: 0;
   text-align-last: left;
@@ -587,6 +591,22 @@
   /* IE 10+ */
   text-align: left;
 }
+.sendModal .advancedOptionsWrap {
+  opacity: 1;
+  display: block !important;
+}
+.sendModal .advancedOptionsWrap.hidden {
+  opacity: 0.4;
+  pointer-events: none;
+}
+.sendModal #advancedOptions {
+  position: absolute;
+  right: 0;
+  padding: 6px 6px;
+}
+.sendModal #advancedOptions img {
+  max-height: 16px;
+}
 
 /* Fee Modal */
 .feeModal form {
@@ -596,6 +616,20 @@
   font-size: 16px;
   text-transform: initial;
   margin-bottom: 0;
+  /* display: flex; */
+  width: 100%;
+  text-align: center;
+}
+.feeModal p span {
+  display: inline-block;
+  width: 330px;
+  text-align: left;
+}
+.feeModal p .left-span {
+  width: 300px !important;
+  text-align: right;
+  margin-right: 10px;
+  margin-left: 45px;
 }
 .feeModal h6 {
   text-transform: initial;

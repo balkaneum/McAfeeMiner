@@ -20,7 +20,8 @@ export default class Modal extends React.Component {
       destination_address: "",
       amount: "",
       mixin: 6,
-      paymentid: ""
+      paymentid: "",
+      advancedOptions: false
     };
   }
 
@@ -82,7 +83,12 @@ export default class Modal extends React.Component {
   };
 
   closeModals = () => {
-    if ((this.props.feeModal && this.props.confirmModal) || (this.props.sendModal && this.props.alert === false && this.props.feeModal === false)) {
+    if (
+      (this.props.feeModal && this.props.confirmModal) ||
+      (this.props.sendModal &&
+        this.props.alert === false &&
+        this.props.feeModal === false)
+    ) {
       this.props.closeModal();
       setTimeout(() => {
         this.setState({
@@ -96,6 +102,12 @@ export default class Modal extends React.Component {
     } else {
       this.props.closeModal();
     }
+  };
+
+  toggleAdvancedOptions = () => {
+    this.setState({
+      advancedOptions: !this.state.advancedOptions
+    });
   };
 
   render() {
@@ -688,6 +700,19 @@ export default class Modal extends React.Component {
                     "destination_address"
                   )}
                 />
+                <button
+                  className="btn button-shine"
+                  id="advancedOptions"
+                  type="button"
+                  onClick={this.toggleAdvancedOptions}
+                  data-tip
+                  data-for="advanced-options-tooptip"
+                >
+                  <img src="images/gears.png" alt="gears" />
+                </button>
+                <ReactTooltip id="advanced-options-tooptip">
+                  <p>Advanced options</p>
+                </ReactTooltip>
               </div>
 
               <div className="form-group">
@@ -697,6 +722,7 @@ export default class Modal extends React.Component {
                   placeholder="Enter Amount"
                   value={this.state.amount}
                   type="number"
+                  id="amount"
                   onChange={this.inputOnChange.bind(this, "amount")}
                 />
                 <div
@@ -707,89 +733,122 @@ export default class Modal extends React.Component {
                   <span>?</span>
                 </div>
                 <span id="dollarAmount">
-                  { 
-                    this.props.send_cash_or_token === 0
-                    ?
-                      "$ " + parseFloat(this.state.amount * this.props.sfxPrice).toFixed(2)
-                    :
-                      "$ " + parseFloat(this.state.amount * this.props.sftPrice).toFixed(2)
-                  }
+                  {this.props.send_cash_or_token === 0
+                    ? "$ " +
+                      parseFloat(
+                        this.state.amount * this.props.sfxPrice
+                      ).toFixed(2)
+                    : "$ " +
+                      parseFloat(
+                        this.state.amount * this.props.sftPrice
+                      ).toFixed(2)}
                 </span>
                 <ReactTooltip id="amount-tooptip">
-                  {
-                    this.props.cash_or_token === 0
-                      ?
-                      <p>
-                        <span className="yellow-text">Safex Cash fee</span> will be added to sending amount.
+                  {this.props.cash_or_token === 0 ? (
+                    <p>
+                      <span className="yellow-text">Safex Cash fee</span> will
+                      be added to sending amount.
+                    </p>
+                  ) : (
+                    <div>
+                      <p className="mb-10">
+                        Token transaction does not accept decimal values.
                       </p>
-                      :
-                      <div>
-                        <p className="mb-10">
-                          Token transaction does not accept decimal values.
-                        </p>
-                        <p>
-                          Token transaction requires <span className="yellow-text">Safex Cash fee</span>.
-                        </p>
-                      </div>
-                  }
+                      <p>
+                        Token transaction requires{" "}
+                        <span className="yellow-text">Safex Cash fee</span>.
+                      </p>
+                    </div>
+                  )}
                 </ReactTooltip>
               </div>
 
-              <div className="form-group">
-                <label id="mixin-label" htmlFor="mixin">
-                  Transaction Mixin (Optional)
-                </label>
-                <select
-                  name="mixin"
-                  value={this.state.mixin}
-                  onChange={this.inputOnChange.bind(this, "mixin")}
-                >
-                  {mixinArray}
-                </select>
-                <div
-                  data-tip
-                  data-for="mixin-tooptip"
-                  className="button-shine question-wrap"
-                  id="mixin-question-wrap"
-                >
-                  <span>?</span>
+              <div
+                className={
+                  this.state.advancedOptions
+                    ? "advancedOptionsWrap"
+                    : "advancedOptionsWrap hidden"
+                }
+              >
+                <div className="form-group">
+                  <label id="mixin-label" htmlFor="mixin">
+                    Transaction Mixin (Optional)
+                  </label>
+                  <select
+                    name="mixin"
+                    value={this.state.mixin}
+                    onChange={this.inputOnChange.bind(this, "mixin")}
+                  >
+                    {mixinArray}
+                  </select>
+                  <div
+                    data-tip
+                    data-for="mixin-tooptip"
+                    className="button-shine question-wrap"
+                    id="mixin-question-wrap"
+                  >
+                    <span>?</span>
+                  </div>
+                  <ReactTooltip id="mixin-tooptip">
+                    <p>
+                      <span className="yellow-text">Transaction Mixin</span>{" "}
+                      determines how many outputs transaction is going to have.
+                    </p>
+                    <p>
+                      Lower mixin will result in smaller fees. For large
+                      transactions we recommend
+                    </p>
+                    <p className="mb-10">
+                      lowering the transaction mixin. Default network mixin is{" "}
+                      <span className="yellow-text">6</span>.
+                    </p>
+                    <p className="yellow-text">
+                      *Consistent use of low ring sizes may affect your
+                      traceability.
+                    </p>
+                  </ReactTooltip>
                 </div>
-                <ReactTooltip id="mixin-tooptip">
-                  <p>
-                    <span className="yellow-text">Transaction Mixin</span>{" "}
-                    determines how many outputs transaction is going to have.
-                  </p>
-                  <p>
-                    Lower mixin will result in smaller fees. For large
-                    transactions we recommend
-                  </p>
-                  <p className="mb-10">
-                    lowering the transaction mixin. Default network mixin is{" "}
-                    <span className="yellow-text">6</span>.
-                  </p>
-                  <p className="yellow-text">
-                    *Consistent use of low ring sizes may affect your
-                    traceability.
-                  </p>
-                </ReactTooltip>
-              </div>
 
-              <div className="form-group">
-                <label htmlFor="paymentid">Payment ID (Optional)</label>
-                <input
-                  name="paymentid"
-                  placeholder="Enter Payment ID"
-                  value={this.state.paymentid}
-                  onChange={this.inputOnChange.bind(this, "paymentid")}
-                />
-                <div
-                  data-tip
-                  data-for="paymentid-tooptip"
-                  className="button-shine question-wrap"
-                >
-                  <span>?</span>
+                <div className="form-group">
+                  <label htmlFor="paymentid">Payment ID (Optional)</label>
+                  <input
+                    name="paymentid"
+                    placeholder="Enter Payment ID"
+                    value={this.state.paymentid}
+                    onChange={this.inputOnChange.bind(this, "paymentid")}
+                  />
+                  <div
+                    data-tip
+                    data-for="paymentid-tooptip"
+                    className="button-shine question-wrap"
+                  >
+                    <span>?</span>
+                  </div>
+                  <ReactTooltip id="paymentid-tooptip">
+                    <p>
+                      <span className="yellow-text">Payment ID</span> is
+                      additional reference number attached to the transaction.
+                    </p>
+                    <p>
+                      It is given by exchanges and web shops to differentiate
+                      and track
+                    </p>
+                    <p className="mb-10">particular deposits and purchases.</p>
+                    <p className="mb-10">
+                      <span className="yellow-text">Payment ID</span> format
+                      should be{" "}
+                      <span className="yellow-text">16 or 64 digit Hex</span>{" "}
+                      character string.
+                    </p>
+                    <p>
+                      Payment ID is{" "}
+                      <span className="yellow-text">not required</span> for
+                      regular user transactions.
+                    </p>
+                  </ReactTooltip>
                 </div>
-                <ReactTooltip id="paymentid-tooptip">
+
+                <ReactTooltip id="payment-tooptip">
                   <p>
                     <span className="yellow-text">Payment ID</span> is
                     additional reference number attached to the transaction.
@@ -799,7 +858,7 @@ export default class Modal extends React.Component {
                     track
                   </p>
                   <p className="mb-10">particular deposits and purchases.</p>
-                  <p className="mb-10">
+                  <p>
                     <span className="yellow-text">Payment ID</span> format
                     should be{" "}
                     <span className="yellow-text">16 or 64 digit Hex</span>{" "}
@@ -812,28 +871,6 @@ export default class Modal extends React.Component {
                   </p>
                 </ReactTooltip>
               </div>
-
-              <ReactTooltip id="payment-tooptip">
-                <p>
-                  <span className="yellow-text">Payment ID</span> is additional
-                  reference number attached to the transaction.
-                </p>
-                <p>
-                  It is given by exchanges and web shops to differentiate and
-                  track
-                </p>
-                <p className="mb-10">particular deposits and purchases.</p>
-                <p>
-                  <span className="yellow-text">Payment ID</span> format should
-                  be <span className="yellow-text">16 or 64 digit Hex</span>{" "}
-                  character string.
-                </p>
-                <p>
-                  Payment ID is{" "}
-                  <span className="yellow-text">not required</span> for regular
-                  user transactions.
-                </p>
-              </ReactTooltip>
 
               <button
                 className="btn button-shine"
@@ -859,8 +896,33 @@ export default class Modal extends React.Component {
           )}
           <div className="mainAlertPopupInner">
             <p>
-              Your approximate transaction fee is: {this.props.fee} SFX ($
-              {parseFloat(this.props.fee * this.props.sfxPrice).toFixed(4)})
+              <span className="left-span">Sending amount:</span>
+              <span>
+                {parseFloat(this.state.amount).toFixed(2)} SFX ($
+                {parseFloat(this.state.amount * this.props.sfxPrice).toFixed(3)}
+                )
+              </span>
+            </p>
+            <p>
+              <span className="left-span">Approximate transaction fee:</span>
+              <span>
+                {this.props.fee} SFX ($
+                {parseFloat(this.props.fee * this.props.sfxPrice).toFixed(3)})
+              </span>
+            </p>
+            <p className="mb-10">
+              <span className="left-span">Total amount:</span>
+              <span>
+                {parseFloat(
+                  parseFloat(this.state.amount) + parseFloat(this.props.fee)
+                ).toFixed(2)}{" "}
+                SFX ($
+                {parseFloat(
+                  (parseFloat(this.state.amount) + parseFloat(this.props.fee)) *
+                    this.props.sfxPrice
+                ).toFixed(3)}
+                )
+              </span>
             </p>
             <p>Are you sure you want to proceed with this transaction?</p>
 
