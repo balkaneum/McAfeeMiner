@@ -92,7 +92,6 @@ export default class Modal extends React.Component {
       this.props.closeModal();
       setTimeout(() => {
         this.setState({
-          password: "",
           destination_address: "",
           amount: "",
           mixin: 6,
@@ -101,6 +100,11 @@ export default class Modal extends React.Component {
       }, 300);
     } else {
       this.props.closeModal();
+      setTimeout(() => {
+        this.setState({
+          password: ""
+        });
+      }, 300);
     }
   };
 
@@ -108,6 +112,15 @@ export default class Modal extends React.Component {
     this.setState({
       advancedOptions: !this.state.advancedOptions
     });
+  };
+
+  onCopy = () => {
+    this.setState({
+      copied: true
+    });
+    setTimeout(() => {
+      this.setState({ copied: false });
+    }, 3000);
   };
 
   render() {
@@ -151,60 +164,76 @@ export default class Modal extends React.Component {
               }
               readOnly
             />
-            <div
-              className={
-                this.state.new_wallet_generated
-                  ? "spendview active"
-                  : "spendview"
-              }
+          </div>
+
+          <div
+            className={
+              this.state.new_wallet_generated ? "spendview active" : "spendview"
+            }
+          >
+            <CopyToClipboard
+              text={this.state.new_wallet}
+              onCopy={this.onCopy}
+              className="button-shine copy-btn"
+              disabled={this.state.new_wallet === "" ? "disabled" : ""}
             >
+              <button>Copy Address</button>
+            </CopyToClipboard>
+            {this.state.exported ? (
+              <h5 className="warning green">
+                Wallet keys have been successfuly saved. Please do not share
+                your keys with others and keep them safe at all times. Good
+                luck!
+              </h5>
+            ) : (
+              <h5 className="warning red">
+                The following keys are to control your coins, do not share them.
+                Keep your keys for yourself only! Before you proceed to mine
+                please save your keys now.
+              </h5>
+            )}
+            <label htmlFor="sec-spendkey">
+              Secret Spenkey
               <CopyToClipboard
-                text={this.state.new_wallet}
-                onCopy={() => this.setState({ copied: true })}
+                text={this.state.spendkey_sec}
+                onCopy={this.onCopy}
                 className="button-shine copy-btn"
-                disabled={this.state.new_wallet === "" ? "disabled" : ""}
               >
-                <button>
-                  {this.state.copied ? "Copied Address" : "Copy Address"}
-                </button>
+                <button>Copy</button>
               </CopyToClipboard>
-              {this.state.exported ? (
-                <h5 className="warning green">
-                  Wallet keys have been successfuly saved. Please do not share
-                  your keys with others and keep them safe at all times. Good
-                  luck!
-                </h5>
-              ) : (
-                <h5 className="warning red">
-                  The following keys are to control your coins, do not share
-                  them. Keep your keys for yourself only! Before you proceed to
-                  mine please save your keys now.
-                </h5>
-              )}
-              <label htmlFor="sec-spendkey">Secret Spenkey</label>
-              <input
-                type="text"
-                name="sec-spendkey"
-                value={this.state.spendkey_sec}
-              />
-              <label htmlFor="sec-spendkey">Secret Viewkey</label>
-              <input
-                type="text"
-                name="sec-spendkey"
-                value={this.state.viewkey_sec}
-              />
-              <button
-                className={this.state.exported ? "save-btn green" : "save-btn"}
-                onClick={this.exportWallet}
+            </label>
+            <input
+              type="text"
+              name="sec-spendkey"
+              id="sec-spendkey"
+              value={this.state.spendkey_sec}
+              readOnly
+            />
+            <label htmlFor="sec-spendkey">
+              Secret Viewkey
+              <CopyToClipboard
+                text={this.state.viewkey_sec}
+                onCopy={this.onCopy}
+                className="button-shine copy-btn"
               >
-                <span>
-                  {" "}
-                  {this.state.exported
-                    ? "Wallet Keys Saved"
-                    : "Save Wallet Keys"}
-                </span>
-              </button>
-            </div>
+                <button>Copy</button>
+              </CopyToClipboard>
+            </label>
+            <input
+              type="text"
+              name="sec-spendkey"
+              value={this.state.viewkey_sec}
+              readOnly
+            />
+            <button
+              className={this.state.exported ? "save-btn green" : "save-btn"}
+              onClick={this.exportWallet}
+            >
+              <span>
+                {" "}
+                {this.state.exported ? "Wallet Keys Saved" : "Save Wallet Keys"}
+              </span>
+            </button>
           </div>
         </div>
       );
@@ -1004,6 +1033,9 @@ export default class Modal extends React.Component {
       <div>
         <div className={"modal" + addClass(this.props.modal, "active")}>
           {modal}
+        </div>
+        <div className={this.state.copied ? "copiedWrap active" : "copiedWrap"}>
+          <p>Copied to clipboard</p>
         </div>
         <div
           className={"backdrop" + addClass(this.props.modal, "active")}

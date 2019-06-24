@@ -230,7 +230,8 @@ function closeAllModals(target) {
       confirm_modal: false,
       fee_modal: false,
       alert: false,
-      alert_close_disabled: false
+      alert_close_disabled: false,
+      filepath: "N/A"
     });
   }, 300);
 }

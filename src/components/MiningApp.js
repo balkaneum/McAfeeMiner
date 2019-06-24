@@ -36,19 +36,15 @@ const { dialog } = window.require("electron").remote;
 export default class MiningApp extends React.Component {
   constructor(props) {
     super(props);
-    if (process.env.NODE_ENV === "development") {
-      this.pools_list = [
-        "mcafee.safex.io:1111",
-        "pool.safexnews.net:1111",
-        "safex.cool-pool.net:3333",
-        "safex.cryptominingpools.net:3333",
-        "minesfx.com:1111",
-        "safex.luckypool.io:3366",
-        "safex.xmining.pro:3333"
-      ];
-    } else {
-      this.pools_list = ["mcafee.safex.io:1111", "pool.safexnews.net:1111"];
-    }
+    this.pools_list = [
+      "mcafee.safex.io:1111",
+      "pool.safexnews.net:1111",
+      "safex.cool-pool.net:3333",
+      "safex.cryptominingpools.net:3333",
+      "minesfx.com:1111",
+      "safex.luckypool.io:3366",
+      "safex.xmining.pro:3333"
+    ];
     this.state = {
       //mining settings
       active: false,
@@ -290,20 +286,20 @@ export default class MiningApp extends React.Component {
       this.setOpenAlert("Enter valid amount");
       return false;
     }
-    // if (
-    //   process.env.NODE_ENV !== "development" &&
-    //   !safex.addressValid(sendingAddress, "mainnet")
-    // ) {
-    //   this.setOpenAlert("Enter valid Safex address");
-    //   return false;
-    // }
-    // if (
-    //   process.env.NODE_ENV === "development" &&
-    //   !safex.addressValid(sendingAddress, "testnet")
-    // ) {
-    //   this.setOpenAlert("Enter valid Safex address");
-    //   return false;
-    // }
+    if (
+      process.env.NODE_ENV !== "development" &&
+      !safex.addressValid(sendingAddress, "mainnet")
+    ) {
+      this.setOpenAlert("Enter valid Safex address");
+      return false;
+    }
+    if (
+      process.env.NODE_ENV === "development" &&
+      !safex.addressValid(sendingAddress, "testnet")
+    ) {
+      this.setOpenAlert("Enter valid Safex address");
+      return false;
+    }
     if (
       (send_cash_or_token === 0 &&
         parseFloat(e.target.amount.value) + parseFloat(0.1) >
