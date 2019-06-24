@@ -478,7 +478,7 @@
 .sendModal #dollarAmount {
   position: absolute;
   right: 50px;
-  width: 150px;
+  width: 200px;
   background: rgba(255, 255, 255, 0.3);
   line-height: 1;
   padding: 7px 10px;
@@ -513,7 +513,7 @@
   box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
 }
 .sendModal #amount {
-  padding: 5px 160px 5px 10px;
+  padding: 5px 210px 5px 10px;
 }
 .sendModal .form-group .question-wrap {
   position: absolute;
@@ -642,7 +642,6 @@
   font-size: 16px;
   text-transform: initial;
   margin-bottom: 0;
-  /* display: flex; */
   width: 100%;
   text-align: center;
 }

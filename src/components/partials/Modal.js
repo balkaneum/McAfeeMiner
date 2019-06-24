@@ -807,6 +807,7 @@ export default class Modal extends React.Component {
                     name="mixin"
                     value={this.state.mixin}
                     onChange={this.inputOnChange.bind(this, "mixin")}
+                    disabled={this.state.advancedOptions ? "" : "disabled"}
                   >
                     {mixinArray}
                   </select>
@@ -845,6 +846,7 @@ export default class Modal extends React.Component {
                     placeholder="Enter Payment ID"
                     value={this.state.paymentid}
                     onChange={this.inputOnChange.bind(this, "paymentid")}
+                    disabled={this.state.advancedOptions ? "" : "disabled"}
                   />
                   <div
                     data-tip
