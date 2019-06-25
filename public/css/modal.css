@@ -358,17 +358,21 @@
 }
 
 /* New Wallet Modal */
-.newWalletModal .spendview label {
-  text-transform: uppercase;
+.newWalletModal .label-wrap {
   position: relative;
 }
-.newWalletModal .spendview label button {
+.newWalletModal .label-wrap .copy-btn {
   position: absolute;
   right: 0;
   top: -10px;
   padding: 6px 9px 5px;
   font-size: 10px;
   letter-spacing: 1.1px;
+}
+.newWalletModal .spendview label {
+  text-transform: uppercase;
+  position: relative;
+  width: initial;
 }
 .newWalletModal input {
   text-align: center;

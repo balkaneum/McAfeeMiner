@@ -286,20 +286,20 @@ export default class MiningApp extends React.Component {
       this.setOpenAlert("Enter valid amount");
       return false;
     }
-    // if (
-    //   process.env.NODE_ENV !== "development" &&
-    //   !safex.addressValid(sendingAddress, "mainnet")
-    // ) {
-    //   this.setOpenAlert("Enter valid Safex address");
-    //   return false;
-    // }
-    // if (
-    //   process.env.NODE_ENV === "development" &&
-    //   !safex.addressValid(sendingAddress, "testnet")
-    // ) {
-    //   this.setOpenAlert("Enter valid Safex address");
-    //   return false;
-    // }
+    if (
+      process.env.NODE_ENV !== "development" &&
+      !safex.addressValid(sendingAddress, "mainnet")
+    ) {
+      this.setOpenAlert("Enter valid Safex address");
+      return false;
+    }
+    if (
+      process.env.NODE_ENV === "development" &&
+      !safex.addressValid(sendingAddress, "testnet")
+    ) {
+      this.setOpenAlert("Enter valid Safex address");
+      return false;
+    }
     if (
       (send_cash_or_token === 0 &&
         parseFloat(e.target.amount.value) + parseFloat(0.1) >
