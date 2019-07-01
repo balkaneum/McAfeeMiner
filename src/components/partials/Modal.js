@@ -583,11 +583,6 @@ export default class Modal extends React.Component {
                     <span className="yellow-text">Safex Cash (SFX)</span> or{" "}
                     <span className="yellow-text">Safex Tokens (SFT)</span>.
                   </p>
-                  <p>
-                    This is address where all your{" "}
-                    <span className="yellow-text">Safex Cash (SFX)</span> you
-                    mined will be available.
-                  </p>
                 </ReactTooltip>
               </div>
 
