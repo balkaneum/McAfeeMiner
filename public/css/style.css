@@ -107,9 +107,6 @@ body img {
   word-break: break-word;
   width: 470px;
 }
-/* .__react_component_tooltip .mb-10 {
-  margin-bottom: 10px !important;
-} */
 .__react_component_tooltip.type-dark.place-top:after {
   border-top-color: rgba(0, 0, 0, 0.95);
 }

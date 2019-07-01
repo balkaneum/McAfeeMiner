@@ -501,7 +501,7 @@ export default class Modal extends React.Component {
           {this.props.walletLoaded ? (
             <div className="wallet-exists">
               <div className="btns-wrap">
-                <button
+                <div
                   className={`signal ${
                     this.props.wallet.wallet_connected ? "connected" : ""
                   }`}
@@ -516,18 +516,18 @@ export default class Modal extends React.Component {
                         : "Connection error"}
                     </span>
                   </p>
-                </button>
+                </div>
                 <ReactTooltip place="right" id="status-tooltip">
                   <p>Status</p>
                 </ReactTooltip>
-                <button
+                <div
                   className="blockheight"
                   data-tip
                   data-for="blockchain-tooltip"
                 >
                   <img src="images/blocks.png" alt="blocks" />
                   <span>{this.props.wallet.blockchain_height}</span>
-                </button>
+                </div>
                 <ReactTooltip id="blockchain-tooltip">
                   <p>Blockchain Height</p>
                 </ReactTooltip>
@@ -725,7 +725,7 @@ export default class Modal extends React.Component {
                   )}
                 />
                 <button
-                  className="btn button-shine"
+                  className={this.props.txBeingSent ? "btn button-shine disabled" : ""}
                   id="advancedOptions"
                   type="button"
                   onClick={this.toggleAdvancedOptions}
@@ -766,6 +766,15 @@ export default class Modal extends React.Component {
                       parseFloat(
                         this.state.amount * this.props.sftPrice
                       ).toFixed(2)}
+                </span>
+                <span id="amount-span">
+                  {
+                    this.props.send_cash_or_token === 0
+                      ?
+                      "SFX"
+                      :
+                      "SFT"
+                  }
                 </span>
                 <ReactTooltip id="amount-tooptip">
                   {this.props.cash_or_token === 0 ? (
@@ -1033,7 +1042,7 @@ export default class Modal extends React.Component {
               </button>
             </form>
             <h6>
-              Due to the way Safex blockchain works, part or all of your
+              *Due to the way Safex blockchain works, part or all of your
               remaining balance after a transaction may go into pending status
               for a short period of time. This is normal and status will become
               available after 10 blocks.

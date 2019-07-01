@@ -482,7 +482,7 @@
 .sendModal #dollarAmount {
   position: absolute;
   right: 50px;
-  width: 200px;
+  width: 250px;
   background: rgba(255, 255, 255, 0.3);
   line-height: 1;
   padding: 7px 10px;
@@ -491,6 +491,14 @@
   border-bottom-right-radius: 5px;
   overflow: hidden;
   white-space: nowrap;
+}
+.sendModal #amount-span {
+  background: rgba(255, 255, 255, 0.3);
+  position: absolute;
+  left: 200px;
+  padding: 4px 10px 2px 10px;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
 }
 .sendModal .btn {
   margin: 0;
@@ -517,7 +525,7 @@
   box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
 }
 .sendModal #amount {
-  padding: 5px 210px 5px 10px;
+  padding: 6px 260px 4px 55px;
 }
 .sendModal .form-group .question-wrap {
   position: absolute;
@@ -633,6 +641,9 @@
   position: absolute;
   right: 0;
   padding: 6px 6px;
+}
+.sendModal #advancedOptions.disabled {
+  pointer-events: none;
 }
 .sendModal #advancedOptions img {
   max-height: 16px;
