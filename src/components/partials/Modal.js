@@ -106,6 +106,11 @@ export default class Modal extends React.Component {
         });
       }, 300);
     }
+    if (this.props.sendModal && this.props.feeModal === false) {
+      this.setState({
+        advancedOptions: false
+      });
+    }
   };
 
   toggleAdvancedOptions = () => {
@@ -725,7 +730,9 @@ export default class Modal extends React.Component {
                   )}
                 />
                 <button
-                  className={this.props.txBeingSent ? "btn button-shine disabled" : ""}
+                  className={
+                    this.props.txBeingSent ? "btn button-shine disabled" : ""
+                  }
                   id="advancedOptions"
                   type="button"
                   onClick={this.toggleAdvancedOptions}
@@ -768,13 +775,7 @@ export default class Modal extends React.Component {
                       ).toFixed(2)}
                 </span>
                 <span id="amount-span">
-                  {
-                    this.props.send_cash_or_token === 0
-                      ?
-                      "SFX"
-                      :
-                      "SFT"
-                  }
+                  {this.props.send_cash_or_token === 0 ? "SFX" : "SFT"}
                 </span>
                 <ReactTooltip id="amount-tooptip">
                   {this.props.cash_or_token === 0 ? (
