@@ -207,6 +207,7 @@ function open_from_wallet_file(target, e) {
     "Please wait while your wallet file is loaded. Don't close the application until the process is complete. This may take a while, please be patient.",
     true
   );
+  console.log(args)
   safex
     .openWallet(args)
     .then(wallet => {

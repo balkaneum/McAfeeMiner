@@ -73,7 +73,7 @@ function rescanBalance(target) {
           console.log("Unable to store wallet: " + e);
           target.setOpenAlert("Unable to store wallet: " + e);
         });
-      wallet.on("newBlock", target.refreshCallback);
+      wallet.on("newBlock", target.startRefreshCallback);
     }, 1000);
   }, 1000);
 }
