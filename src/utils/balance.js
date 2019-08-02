@@ -49,6 +49,10 @@ function balanceCheck(target) {
 
 function rescanBalance(target) {
   let wallet = target.wallet_meta;
+  if (target.state.wallet.wallet_connected === false) {
+    target.setOpenAlert("No connection to daemon");
+    return false;
+  }
   target.setOpenAlert(
     "Rescan started. Don't close the application until the process is complete. This may take a while, please be patient. ",
     true

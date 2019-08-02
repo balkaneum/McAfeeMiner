@@ -106,16 +106,8 @@ function checkInputValueLenght(inputValue) {
  */
 function checkInputValuePrefix(inputValue) {
   let userInputValue = inputValue;
-  if (userInputValue.startsWith("SFXt") || userInputValue.startsWith("Safex")) {
-    if (
-      !userInputValue.startsWith("SFXts") ||
-      !userInputValue.startsWith("SFXti")
-    ) {
-      return true;
-    } else {
-      console.log("Suffix is invalid");
-      return false;
-    }
+  if (userInputValue.startsWith("SFXs") || userInputValue.startsWith("Safex")) {
+    return true;
   } else {
     console.log("Suffix is invalid");
     return false;

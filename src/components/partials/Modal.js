@@ -95,7 +95,8 @@ export default class Modal extends React.Component {
           destination_address: "",
           amount: "",
           mixin: 6,
-          paymentid: ""
+          paymentid: "",
+          advancedOptions: false
         });
       }, 300);
     } else {
@@ -105,11 +106,6 @@ export default class Modal extends React.Component {
           password: ""
         });
       }, 300);
-    }
-    if (this.props.sendModal && this.props.feeModal === false) {
-      this.setState({
-        advancedOptions: false
-      });
     }
   };
 
