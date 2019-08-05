@@ -75,3 +75,4 @@ package-lock.json
 release-builds/
 .new
 output_wallet_log.txt
+signing
