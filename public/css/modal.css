@@ -580,7 +580,8 @@
   user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
 }
 .sendModal select {
-  background: url(../images/select-bg.png) no-repeat top 8px right 3px / contain;
+  background: rgba(0, 0, 0, 0.6) url(../images/select-bg.png) no-repeat top 8px
+    right 3px / contain;
   background-size: 10px;
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   width: calc(65% + 5px);
