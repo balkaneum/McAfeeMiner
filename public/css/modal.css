@@ -98,15 +98,15 @@
   display: inline-block;
   border: 0px none;
   border-bottom: 1px solid #dfc983;
-  padding: 5px 10px;
+  padding: 5px 0px;
   margin: 0;
   font-size: 15px;
   background: transparent;
   background-size: 100% 100%;
   color: #fff;
   width: 100%;
-  max-height: 100px;
-  text-align: left;
+  max-height: 103px;
+  text-align: center;
   transition: all ease 0.3s;
   -o-transition: all ease 0.3s;
   -moz-transition: all ease 0.3s;
@@ -122,8 +122,8 @@
 .modal textarea:hover,
 .modal textarea:active,
 .modal textarea:focus {
-  -webkit-box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
-  box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
+  -webkit-box-shadow: none;
+  box-shadow: none;
 }
 .modal textarea::-webkit-input-placeholder,
 .modal input::-webkit-input-placeholder {
@@ -164,7 +164,7 @@
   display: inline-block;
   border: 0px none;
   border-bottom: 1px solid #dfc983;
-  padding: 5px 10px;
+  padding: 5px 0px;
   margin: 0 0 20px;
   font-size: 15px;
   background: transparent;
@@ -180,8 +180,8 @@
 }
 .modal input:focus,
 .modal input:hover {
-  -webkit-box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
-  box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
+  -webkit-box-shadow: none;
+  box-shadow: none;
 }
 .modal #filepath {
   background: transparent;
@@ -479,7 +479,7 @@
   margin-top: 20px;
 }
 .sendModal label {
-  width: 200px;
+  width: 210px;
   text-align: left;
 }
 .sendModal #dollarAmount {
@@ -497,8 +497,8 @@
 }
 .sendModal #amount-span {
   position: absolute;
-  left: 200px;
-  padding: 4px 10px 2px 10px;
+  left: 210px;
+  padding: 4px 10px 2px 0px;
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
   border-right: 1px solid #dfc983;
@@ -507,7 +507,7 @@
   margin: 0;
 }
 .sendModal input {
-  width: calc(65% + 4px);
+  width: calc(100% - 260px);
   margin: 0;
   text-align: left;
 }
@@ -517,18 +517,18 @@
   margin: 0;
 }
 .sendModal textarea {
-  width: calc(100% - 250px);
+  width: calc(100% - 260px);
   margin: 0;
   text-align: left;
 }
 .sendModal input:hover,
 .sendModal input:active,
 .sendModal input:focus {
-  -webkit-box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
-  box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
+  -webkit-box-shadow: none;
+  box-shadow: none;
 }
 .sendModal #amount {
-  padding: 6px 260px 4px 60px;
+  padding: 6px 260px 4px 50px;
 }
 .sendModal .form-group .question-wrap {
   position: absolute;
@@ -584,8 +584,8 @@
     right 3px / contain;
   background-size: 10px;
   font-family: "Avenir", Helvetica, Arial, sans-serif;
-  width: calc(65% + 5px);
-  left: 200px;
+  width: calc(65% - 5px);
+  left: 210px;
   top: 0;
   text-align-last: left;
   border: 0px none;
@@ -596,18 +596,19 @@
   height: 31px;
   z-index: 2;
   margin: 0;
-  padding: 0 10px;
+  padding: 0;
   color: #fff;
   -webkit-appearance: none;
   -webkit-border-radius: 0px;
+  border-radius: 0px;
   transition: all ease 0.3s;
   -o-transition: all ease 0.3s;
   -moz-transition: all ease 0.3s;
   -webkit-transition: all ease 0.3s;
 }
 .sendModal select:hover {
-  -webkit-box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
-  box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
+  -webkit-box-shadow: none;
+  box-shadow: none;
 }
 .sendModal select:focus {
   outline: 0px none;

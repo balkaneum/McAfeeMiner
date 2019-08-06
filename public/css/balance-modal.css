@@ -244,6 +244,7 @@
 }
 .balance-modal .address-group textarea {
   width: calc(100% - 160px);
+  text-align: left;
 }
 .balance-modal .question-wrap span {
   position: relative;

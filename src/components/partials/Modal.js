@@ -10,10 +10,18 @@ export default class Modal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      new_wallet_pass: "",
+      new_wallet_repeat_pass: "",
       new_wallet: "",
       new_wallet_generated: false,
+
+      //Create Wallet From Keys
+      address: "",
       spendkey_sec: "",
       viewkey_sec: "",
+      create_from_keys_pass: "",
+      create_from_keys_repeat_pass: "",
+
       exported: false,
       instructions_lang: "english",
       password: "",
@@ -87,7 +95,10 @@ export default class Modal extends React.Component {
       (this.props.feeModal && this.props.confirmModal) ||
       (this.props.sendModal &&
         this.props.alert === false &&
-        this.props.feeModal === false)
+        this.props.feeModal === false) ||
+      (this.props.createNewWalletModal && this.props.alert) ||
+      (this.props.openCreateFromKeysModal && this.props.alert) ||
+      (this.props.openFromExistingModal && this.props.alert)
     ) {
       this.props.closeModal();
       setTimeout(() => {
@@ -99,11 +110,20 @@ export default class Modal extends React.Component {
           advancedOptions: false
         });
       }, 300);
+      console.log("reset send inputs");
     } else {
       this.props.closeModal();
+      console.log("reset password");
       setTimeout(() => {
         this.setState({
-          password: ""
+          new_wallet_pass: "",
+          new_wallet_repeat_pass: "",
+          password: "",
+          address: "",
+          spendkey_sec: "",
+          viewkey_sec: "",
+          create_from_keys_pass: "",
+          create_from_keys_repeat_pass: ""
         });
       }, 300);
     }
@@ -257,12 +277,19 @@ export default class Modal extends React.Component {
                 type="password"
                 name="pass1"
                 placeholder="Enter New Password"
+                value={this.state.new_wallet_pass}
+                onChange={this.inputOnChange.bind(this, "new_wallet_pass")}
               />
               <label htmlFor="pass1">Repeat Password</label>
               <input
                 type="password"
                 name="pass2"
                 placeholder="Enter Repeated Password"
+                value={this.state.new_wallet_repeat_pass}
+                onChange={this.inputOnChange.bind(
+                  this,
+                  "new_wallet_repeat_pass"
+                )}
               />
               <button type="submit" className="button-shine new-wallet-btn">
                 Create New Wallet
@@ -335,23 +362,53 @@ export default class Modal extends React.Component {
               <div className="form-wrap">
                 <div className="form-group">
                   <label htmlFor="address">Safex Address</label>
-                  <textarea name="address" placeholder="Address" rows="5" />
+                  <textarea
+                    name="address"
+                    placeholder="Enter Address"
+                    rows="5"
+                    value={this.state.address}
+                    onChange={this.inputOnChange.bind(this, "address")}
+                  />
                 </div>
                 <div className="form-group">
                   <label htmlFor="pass1">Password</label>
-                  <input type="password" name="pass1" placeholder="Password" />
+                  <input
+                    type="password"
+                    name="pass1"
+                    placeholder="Enter Password"
+                    value={this.state.create_from_keys_pass}
+                    onChange={this.inputOnChange.bind(
+                      this,
+                      "create_from_keys_pass"
+                    )}
+                  />
                   <label htmlFor="pass1">Repeat Password</label>
                   <input
                     type="password"
                     name="pass2"
-                    placeholder="Repeat Password"
+                    placeholder="Enter Repeat Password"
+                    value={this.state.create_from_keys_repeat_pass}
+                    onChange={this.inputOnChange.bind(
+                      this,
+                      "create_from_keys_repeat_pass"
+                    )}
                   />
                 </div>
               </div>
               <label htmlFor="spendkey">Secret Spend Key (Sec, Private) </label>
-              <input name="spendkey" placeholder="Secret Spendkey" />
+              <input
+                name="spendkey"
+                placeholder="Enter Secret Spendkey"
+                value={this.state.spendkey_sec}
+                onChange={this.inputOnChange.bind(this, "spendkey_sec")}
+              />
               <label htmlFor="viewkey">Secret View Key (Sec, Private)</label>
-              <input name="viewkey" placeholder="Secret Viewkey" />
+              <input
+                name="viewkey"
+                placeholder="Enter Secret Viewkey"
+                value={this.state.viewkey_sec}
+                onChange={this.inputOnChange.bind(this, "viewkey_sec")}
+              />
               <button type="submit" className="button-shine new-wallet-btn">
                 Create Wallet From Keys
               </button>
