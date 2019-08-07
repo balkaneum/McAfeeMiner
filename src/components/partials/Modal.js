@@ -14,11 +14,13 @@ export default class Modal extends React.Component {
       new_wallet_repeat_pass: "",
       new_wallet: "",
       new_wallet_generated: false,
+      spendkey_sec: "",
+      viewkey_sec: "",
 
       //Create Wallet From Keys
       address: "",
-      spendkey_sec: "",
-      viewkey_sec: "",
+      create_from_keys_viewkey: "",
+      create_from_keys_spendkey: "",
       create_from_keys_pass: "",
       create_from_keys_repeat_pass: "",
 
@@ -120,8 +122,8 @@ export default class Modal extends React.Component {
           new_wallet_repeat_pass: "",
           password: "",
           address: "",
-          spendkey_sec: "",
-          viewkey_sec: "",
+          create_from_keys_viewkey: "",
+          create_from_keys_spendkey: "",
           create_from_keys_pass: "",
           create_from_keys_repeat_pass: ""
         });
@@ -399,15 +401,21 @@ export default class Modal extends React.Component {
               <input
                 name="spendkey"
                 placeholder="Enter Secret Spendkey"
-                value={this.state.spendkey_sec}
-                onChange={this.inputOnChange.bind(this, "spendkey_sec")}
+                value={this.state.create_from_keys_spendkey}
+                onChange={this.inputOnChange.bind(
+                  this,
+                  "create_from_keys_spendkey"
+                )}
               />
               <label htmlFor="viewkey">Secret View Key (Sec, Private)</label>
               <input
                 name="viewkey"
                 placeholder="Enter Secret Viewkey"
-                value={this.state.viewkey_sec}
-                onChange={this.inputOnChange.bind(this, "viewkey_sec")}
+                value={this.state.create_from_keys_viewkey}
+                onChange={this.inputOnChange.bind(
+                  this,
+                  "create_from_keys_viewkey"
+                )}
               />
               <button type="submit" className="button-shine new-wallet-btn">
                 Create Wallet From Keys
