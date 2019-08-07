@@ -91,6 +91,7 @@ function create_new_wallet_from_keys(target, e) {
   var spend_key = e.target.spendkey.value;
   var pass1 = e.target.pass1.value;
   var pass2 = e.target.pass2.value;
+  console.log(env);
 
   if (
     safex_address === "" ||
@@ -102,15 +103,23 @@ function create_new_wallet_from_keys(target, e) {
     target.setOpenAlert("Fill out all the fields");
     return false;
   }
-  if (pass1 === "" && pass2 === "" && pass1 !== pass2) {
+  if (pass1 !== pass2) {
     target.setOpenAlert("Passwords do not match");
     return false;
   }
+  if (spend_key.length !== 64) {
+    target.setOpenAlert("Incorrect spend key");
+    return false;
+  }
+  if (view_key.length !== 64) {
+    target.setOpenAlert("Incorrect view key");
+    return false;
+  }
   if (
-    process.env.NODE_ENV !== "development" &&
+    env.NETWORK === "mainnet" &&
     verify_safex_address(spend_key, view_key, safex_address) === false
   ) {
-    target.setOpenAlert("Incorrect keys");
+    target.setOpenAlert("Incorrect keys for given address");
     return false;
   }
   dialog.showSaveDialog(filepath => {
@@ -207,7 +216,7 @@ function open_from_wallet_file(target, e) {
     "Please wait while your wallet file is loaded. Don't close the application until the process is complete. This may take a while, please be patient.",
     true
   );
-  console.log(args)
+  console.log(args);
   safex
     .openWallet(args)
     .then(wallet => {
