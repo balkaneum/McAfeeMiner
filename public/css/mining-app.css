@@ -218,7 +218,9 @@
   display: inline-block;
 }
 .main form #pool {
-  background: rgba(10, 26, 45, 0.5);
+  background: rgba(10, 26, 45, 0.5) url(../images/select-bg.png) no-repeat top
+    6px right 7px / contain;
+  background-size: 10px;
   padding: 6px 10px;
   color: #fff;
   border-radius: 8px;
