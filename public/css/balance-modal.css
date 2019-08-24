@@ -1,8 +1,6 @@
 /* Balance Modal */
 .balance-modal {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
-  width: 730px;
-  padding: 15px;
 }
 .balance-modal h3 {
   margin: 0 0 15px;
@@ -45,6 +43,11 @@
 }
 .balance-modal form button {
   margin-top: 10px;
+}
+.balance-modal form button:active,
+.balance-modal form button:focus {
+  outline: none !important;
+  color: #fff;
 }
 .balance-modal p {
   font-size: 14px;
@@ -117,7 +120,7 @@
 }
 .balance-modal .btns-wrap {
   position: absolute;
-  top: 15px;
+  top: 14px;
 }
 .balance-modal .btns-wrap button {
   padding: 7px 9px 7px;
@@ -129,14 +132,11 @@
   -moz-transition: all 0.2s ease-in;
   transition: all 0.2s ease-in;
 }
-.balance-modal .btns-wrap button:hover img {
-  -webkit-filter: grayscale(0);
-  filter: grayscale(0);
-}
 .balance-modal .btns-wrap .signal,
 .balance-modal .btns-wrap .blockheight {
   border: 0px none;
   padding: 0;
+  display: inline-block;
 }
 .balance-modal .btns-wrap .signal:hover,
 .balance-modal .btns-wrap .blockheight:hover {
@@ -144,17 +144,21 @@
   cursor: initial;
 }
 .balance-modal .btns-wrap .blockheight {
-  margin-left: 15px;
-  min-width: 75px;
+  margin-left: 10px;
+  min-width: 65px;
   text-align: left;
 }
 .balance-modal .btns-wrap .blockheight img {
   -webkit-filter: grayscale(0);
   filter: grayscale(0);
   margin-right: 8px;
+  max-height: 23px;
 }
 .balance-modal .btns-wrap .blockheight span {
   letter-spacing: 0px;
+  position: relative;
+  top: 1px;
+  font-size: 14px;
 }
 .balance-modal .btns-wrap .blockheight:hover span {
   color: #fff;
@@ -171,8 +175,17 @@
   -webkit-filter: grayscale(0);
   filter: grayscale(0);
 }
+.balance-modal .btns-wrap .signal p {
+  display: inline-block;
+  margin: 0 0 0 10px;
+  font-size: 14px;
+  position: relative;
+  top: 1px;
+  color: #fff;
+  letter-spacing: 0px;
+}
 .balance-modal .btns-wrap .refresh {
-  margin-left: 15px;
+  margin-left: 10px;
   text-align: left;
 }
 .balance-modal .btns-wrap .refresh img {
@@ -188,4 +201,66 @@
   float: left;
   margin-top: 0;
   text-align: left;
+  margin-bottom: 0;
+}
+.balance-modal .address-group {
+  display: flex;
+  align-items: center;
+  position: relative;
+  min-height: 31px;
+  margin-top: 26px;
+  margin-bottom: 16px;
+}
+.balance-modal .question-wrap {
+  position: absolute;
+  top: 8px;
+  right: 0;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #dfc983;
+  border-radius: 50%;
+  transition: all ease 0.3s;
+  -o-transition: all ease 0.3s;
+  -moz-transition: all ease 0.3s;
+  -webkit-transition: all ease 0.3s;
+}
+.balance-modal .question-wrap:hover {
+  -webkit-box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
+  box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
+  cursor: pointer;
+}
+.balance-modal .question-wrap:active {
+  -webkit-box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
+  box-shadow: 0 0 25px 0 rgba(255, 214, 22, 0.8) !important;
+}
+.balance-modal .address-group .question-wrap:focus {
+  outline: 0px none;
+}
+.balance-modal #wallet-label {
+  position: relative;
+  z-index: initial;
+  text-align: left;
+  width: 110px;
+}
+.balance-modal .address-group textarea {
+  width: calc(100% - 160px);
+  text-align: left;
+}
+.balance-modal .question-wrap span {
+  position: relative;
+  top: -7px;
+  left: -0px;
+  font-size: 19px;
+  transition: all ease 0.3s;
+  -o-transition: all ease 0.3s;
+  -moz-transition: all ease 0.3s;
+  -webkit-transition: all ease 0.3s;
+  font-family: "Atrament", Helvetica, Arial, sans-serif;
+  pointer-events: none;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
 }

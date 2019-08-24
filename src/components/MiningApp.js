@@ -1,70 +1,74 @@
-import React from 'react';
-import packageJson from "../../package";
-
-const { shell } = window.require('electron')
-const xmrigCpu = window.require('node-xmrig-cpu');
-const fileDownload = window.require('js-file-download');
-const safex = window.require('safex-nodejs-libwallet');
-const { dialog } = window.require('electron').remote;
-const path = window.require('path');
-const remote = window.require('electron').remote;
-
+import React from "react";
 import {
-  verify_safex_address,
-  openBalanceAlert,
-  closeBalanceAlert,
-  openSendCashPopup,
-  openSendTokenPopup,
-  closeSendPopup
-} from '../utils/balance';
+  refreshCallback,
+  balanceCheck,
+  rescanBalance,
+  walletData,
+  roundAmount
+} from "../utils/balance";
+import {
+  openSendPopup,
+  closeSendPopup,
+  inputValidate,
+  checkInputValueLenght,
+  checkInputValuePrefix,
+  addClass,
+  openModal,
+  closeModal,
+  closeAllModals
+} from "../utils/utils";
+import { miningStart, miningStop } from "../utils/mining";
+import {
+  create_new_wallet,
+  create_new_wallet_from_keys,
+  open_from_wallet_file
+} from "../utils/wallet";
+import Header from "./partials/Header";
+import Modal from "./partials/Modal";
+import ReactTooltip from "react-tooltip";
+import axios from "axios";
 
-import NewWalletModal from './partials/NewWalletModal';
-import BalanceAlert from './partials/BalanceAlert';
-import SendModal from './partials/SendModal';
-import CreateNewWalletModal from './partials/CreateNewWalletModal';
-import OpenExistingWalletModal from './partials/OpenExistingWalletModal';
-import CreateFromKeysModal from './partials/CreateFromKeysModal';
-import InstructionsModal from './partials/InstructionsModal';
-import ExitModal from './partials/ExitModal';
-
-// Testnet conf
-// let net = 'testnet';
-// let daemonHostPort = '192.168.1.22:29393';
-
-// Mainnet conf
-let net = 'mainnet';
-let daemonHostPort = 'rpc.safex.io:17402';
+const { shell } = window.require("electron");
+const safex = window.require("safex-nodejs-libwallet");
+const remote = window.require("electron").remote;
+const { dialog } = window.require("electron").remote;
 
 export default class MiningApp extends React.Component {
   constructor(props) {
     super(props);
-    this.miner = null;
+    this.pools_list = [
+      "mcafee.safex.io:1111",
+      "pool.safexnews.net:1111",
+      "safex.cryptominingpools.net:3333",
+      "cryptokafa.com:1111",
+      "safex.cool-pool.net:3333",
+      "minesfx.com:1111",
+      "safex.luckypool.io:3366"
+    ];
     this.state = {
       //mining settings
       active: false,
       starting: false,
       stopping: false,
-      new_wallet: '',
+      new_wallet: "",
       new_wallet_generated: false,
       exported: false,
-      hashrate: '0',
-      address: '',
-      pool_url: '',
-      pools_list: [
-        'mcafee.safex.io:1111'
-      ],
+      hashrate: "0",
+      address: "",
+      pool_url: "",
+      mining_info: "",
       jsonConfig: {
-        "algo": "cryptonight/2",
-        "api": {
-          "port": 0,
+        algo: "cryptonight/2",
+        api: {
+          port: 0,
           "access-token": null,
           "worker-id": null,
-          "ipv6": false,
-          "restricted": true
+          ipv6: false,
+          restricted: true
         },
-        "av": 0,
-        "background": false,
-        "colors": true,
+        av: 0,
+        background: false,
+        colors: true,
         "cpu-affinity": null,
         "cpu-priority": null,
         "donate-level": 5,
@@ -72,116 +76,75 @@ export default class MiningApp extends React.Component {
         "hw-aes": null,
         "log-file": null,
         "max-cpu-usage": 100,
-        "pools": [
+        pools: [
           {
-            "url": "",
-            "user": "",
-            "pass": "x",
+            url: "",
+            user: "",
+            pass: "x",
             "rig-id": null,
-            "nicehash": false,
-            "keepalive": false,
-            "variant": 1
+            nicehash: false,
+            keepalive: false,
+            variant: 1
           }
         ],
         "print-time": 60,
-        "retries": 5,
+        retries: 5,
         "retry-pause": 5,
-        "safe": false,
-        "threads": null,
+        safe: false,
+        threads: null,
         "user-agent": null,
-        "watch": false
+        watch: false
       },
 
-      //UI settings 
-      modal_active: false,
-      modal_close_disabled: false,
-      instructions_modal_active: false,
-      balance_modal_active: false,
-      balance_alert_close_disabled: false,
-      instructions_lang: 'english',
+      //UI settings
+      modal: false,
       new_wallet_modal: false,
-      exit_modal: false,
-      exiting: false,
+      create_new_wallet_modal: false,
+      create_from_keys_modal: false,
+      open_from_existing_modal: false,
+      balance_modal_active: false,
+      instructions_modal_active: false,
+      fee_modal: false,
+      confirm_modal: false,
+      alert: false,
+      alert_text: "",
+      alert_close_disabled: false,
 
       //balance settings
       balance: 0,
       unlocked_balance: 0,
       tokens: 0,
       unlocked_tokens: 0,
-      balance_wallet: '',
-      balance_view_key: '',
-      balance_spend_key: '',
-      balance_alert: false,
-      open_file_alert: false,
-      create_new_wallet_alert: false,
-      create_from_keys_alert: false,
-      balance_alert_text: '',
-      send_cash: false,
-      send_token: false,
+      sfx_price: 0,
+      sft_price: 0,
+      balance_wallet: "",
+      balance_view_key: "",
+      balance_spend_key: "",
+      send_cash_or_token: false,
       tick_handle: null,
+      tx_being_sent: false,
+      fee: 0,
 
       //wallet state settings
-      wallet: {},
-      wallet_connected: false,
-      blockchain_height: 0,
-      wallet_sync: false,
+      wallet: {
+        address: "",
+        spend_key: "",
+        view_key: "",
+        wallet_connected: "",
+        balance: 0,
+        unlocked_balance: 0,
+        tokens: 0,
+        unlocked_tokens: 0,
+        blockchain_height: 0
+      },
       wallet_being_created: false,
-      create_new_wallet_modal: false,
-      open_from_existing_modal: false,
-      create_from_keys_modal: false,
       wallet_loaded: false,
-      wallet_exists: false,
-      mining_address: '',
-      wallet_password: '',
-      wallet_path: '',
-      spend_key: '',
-      view_key: ''
+      wallet_password: "",
+      filepath: ""
     };
 
-    //mining functions
-    this.openInfoPopup = this.openInfoPopup.bind(this);
-    this.openInstructionsModal = this.openInstructionsModal.bind(this);
-    this.inputValidate = this.inputValidate.bind(this);
-    this.checkInputValueLenght = this.checkInputValueLenght.bind(this);
-    this.checkInputValuePrefix = this.checkInputValuePrefix.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.startMining = this.startMining.bind(this);
-    this.stopMining = this.stopMining.bind(this);
-    this.checkStatus = this.checkStatus.bind(this);
-    this.addressChange = this.addressChange.bind(this);
-
-    //UI functions
-    this.openNewWalletModal = this.openNewWalletModal.bind(this);
-    this.closeModal = this.closeModal.bind(this);
-    this.footerLink = this.footerLink.bind(this);
-    this.openExitModal = this.openExitModal.bind(this);
-    this.closeApp = this.closeApp.bind(this);
-
-    //balance functions
-    this.openBalanceModal = this.openBalanceModal.bind(this);
-    this.startBalanceCheck = this.startBalanceCheck.bind(this);
-    this.setOpenBalanceAlert = this.setOpenBalanceAlert.bind(this);
-    this.setCloseBalanceAlert = this.setCloseBalanceAlert.bind(this);
-    this.rescanBalance = this.rescanBalance.bind(this);
-    this.roundBalanceAmount = this.roundBalanceAmount.bind(this);
-    this.refreshCallback = this.refreshCallback.bind(this);
-    this.updatedCallback = this.updatedCallback.bind(this);
-    this.newBlockCallback = this.newBlockCallback.bind(this);
-
-    //wallet functions
-    this.browseFile = this.browseFile.bind(this);
-    this.create_new_wallet = this.create_new_wallet.bind(this);
-    this.open_from_wallet_file = this.open_from_wallet_file.bind(this);
-    this.create_new_wallet_from_keys = this.create_new_wallet_from_keys.bind(this);
-    this.setOpenSendCash = this.setOpenSendCash.bind(this);
-    this.setOpenSendTokens = this.setOpenSendTokens.bind(this);
-    this.setCloseSendPopup = this.setCloseSendPopup.bind(this);
-    this.sendCash = this.sendCash.bind(this);
-    this.sendToken = this.sendToken.bind(this);
-    this.openCreateWalletModal = this.openCreateWalletModal.bind(this);
-    this.openFromExistingModal = this.openFromExistingModal.bind(this);
-    this.openCreateFromKeysModal = this.openCreateFromKeysModal.bind(this);
-    this.closeWallet = this.closeWallet.bind(this);
+    this.wallet_meta = null;
+    this.tx = null;
   }
 
   //first step select wallet path, if exists, set password
@@ -191,805 +154,410 @@ export default class MiningApp extends React.Component {
   //create new
   //import -> keys/file
 
-  browseFile() {
-    var filename = "";
-    filename = dialog.showOpenDialog({})
-    console.log("filename " + filename);
+  browseFile = () => {
+    var filepath = "";
+    filepath = dialog.showOpenDialog({});
+    this.setState({ filepath });
+  };
 
-    this.setState(() => ({
-      wallet_path: filename,
-    }));
-  }
+  createNewWallet = e => {
+    create_new_wallet(this, e);
+  };
 
-  open_from_wallet_file(e) {
-    e.preventDefault();
-    const pass = e.target.pass.value;
-    let filename = e.target.filepath.value;
+  createNewWalletFromKeys = e => {
+    create_new_wallet_from_keys(this, e);
+  };
 
-    if (filename !== '') {
-      if (pass !== '') {
-        if (this.state.wallet_loaded) {
-          this.closeWallet();
-        }
-        if (this.state.wallet_path) {
-          this.setState({
-            modal_close_disabled: true
-          });
-          var args = {
-            'path': this.state.wallet_path,
-            'password': pass,
-            'network': net,
-            'daemonAddress': daemonHostPort,
-          }
-          this.setOpenBalanceAlert('Please wait while your wallet file is loaded', 'open_file_alert', true);
-          safex.openWallet(args)
-            .then((wallet) => {
-              this.setState({
-                wallet_loaded: true,
-                wallet: wallet,
-                mining_address: wallet.address(),
-                spend_key: wallet.secretSpendKey(),
-                view_key: wallet.secretViewKey(),
-                modal_close_disabled: false,
-                mining_info: false
-              });
-              this.closeModal();
-              console.log("wallet loaded " + this.state.wallet_loaded)
-            })
-            .catch((err) => {
-              this.setState(() => ({
-                modal_close_disabled: false
-              }));
-              this.setOpenBalanceAlert('Error opening the wallet: ' + err, 'open_file_alert', false);
-            })
-        }
-      } else {
-        this.setOpenBalanceAlert("Enter password for your wallet file", 'open_file_alert', false);
-      }
-    } else {
-      this.setOpenBalanceAlert("Choose the wallet file", 'open_file_alert', false);
-    }
-  }
+  openWalletFile = e => {
+    open_from_wallet_file(this, e);
+  };
 
-  create_new_wallet(e) {
-    e.preventDefault();
+  addressChange = e => {
+    let address = e.target.value;
+    this.setState({ mining_info: false, wallet: { address } });
+  };
 
-    const pass1 = e.target.pass1.value;
-    const pass2 = e.target.pass2.value;
-    console.log("new wallet password " + e.target.pass1.value);
-
-    if (pass1 !== '' || pass2 !== '') {
-      if (pass1 === pass2) {
-        if (this.state.wallet_loaded) {
-          this.closeWallet();
-        }
-        dialog.showSaveDialog((filepath) => {
-          if (filepath !== undefined) {
-            this.setState({ wallet_path: filepath });
-            //TODO needs additional sanitation on the passwords, length and type of data
-
-            var args = {
-              'path': filepath,
-              'password': pass1,
-              'network': net,
-              'daemonAddress': daemonHostPort,
-            }
-            if (!safex.walletExists(filepath)) {
-              this.setState(() => ({
-                wallet_exists: false,
-                modal_close_disabled: true
-              }));
-              this.setOpenBalanceAlert('Please wait while your wallet file is being created', 'create_new_wallet_alert', true);
-              console.log("wallet doesn't exist. creating new one: " + this.state.wallet_path);
-
-              safex.createWallet(args)
-                .then((wallet) => {
-                  this.setState({
-                    wallet_loaded: true,
-                    wallet: wallet,
-                    mining_address: wallet.address(),
-                    spend_key: wallet.secretSpendKey(),
-                    view_key: wallet.secretViewKey(),
-                    modal_close_disabled: false,
-                    mining_info: false
-                  });
-                  console.log('wallet address  ' + this.state.mining_address);
-                  console.log('wallet spend private key  ' + this.state.spend_key);
-                  console.log('wallet view private key  ' + this.state.view_key);
-                  this.closeModal();
-                })
-                .catch((err) => {
-                  this.setOpenBalanceAlert('error with the creation of the wallet ' + err, 'create_new_wallet_alert', false);
-                });
-            } else {
-              this.setState(() => ({
-                modal_close_disabled: false
-              }));
-              this.setOpenBalanceAlert("Wallet already exists. Please choose a different file name  " +
-                "this application does not enable overwriting an existing wallet file " +
-                "OR you can open it using the Load Existing Wallet", 'create_new_wallet_alert', false);
-            }
-          }
-        });
-      } else {
-        this.setOpenBalanceAlert('Repeated password does not match', 'create_new_wallet_alert', false);
-      }
-      //pass dialog box
-      //pass password
-      //confirm password
-    } else {
-      this.setOpenBalanceAlert("Fill out all the fields", 'create_new_wallet_alert', false);
-    }
-  }
-
-  create_new_wallet_from_keys(e) {
-    e.preventDefault();
-
-    //here we need the key set
-    //the wallet path desired
-    //the password
-    var safex_address = e.target.address.value;
-    var view_key = e.target.viewkey.value;
-    var spend_key = e.target.spendkey.value;
-    var pass1 = e.target.pass1.value;
-    var pass2 = e.target.pass2.value;
-
-    if (safex_address !== '' || view_key !== '' || spend_key !== '' || pass1 !== '' || pass2 !== '') {
-      if (pass1 !== '' && pass2 !== '' && pass1 === pass2) {
-        if (net == 'testnet' || verify_safex_address(spend_key, view_key, safex_address)) {
-          if (this.state.wallet_loaded) {
-            this.closeWallet();
-          }
-          dialog.showSaveDialog((filepath) => {
-            if (filepath !== undefined) {
-              this.setState({ wallet_path: filepath });
-              var args = {
-                'path': this.state.wallet_path,
-                'password': pass1,
-                'network': net,
-                'daemonAddress': daemonHostPort,
-                'restoreHeight': 0,
-                'addressString': safex_address,
-                'viewKeyString': view_key,
-                'spendKeyString': spend_key
-              }
-              if (!safex.walletExists(filepath)) {
-                this.setState(() => ({
-                  wallet_exists: false,
-                  modal_close_disabled: true
-                }));
-                this.setOpenBalanceAlert('Please wait while your wallet file is being created', 'create_from_keys_alert', true);
-                console.log("wallet doesn't exist. creating new one: " + this.state.wallet_path);
-
-                safex.createWalletFromKeys(args)
-                  .then((wallet) => {
-                    console.log("Create wallet form keys performed!");
-                    this.setState({
-                      wallet_loaded: true,
-                      wallet: wallet,
-                      mining_address: wallet.address(),
-                      spend_key: wallet.secretSpendKey(),
-                      view_key: wallet.secretViewKey(),
-                      modal_close_disabled: false,
-                      mining_info: false
-                    });
-                    console.log('wallet address  ' + this.state.mining_address);
-                    console.log('wallet spend private key  ' + this.state.spend_key);
-                    console.log('wallet view private key  ' + this.state.view_key);
-                    this.closeModal();
-                    console.log("create_new_wallet_from_keys checkpoint 1");
-                  })
-                  .catch((err) => {
-                    console.log("Create wallet form keys failed!");
-                    this.setOpenBalanceAlert('Error with the creation of the wallet ' + err, 'create_from_keys_alert', false);
-                  });
-              } else {
-                console.log("Safex wallet exists!");
-                this.setState(() => ({
-                  modal_close_disabled: false
-                }));
-                this.setOpenBalanceAlert("Wallet already exists. Please choose a different file name  " +
-                  "this application does not enable overwriting an existing wallet file " +
-                  "OR you can open it using the Load Existing Wallet", 'create_from_keys_alert', false);
-              }
-            }
-          });
-          console.log("create_new_wallet_from_keys checkpoint 2");
-        } else {
-          console.log('Incorrect keys');
-          this.setOpenBalanceAlert('Incorrect keys', 'create_from_keys_alert', false);
-        }
-      } else {
-        this.setOpenBalanceAlert("Passwords do not match", 'create_from_keys_alert', false);
-      }
-    } else {
-      this.setOpenBalanceAlert("Fill out all the fields", 'create_from_keys_alert', false);
-    }
-  }
-
-  addressChange(e) {
-    this.setState({
-      mining_info: false,
-      mining_address: e.target.value
-    });
-  }
-
-  closeWallet() {
+  closeWallet = () => {
     if (this.state.wallet_loaded) {
-      this.state.wallet.pauseRefresh();
-      this.state.wallet.off();
-      this.state.wallet.close(true);
-      this.state.wallet_loaded = false;
+      this.wallet_meta.pauseRefresh();
+      this.wallet_meta.off();
+      this.wallet_meta.close(true);
+      this.setState({ wallet_loaded: false });
       clearTimeout(this.state.tick_handle);
-
-      console.log('wallet closed')
     }
-  }
+  };
 
-  updatedCallback() {
-    console.log("UPDATED");
-    this.state.wallet.store()
-      .then(() => {
-        console.log("Wallet stored");
-        this.setCloseBalanceAlert();
-      })
-      .catch((e) => {
-        console.log("Unable to store wallet: " + e)
-      })
-  }
-
-  refreshCallback() {
-    console.log("wallet refreshed");
-    let wallet = this.state.wallet;
-    this.setState(() => ({
-      modal_close_disabled: false,
-      balance_alert_close_disabled: false,
-      balance: this.roundBalanceAmount(wallet.balance() - wallet.unlockedBalance()),
-      unlocked_balance: this.roundBalanceAmount(wallet.unlockedBalance()),
-      tokens: this.roundBalanceAmount(wallet.tokenBalance() - wallet.unlockedTokenBalance()),
-      unlocked_tokens: this.roundBalanceAmount(wallet.unlockedTokenBalance()),
-      blockchain_height: wallet.blockchainHeight(),
-      wallet_connected: wallet.connected() === "connected"
-    }));
-
-    wallet.store()
-      .then(() => {
-        console.log("Wallet stored");
-        this.setCloseBalanceAlert();
-      })
-      .catch((e) => {
-        console.log("Unable to store wallet: " + e);
-        this.setOpenBalanceAlert("Unable to store wallet: " + e, 'balance_alert', false);
-      });
-
-    wallet.off('refreshed');
-
-    setTimeout(() => {
-      wallet.on('newBlock', this.newBlockCallback);
-      wallet.on('updated', this.updatedCallback);
-    }, 300);
-  }
-
-  newBlockCallback(height) {
-    let wallet = this.state.wallet;
-    let syncedHeight = wallet.daemonBlockchainHeight() - height < 10;
-    if (syncedHeight) {
-      console.log("syncedHeight up to date...");
-      if (wallet.synchronized()) {
-        console.log("newBlock wallet synchronized, setting state...");
-        this.setState(() => ({
-          wallet_sync: true,
-          modal_close_disabled: false,
-          balance_alert_close_disabled: false,
-          balance: this.roundBalanceAmount(wallet.balance() - wallet.unlockedBalance()),
-          unlocked_balance: this.roundBalanceAmount(wallet.unlockedBalance()),
-          tokens: this.roundBalanceAmount(wallet.tokenBalance() - wallet.unlockedTokenBalance()),
-          unlocked_tokens: this.roundBalanceAmount(wallet.unlockedTokenBalance()),
-          blockchain_height: wallet.blockchainHeight()
-        }));
-      }
-    }
-  }
-
-  startBalanceCheck() {
-    if (this.state.wallet_loaded) {
-      let wallet = this.state.wallet;
-      console.log("daemon blockchain height: " + wallet.daemonBlockchainHeight());
-      console.log("blockchain height: " + wallet.blockchainHeight());
-
-      this.setState(() => ({
-        balance_wallet: wallet.address()
-      }));
-
-      if (this.state.wallet_loaded) {
-        let myBlockchainHeight = wallet.blockchainHeight();
-        this.setState(() => ({
-          wallet_connected: wallet.connected() === "connected",
-          blockchain_height: myBlockchainHeight,
-          balance: this.roundBalanceAmount(wallet.balance() - wallet.unlockedBalance()),
-          unlocked_balance: this.roundBalanceAmount(wallet.unlockedBalance()),
-          tokens: this.roundBalanceAmount(wallet.tokenBalance() - wallet.unlockedTokenBalance()),
-          unlocked_tokens: this.roundBalanceAmount(wallet.unlockedTokenBalance())
-        }));
-
-        console.log("balance: " + this.roundBalanceAmount(wallet.balance()));
-        console.log("unlocked balance: " + this.roundBalanceAmount(wallet.unlockedBalance()));
-        console.log("token balance: " + this.roundBalanceAmount(wallet.tokenBalance() - wallet.unlockedTokenBalance()));
-        console.log("unlocked token balance: " + this.roundBalanceAmount(wallet.unlockedTokenBalance()));
-        console.log("blockchain height " + wallet.blockchainHeight());
-        console.log('connected: ' + wallet.connected());
-      }
-
-      console.log("balance address: " + wallet.address());
-
-      this.setState(() => ({
-        wallet_sync: false,
-      }));
-
-      if (wallet.daemonBlockchainHeight() - wallet.blockchainHeight() > 10) {
-        this.setOpenBalanceAlert('Please wait while blockchain is being updated...', 'balance_alert', true);
-      }
-      wallet.on('refreshed', this.refreshCallback);
-    }
-  }
-
-  rescanBalance() {
-    var wallet = this.state.wallet;
-    this.setOpenBalanceAlert('Rescanning, this may take some time, please wait ', 'balance_alert', true);
-    wallet.off('updated');
-    wallet.off('newBlock');
-    wallet.off('refreshed');
-
-    this.setState(() => ({
-      modal_close_disabled: true
-    }));
-
-    setTimeout(() => {
-      this.setState(() => ({
-        blockchain_height: wallet.blockchainHeight()
-      }));
-      console.log("Starting blockchain rescan sync...");
-      wallet.rescanBlockchain();
-      console.log("Blockchain rescan executed...");
-
-      setTimeout(() => {
-        console.log("Rescan setting callbacks");
-        this.setState(() => ({
-          modal_close_disabled: false,
-          balance_alert_close_disabled: false,
-          balance: this.roundBalanceAmount(wallet.balance() - wallet.unlockedBalance()),
-          unlocked_balance: this.roundBalanceAmount(wallet.unlockedBalance()),
-          tokens: this.roundBalanceAmount(wallet.tokenBalance() - wallet.unlockedTokenBalance()),
-          unlocked_tokens: this.roundBalanceAmount(wallet.unlockedTokenBalance()),
-          blockchain_height: wallet.blockchainHeight(),
-          wallet_connected: wallet.connected() === "connected"
-        }));
-        this.setCloseBalanceAlert();
-
-        wallet.store()
-          .then(() => {
-            console.log("Wallet stored");
-          })
-          .catch((e) => {
-            console.log("Unable to store wallet: " + e);
-            this.setOpenBalanceAlert("Unable to store wallet: " + e, 'balance_alert', false);
-          });
-        wallet.on('newBlock', this.newBlockCallback);
-        wallet.on('updated', this.updatedCallback);
-      }, 1000);
-    }, 1000);
-  }
-
-  roundBalanceAmount(balance) {
-    return Math.floor(parseFloat(balance) / 100000000) / 100;
-  }
-
-  openInfoPopup(message) {
+  openInfoPopup = message => {
     this.setState({
       mining_info: true,
       mining_info_text: message
-    })
-  }
+    });
+  };
 
-  openNewWalletModal() {
-    this.setState(() => ({
-      new_wallet_modal: true
-    }));
-  }
+  setOpenModal = (modal_type, alert, disabled) => {
+    openModal(this, modal_type, alert, disabled);
+  };
 
-  openInstructionsModal() {
-    this.setState(() => ({
-      instructions_modal_active: true
-    }));
-  }
+  setOpenAlert = (alert, disabled = false) => {
+    this.setOpenModal("alert", alert, disabled);
+  };
 
-  openCreateWalletModal() {
-    this.setState(() => ({
-      create_new_wallet_modal: true
-    }));
-  }
+  setCloseAlert = () => {
+    this.setState({
+      alert: false,
+      alert_close_disabled: false
+    });
+  };
 
-  openFromExistingModal() {
-    this.setState(() => ({
-      open_from_existing_modal: true
-    }));
-  }
+  setOpenSendPopup = send_cash_or_token => {
+    openSendPopup(this, send_cash_or_token);
+  };
 
-  openCreateFromKeysModal() {
-    this.setState(() => ({
-      create_from_keys_modal: true
-    }));
-  }
-
-  openBalanceModal() {
-    this.setState(() => ({
-      balance_modal_active: true
-    }));
-    if (this.state.wallet_loaded) {
-      this.startBalanceCheck();
-    }
-  }
-
-  setOpenBalanceAlert(alert, alert_state, disabled) {
-    openBalanceAlert(this, alert, alert_state, disabled);
-  }
-
-  setCloseBalanceAlert() {
-    if (this.state.balance_alert_close_disabled === false) {
-      closeBalanceAlert(this);
-    }
-  }
-
-  setOpenSendCash() {
-    openSendCashPopup(this);
-  }
-
-  setOpenSendTokens() {
-    openSendTokenPopup(this);
-  }
-
-  setCloseSendPopup() {
+  setCloseSendPopup = () => {
     closeSendPopup(this);
-  }
+  };
 
-  closeModal() {
-    if (this.state.modal_close_disabled === false) {
-      this.setState(() => ({
-        new_wallet_modal: false,
-        instructions_modal_active: false,
-        balance_modal_active: false,
-        balance_alert: false,
-        open_file_alert: false,
-        create_new_wallet_alert: false,
-        create_from_keys_alert: false,
-        send_cash: false,
-        send_token: false,
-        create_new_wallet_modal: false,
-        open_from_existing_modal: false,
-        create_from_keys_modal: false,
-        exit_modal: false
-      }));
-    }
-  }
+  setOpenFeeModal = () => {
+    this.setOpenModal("fee_modal", "", false);
+  };
 
-  sendCash(e) {
+  setOpenConfirmModal = (alert, disabled) => {
+    this.setOpenModal("confirm_modal", alert, disabled);
+  };
+
+  setCloseMyModal = () => {
+    this.setState({
+      modal: false,
+      send_disabled: true
+    });
+    setTimeout(() => {
+      this.setState({
+        send_modal: false,
+        confirm_modal: false,
+        fee_modal: false
+      });
+    }, 300);
+    setTimeout(() => {
+      this.setState({
+        button_disabled: false
+      });
+    }, 1000);
+  };
+
+  closeModal = () => {
+    closeModal(this);
+  };
+
+  closeAllModals = () => {
+    closeAllModals(this);
+  };
+
+  startBalanceCheck = () => {
+    balanceCheck(this);
+  };
+
+  startRefreshCallback = () => {
+    refreshCallback(this);
+  };
+
+  startRescanBalance = () => {
+    rescanBalance(this);
+  };
+
+  setWalletData = () => {
+    walletData(this);
+  };
+
+  sendCashOrToken = (e, send_cash_or_token) => {
     e.preventDefault();
-    let sendingAddress = e.target.send_to.value;
+    let sendingAddressInput = e.target.send_to.value;
+    let sendingAddress = sendingAddressInput.replace(/\s+/g, "");
+    let amountInput = e.target.amount.value;
     let amount = e.target.amount.value * 10000000000;
     let paymentid = e.target.paymentid.value;
-    let wallet = this.state.wallet;
-
-    if (sendingAddress !== '') {
-      if (amount !== '') {
-        if (paymentid !== '') {
-            console.log("amount " + amount);
-            wallet.createTransaction({
-                'address': sendingAddress,
-                'amount': amount,
-                'paymentId': paymentid,
-                'tx_type': 0 // cash transaction
-            }).then((tx) => {
-                let txId = tx.transactionsIds();
-                console.log("Cash transaction created: " + txId);
-
-                tx.commit().then(() => {
-                    console.log("Transaction committed successfully");
-                    this.setCloseSendPopup();
-                    this.setOpenBalanceAlert('Transaction committed successfully, Your cash transaction ID is: '
-                        + txId, 'balance_alert', false);
-                    this.state.balance = this.roundBalanceAmount(wallet.unlockedBalance() - wallet.balance());
-                    this.state.unlocked_balance = this.roundBalanceAmount(wallet.unlockedBalance());
-                }).catch((e) => {
-                    console.log("Error on committing transaction: " + e);
-                    this.setOpenBalanceAlert("Error on committing transaction: " + e, 'balance_alert', false);
-                });
-            }).catch((e) => {
-                console.log("Couldn't create transaction: " + e);
-                this.setOpenBalanceAlert("Couldn't create transaction: " + e, 'balance_alert', false);
-            });
-        } else {
-            console.log("amount " + amount);
-            wallet.createTransaction({
-                'address': sendingAddress,
-                'amount': amount,
-                'tx_type': 0 // cash transaction
-            }).then((tx) => {
-                let txId = tx.transactionsIds();
-                console.log("Cash transaction created: " + txId);
-
-                tx.commit().then(() => {
-                    console.log("Transaction committed successfully");
-                    this.setCloseSendPopup();
-                    this.setOpenBalanceAlert('Transaction committed successfully, Your cash transaction ID is: '
-                        + txId, 'balance_alert', false);
-                    this.state.balance = this.roundBalanceAmount(wallet.unlockedBalance() - wallet.balance());
-                    this.state.unlocked_balance = this.roundBalanceAmount(wallet.unlockedBalance());
-                }).catch((e) => {
-                    console.log("Error on committing transaction: " + e);
-                    this.setOpenBalanceAlert("Error on committing transaction: " + e, 'balance_alert', false);
-                });
-            }).catch((e) => {
-                console.log("Couldn't create transaction: " + e);
-                this.setOpenBalanceAlert("Couldn't create transaction: " + e, 'balance_alert', false);
-            });
-        }
-      } else {
-        this.setOpenBalanceAlert('Enter Amount', 'balance_alert', false);
-      }
-    } else {
-      this.setOpenBalanceAlert('Fill out all the fields', 'balance_alert', false);
-    }
-  }
-
-  sendToken(e) {
-    e.preventDefault();
-    let sendingAddress = e.target.send_to.value;
-    let amount = Math.floor(e.target.amount.value) * 10000000000;
-    let paymentid = e.target.paymentid.value;
-    let wallet = this.state.wallet;
-
-    if (sendingAddress !== '') {
-      if (amount !== '') {
-        if (paymentid !== '') {
-            console.log("amount " + amount)
-            wallet.createTransaction({
-                'address': sendingAddress,
-                'amount': amount,
-                'paymentId': paymentid,
-                'tx_type': 1 // token transaction
-            }).then((tx) => {
-                let txId = tx.transactionsIds();
-                console.log("Token transaction created: " + txId);
-
-                tx.commit().then(() => {
-                    console.log("Transaction committed successfully");
-                    this.setCloseSendPopup();
-                    this.setOpenBalanceAlert('Transaction committed successfully, Your token transaction ID is: '
-                        + txId, 'balance_alert', false);
-                    this.state.tokens = this.roundBalanceAmount(wallet.unlockedTokenBalance() - wallet.tokenBalance());
-                    this.state.unlocked_tokens = this.roundBalanceAmount(wallet.unlockedTokenBalance());
-                }).catch((e) => {
-                    console.log("Error on committing transaction: " + e);
-                    this.setOpenBalanceAlert("Error on committing transaction: " + e, 'balance_alert', false);
-                });
-            }).catch((e) => {
-                console.log("Couldn't create transaction: " + e);
-                this.setOpenBalanceAlert("Couldn't create transaction: " + e, 'balance_alert', false);
-            });
-        } else {
-            console.log("amount " + amount)
-            wallet.createTransaction({
-                'address': sendingAddress,
-                'amount': amount,
-                'tx_type': 1 // token transaction
-            }).then((tx) => {
-                let txId = tx.transactionsIds();
-                console.log("Token transaction created: " + txId);
-
-                tx.commit().then(() => {
-                    console.log("Transaction committed successfully");
-                    this.setCloseSendPopup();
-                    this.setOpenBalanceAlert('Transaction committed successfully, Your token transaction ID is: '
-                        + txId, 'balance_alert', false);
-                    this.state.tokens = this.roundBalanceAmount(wallet.unlockedTokenBalance() - wallet.tokenBalance());
-                    this.state.unlocked_tokens = this.roundBalanceAmount(wallet.unlockedTokenBalance());
-                }).catch((e) => {
-                    console.log("Error on committing transaction: " + e);
-                    this.setOpenBalanceAlert("Error on committing transaction: " + e, 'balance_alert', false);
-                });
-            }).catch((e) => {
-                console.log("Couldn't create transaction: " + e);
-                this.setOpenBalanceAlert("Couldn't create transaction: " + e, 'balance_alert', false);
-            });
-        }
-
-      } else {
-        this.setOpenBalanceAlert('Enter Amount', 'balance_alert', false);
-      }
-    } else {
-      this.setOpenBalanceAlert('Fill out all the fields', 'balance_alert', false);
-    }
-  }
-
-  changeInstructionLang(lang) {
-    this.setState(() => ({
-      instructions_lang: lang
-    }));
-  }
-
-  inputValidate(inputValue) {
-    let inputRegex = /^[a-zA-Z0-9]/;
-    return inputRegex.test(inputValue);
-  }
-
-  checkInputValueLenght(inputValue) {
-    let inputValueLength = inputValue.length;
-    if (inputValueLength <= 95) {
-      console.log('Safex hash address length is too short');
-      this.openInfoPopup('Address length is too short');
+    let paymentidInput = paymentid.replace(/\s+/g, "");
+    let mixin = e.target.mixin.value;
+    this.setState({ send_cash_or_token });
+    if (sendingAddress === "") {
+      this.setOpenAlert("Enter destination address");
       return false;
-    } else if (inputValueLength >= 105) {
-      console.log('Safex hash address length is too long');
-      this.openInfoPopup('Address length is too long');
-      return false;
-    } else {
-      return true;
     }
-  }
-
-  checkInputValuePrefix(inputValue) {
-    let userInputValue = inputValue;
-    if (userInputValue.startsWith("SFXt") || userInputValue.startsWith("Safex")) {
-      if (!userInputValue.startsWith("SFXts") || !userInputValue.startsWith("SFXti")) {
-        return true;
-      } else {
-        console.log('Suffix is invalid');
+    if (amountInput === "" || isNaN(amountInput)) {
+      this.setOpenAlert("Enter valid amount");
+      return false;
+    }
+    if (
+      process.env.NODE_ENV !== "development" &&
+      !safex.addressValid(sendingAddress, "mainnet")
+    ) {
+      this.setOpenAlert("Enter valid Safex address");
+      return false;
+    }
+    if (
+      process.env.NODE_ENV === "development" &&
+      !safex.addressValid(sendingAddress, "stagenet")
+    ) {
+      this.setOpenAlert("Enter valid Safex address");
+      return false;
+    }
+    if (
+      (send_cash_or_token === 0 &&
+        parseFloat(e.target.amount.value) + parseFloat(0.1) >
+          this.state.wallet.unlocked_balance) ||
+      this.state.wallet.unlocked_balance < parseFloat(0.1)
+    ) {
+      this.setOpenAlert(
+        "Not enough available Safex Cash to complete the transaction"
+      );
+      return false;
+    }
+    if (paymentidInput !== "") {
+      if (paymentidInput.length !== 64) {
+        this.setOpenAlert("Payment ID should contain 64 characters");
         return false;
       }
+      this.setState(() => ({
+        tx_being_sent: true
+      }));
+      this.sendTransaction({
+        address: sendingAddress,
+        amount: amount,
+        paymentId: paymentidInput,
+        tx_type: send_cash_or_token,
+        mixin: mixin
+      });
     } else {
-      console.log('Suffix is invalid');
+      this.setState(() => ({
+        tx_being_sent: true
+      }));
+      this.sendTransaction({
+        address: sendingAddress,
+        amount: amount,
+        tx_type: send_cash_or_token,
+        mixin: mixin
+      });
+    }
+  };
+
+  sendTransaction = args => {
+    let wallet = this.wallet_meta;
+    wallet
+      .createTransaction(args)
+      .then(tx => {
+        let fee = roundAmount(tx.fee());
+        this.setState(() => ({
+          fee: fee,
+          send_tx_disabled: false,
+          tx_being_sent: false
+        }));
+        this.tx = tx;
+        this.setOpenFeeModal();
+        localStorage.setItem("args", JSON.stringify(args));
+        console.log(args);
+      })
+      .catch(e => {
+        this.setState({
+          send_tx_disabled: false
+        });
+        if (e.startsWith("not enough money to transfer, available only")) {
+          this.setOpenAlert(
+            "There is not enough SFX or outputs available to fulfil this transaction + fee. Please consider reducing the size of the transaction.",
+            false
+          );
+        } else {
+          this.setState(() => ({
+            send_tx_disabled: false,
+            tx_being_sent: false
+          }));
+          this.setOpenAlert("" + e, false);
+        }
+        console.log("" + e);
+      });
+  };
+
+  commitTx = e => {
+    e.preventDefault();
+    let tx = this.tx;
+    let txId = tx.transactionsIds();
+
+    this.setState(() => ({
+      tx_being_sent: true,
+      alert_close_disabled: true
+    }));
+    tx.commit()
+      .then(() => {
+        if (!txId) {
+          this.setOpenAlert("Unable to create transaction id ", false);
+          return false;
+        }
+        this.setState({
+          tx_being_sent: false,
+          alert_close_disabled: false
+        });
+        if (this.state.send_cash_or_token === 0) {
+          this.setOpenConfirmModal(
+            "Transaction commited successfully, Your cash transaction ID is: " +
+              txId,
+            false
+          );
+          this.tx = null;
+        } else {
+          this.setOpenConfirmModal(
+            "Transaction commited successfully, Your token transaction ID is: " +
+              txId,
+            false
+          );
+          this.tx = null;
+        }
+        setTimeout(() => {
+          this.setWalletData();
+          this.setState({
+            mixin: 6
+          });
+          console.log("reset mixin " + this.state.mixin);
+          localStorage.removeItem("args");
+        }, 300);
+      })
+      .catch(e => {
+        this.setState(() => ({
+          tx_being_sent: false,
+          alert_close_disabled: false
+        }));
+        this.setOpenAlert("" + e, false);
+      });
+  };
+
+  handleSubmit = e => {
+    e.preventDefault();
+    if (this.state.wallet_loaded) {
+      this.setWalletData();
+    }
+    let miningAddress = e.target.mining_address.value;
+    if (miningAddress === "") {
+      this.openInfoPopup("Please enter Safex address or load wallet");
       return false;
     }
-  }
-
-  handleSubmit(e) {
-    e.preventDefault();
-    let miningAddress = e.target.mining_address.value;
-
-    if (miningAddress !== '') {
-      if (this.inputValidate(miningAddress))
-        if (this.checkInputValueLenght(miningAddress)) {
-          if (this.checkInputValuePrefix(miningAddress)) {
-            if (safex.addressValid(miningAddress, 'mainnet')) {
-              if (this.state.active) {
-                this.stopMining();
-              } else {
-                this.startMining();
-              }
-            } else {
-              this.openInfoPopup('Address is not valid');
-            }
-          } else {
-            this.openInfoPopup('Your address must start with Safex or SFXt');
-          }
-        } else {
-          console.log('Address length is not valid')
-        }
-      else {
-        this.openInfoPopup('Please enter valid address');
-      }
-    } else {
-      this.openInfoPopup('Please enter valid address');
+    if (!inputValidate(miningAddress)) {
+      this.openInfoPopup("Please enter valid Safex address");
+      return false;
     }
-  }
-
-  startMining() {
-    var userWallet = document.getElementById("mining_address").value;
-    var pool = document.getElementById("pool").value;
-    var maxCpuUsage = document.getElementById("cpuUsage").value;
-
-    //specify jsonConfig.pools[0].url, jsonConfig.pools[0].user (safex address)
-    this.state.jsonConfig.pools[0].url = pool;
-    this.state.jsonConfig.pools[0].user = userWallet;
-    this.state.jsonConfig["max-cpu-usage"] = maxCpuUsage;
-
-    console.log("User address: " + userWallet);
-    console.log("Pool: " + pool);
-    console.log("CPU usage: " + maxCpuUsage);
-    console.log("Starting mining...");
-
-    this.setState(() => ({
-      active: true,
-      starting: true
-    }));
-    this.openInfoPopup('Starting miner...');
-    setTimeout(() => {
-      this.setState(() => ({
-        starting: false
-      }));
-      this.openInfoPopup('Mining in progress');
-    }, 12000);
-
-    if (this.miner) {
-      this.miner.reloadConfig(JSON.stringify(this.state.jsonConfig));
-    } else {
-      this.miner = new xmrigCpu.NodeXmrigCpu(JSON.stringify(this.state.jsonConfig));
+    if (!checkInputValueLenght(miningAddress)) {
+      this.openInfoPopup("Please enter valid address");
+      return false;
     }
-    this.miner.startMining();
-    console.log("Native mining started!");
-
-    let checkStatusInterval = setInterval(this.checkStatus, 2000);
-    this.setState({
-      checkStatusInterval: checkStatusInterval,
-    })
-  }
-
-  stopMining() {
-    this.setState(() => ({
-      active: false,
-      stopping: true
-    }));
-    this.openInfoPopup('Stopping miner...');
-    setTimeout(() => {
-      this.setState(() => ({
-        mining_info: false,
-        mining_info_text: '',
-        stopping: false
-      }));
-    }, 5000);
-    console.log("Ending mining...");
-    clearInterval(this.state.checkStatusInterval);
-    this.setState(() => ({
-      hashrate: 0
-    }));
-    this.miner.stopMining();
-    console.log("Mining ended");
-  }
-
-  checkStatus() {
-    this.setState({
-      hashrate: this.miner.getStatus().split(' ')[2]
-    });
-    console.log(this.miner.getStatus(), this.state.hashrate);
-  }
-
-  footerLink() {
-    shell.openExternal('https://www.safex.io/')
-  }
-
-  closeApp() {
-    let window = remote.getCurrentWindow();
-    this.closeModal();
-
+    if (!checkInputValuePrefix(miningAddress)) {
+      this.openInfoPopup("Your address must start with Safex or SFXt");
+      return false;
+    }
+    if (
+      process.env.NODE_ENV !== "development" &&
+      !safex.addressValid(miningAddress, "mainnet")
+    ) {
+      this.openInfoPopup("Address is not valid");
+      return false;
+    }
+    if (this.state.wallet.wallet_connected === false) {
+      this.openInfoPopup("No connection to daemon");
+      return false;
+    }
     if (this.state.active) {
-      this.stopMining();
+      miningStop(this);
+    } else {
+      miningStart(this);
+    }
+  };
+
+  checkStatus = () => {
+    this.setState({ hashrate: this.miner.getStatus().split(" ")[2] });
+    console.log(this.miner.getStatus(), this.state.hashrate);
+  };
+
+  footerLink = () => {
+    shell.openExternal("https://safex.io/");
+  };
+
+  closeApp = () => {
+    let window = remote.getCurrentWindow();
+    if (this.state.active) {
+      miningStop(this);
       this.closeWallet();
       setTimeout(() => {
-        this.setState(() => ({
-          exiting: true
-        }));
+        window.close();
       }, 5000);
-      setTimeout(() => {
-        window.close();
-      }, 6000);
     } else {
-      this.setState(() => ({
-        exiting: true
-      }));
-      setTimeout(() => {
-        window.close();
-      }, 1000);
+      window.close();
     }
-  }
+  };
 
-  openExitModal() {
-    this.setState({
-      exit_modal: true
-    });
-  }
+  renderButton = ({
+    type,
+    title,
+    content,
+    classes,
+    disabled,
+    tooltip_text
+  }) => (
+    <div className="button-wrap" key={type}>
+      <button
+        className={classes.join(" ")}
+        onClick={this.setOpenModal.bind(this, type)}
+        disabled={disabled}
+      >
+        {content.startsWith("images/") ? (
+          <div>
+            <span data-tip data-for={title} />
+            <img src={content} alt={content} />
+          </div>
+        ) : (
+          <div>
+            <span data-tip data-for={title} />
+            {content}
+          </div>
+        )}
+      </button>
+      <ReactTooltip id={title}>
+        <div>
+          <p>{tooltip_text}</p>
+          <p className={disabled ? "" : "hidden"}>
+            (disabled when wallet is loaded)
+          </p>
+        </div>
+      </ReactTooltip>
+    </div>
+  );
+
+  fetchPrice = () => {
+    axios({
+      method: "get",
+      url: "https://api.coingecko.com/api/v3/coins/safex-cash"
+    })
+      .then(res => {
+        var sfx_price = parseFloat(
+          res.data.market_data.current_price.usd
+        ).toFixed(4);
+        this.setState({ sfx_price });
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+
+    axios({
+      method: "get",
+      url: "https://api.coingecko.com/api/v3/coins/safex-token"
+    })
+      .then(res => {
+        var sft_price = parseFloat(
+          res.data.market_data.current_price.usd
+        ).toFixed(4);
+        this.setState({ sft_price });
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+  };
 
   render() {
-    var cpu_options = [];
+    let cpu_options = [];
     for (var i = 25; i <= 100; i += 25) {
       cpu_options.push(
         <option key={i} value={i}>
@@ -999,317 +567,331 @@ export default class MiningApp extends React.Component {
     }
     cpu_options.reverse();
 
-    const pools_list = this.state.pools_list.map((pools_list, index) => (
+    const pools_list = this.pools_list.map((pools_list, index) => (
       <option key={index} value={pools_list} id={index}>
         {pools_list}
       </option>
     ));
 
+    const buttons = [
+      {
+        type: "new_wallet_modal",
+        title: "generate-new-wallet-tooltip",
+        content: "images/new.png",
+        classes: ["modal-btn"],
+        disabled: false,
+        tooltip_text: "Generate New Wallet"
+      },
+      {
+        type: "create_new_wallet_modal",
+        title: "create-new-wallet-file-tooltip",
+        content: "images/new-wallet.png",
+        classes: ["modal-btn"],
+        disabled:
+          this.state.wallet_loaded || this.state.active || this.state.stopping,
+        tooltip_text: "Create New Wallet File"
+      },
+      {
+        type: "open_from_existing_modal",
+        title: "open-wallet-file-tooltip",
+        content: "images/open-logo.png",
+        classes: ["modal-btn"],
+        disabled:
+          this.state.wallet_loaded || this.state.active || this.state.stopping,
+        tooltip_text: "Open Wallet File"
+      },
+      {
+        type: "create_from_keys_modal",
+        title: "create-new-wallet-from-keys-tooltip",
+        content: "images/create-from-keys.png",
+        classes: ["modal-btn"],
+        disabled:
+          this.state.wallet_loaded || this.state.active || this.state.stopping,
+        tooltip_text: "Recover Wallet File From Keys"
+      },
+      {
+        type: "balance_modal_active",
+        title: "check-balance-tooltip",
+        content: "images/key.png",
+        classes: ["modal-btn"],
+        disabled: false,
+        tooltip_text: "Check Balance"
+      },
+      {
+        type: "instructions_modal_active",
+        title: "instructions-tooltip",
+        content: "?",
+        classes: ["modal-btn", "instructions-btn"],
+        disabled: false,
+        tooltip_text: "Instructions"
+      }
+    ];
+
     return (
       <div className="mining-app-wrap">
-        <div className="mining-bg-wrap">
+        <div className="mining-bg-wrap animated fadeIn">
           <img
-            className={
-              this.state.active || this.state.stopping
-                ? "rotatingLeft ring-outer"
-                : "ring-outer"
-            }
+            className={`ring-outer ${addClass(
+              this.state.active || this.state.stopping,
+              "rotatingLeft"
+            )}`}
             src="images/ring-outer.png"
             alt="Ring outer"
           />
           <img
-            className={
-              this.state.active || this.state.stopping
-                ? "rotatingRight ring-inner"
-                : "ring-inner"
-            }
+            className={`ring-inner ${addClass(
+              this.state.active || this.state.stopping,
+              "rotatingRight"
+            )}`}
             src="images/ring-inner.png"
             alt="Ring inner"
           />
           <img
-            className={
-              this.state.active || this.state.stopping
-                ? "rotatingRight ring-center"
-                : "ring-center"
-            }
+            className={`ring-center ${addClass(
+              this.state.active || this.state.stopping,
+              "rotatingRight"
+            )}`}
             src="images/ring-center.png"
             alt="Ring center"
           />
           <img
-            className={
-              this.state.active || this.state.stopping
-                ? "rotatingRight circles"
-                : "circles"
-            }
+            className={`circles ${
+              this.state.active || this.state.stopping ? "rotatingRight" : ""
+            }`}
             src="images/circles.png"
             alt="Circles"
           />
         </div>
 
-        <header>
-          <img src="images/mcafee.png" className={this.state.exiting ? "animated fadeOut" : "animated fadeIn"} alt="McAfee Logo" />
-          <button className={this.state.exiting ? "close animated fadeOut " : "close animated fadeIn"}
-            title={this.state.starting || this.state.stopping ? "Please wait" : "Close App"}
-            onClick={this.openExitModal}
-          >
-            X
-          </button>
-          <p className={this.state.exiting ? "animated fadeOut " : "animated fadeIn"}>{packageJson.version}</p>
-        </header>
+        <div className="mining-app-inner">
+          <Header openExitModal={this.openExitModal} closeApp={this.closeApp} />
 
-        <div className={this.state.exiting ? "main animated fadeOut" : "main animated fadeIn"}>
-          <div className="btns-wrap">
-            <button className="modal-btn"
-              onClick={this.openNewWalletModal}
-              title="Generate New Wallet">
-              <img src="images/new.png" alt="new-wallet" />
-            </button>
-            <button className="modal-btn"
-              onClick={this.openCreateWalletModal}
-              title="Create New Wallet File"
-              disabled={this.state.wallet_loaded || this.state.active || this.state.stopping ? "disabled" : ""}>
-              <img src="images/new-wallet.png" alt="new-wallet" />
-            </button>
-            <button className="modal-btn"
-              onClick={this.openFromExistingModal}
-              title="Open Wallet File"
-              disabled={this.state.wallet_loaded || this.state.active || this.state.stopping ? "disabled" : ""}>
-              <img src="images/open-logo.png" alt="open-logo" />
-            </button>
-            <button className="modal-btn"
-              onClick={this.openCreateFromKeysModal}
-              title="Create New Wallet From Keys"
-              disabled={this.state.wallet_loaded || this.state.active || this.state.stopping ? "disabled" : ""}>
-              <img src="images/create-from-keys.png" alt="open-logo" />
-            </button>
-            <button className="modal-btn"
-              onClick={this.openBalanceModal}
-              title="Check Balance">
-              <img src="images/key.png" alt="key" />
-            </button>
-            <button className="instructions-btn modal-btn" onClick={this.openInstructionsModal}
-              title="Instructions">
-              ?
-            </button>
-          </div>
+          <div className="main animated fadeIn">
+            <div className="btns-wrap">{buttons.map(this.renderButton)}</div>
 
-          <form onSubmit={this.handleSubmit}>
-            <div className="address-wrap">
-              <img src="images/line-left.png" alt="Line Left" />
-              <input type="text"
-                value={this.state.mining_address}
-                onChange={this.addressChange}
-                placeholder="Safex Address"
-                name="mining_address"
-                id="mining_address"
-                disabled={this.state.active || this.state.stopping ? "disabled" : ""}
-                title={this.state.mining_address === '' ? "Your Safex Address will be shown here" : "Your Safex Address"}
-                readOnly={this.state.wallet_loaded ? "readOnly" : ""}
-              />
-              <img src="images/line-right.png" alt="Line Right" />
-            </div>
-
-            <select className="button-shine pool-url" name="pool" id="pool"
-              disabled={this.state.active || this.state.stopping ? "disabled" : ""}
-              title={this.state.active || this.state.stopping ? "Choose the pool you want to connect to (disabled while mining)" : "Choose the pool you want to connect to"}>
-              {pools_list}
-            </select>
-
-            <div className="options">
-              <div className="input-group">
-                <p># CPU</p>
-                <select name="cores" id="cpuUsage"
-                  disabled={this.state.active || this.state.stopping ? "disabled" : ""}
-                  title={this.state.active || this.state.stopping ? "Choose how much CPU power you want to use for mining (disabled while mining)" : "Choose how much CPU power you want to use for mining"}>
-                  {cpu_options}
-                </select>
+            <form onSubmit={this.handleSubmit}>
+              <div className="address-wrap">
+                <img src="images/line-left.png" alt="Line Left" />
+                <div id="address-inner" data-tip data-for="address-tooltip">
+                  <input
+                    type="text"
+                    value={this.state.wallet.address}
+                    onChange={this.addressChange}
+                    placeholder="Safex Address"
+                    name="mining_address"
+                    id="mining_address"
+                    readOnly={this.state.wallet_loaded ? "readOnly" : ""}
+                  />
+                  <ReactTooltip id="address-tooltip">
+                    {this.state.wallet_loaded ? (
+                      <div>
+                        <p>
+                          This is{" "}
+                          <span className="yellow-text">Public Address</span> of
+                          your wallet.
+                        </p>
+                        <p className="mb-10">
+                          Public Address starts with Safex and contains between{" "}
+                          <span className="yellow-text">95 and 105</span>{" "}
+                          characters.
+                        </p>
+                        <p>
+                          This is address where you can receive{" "}
+                          <span className="yellow-text">Safex Cash (SFX)</span>{" "}
+                          or{" "}
+                          <span className="yellow-text">
+                            Safex Tokens (SFT)
+                          </span>
+                          .
+                        </p>
+                      </div>
+                    ) : (
+                      <div>
+                        <p>You can always enter your own safex address.</p>
+                        <p>
+                          Or load wallet to view your{" "}
+                          <span className="yellow-text">Public Address</span>.
+                        </p>
+                      </div>
+                    )}
+                  </ReactTooltip>
+                </div>
+                <img src="images/line-right.png" alt="Line Right" />
               </div>
+
+              <div id="select-wrap">
+                <div id="select-inner" data-tip data-for="pools-tooltip">
+                  <select
+                    className={
+                      this.state.active || this.state.stopping
+                        ? "button-shine pool-url disabled"
+                        : "button-shine pool-url"
+                    }
+                    name="pool"
+                    id="pool"
+                  >
+                    {pools_list}
+                  </select>
+                  <ReactTooltip id="pools-tooltip">
+                    {this.state.active || this.state.stopping ? (
+                      <div>
+                        <p>
+                          Choose the <span className="yellow-text">pool</span>{" "}
+                          you want to connect to
+                        </p>
+                        <p>(disabled while mining)</p>
+                      </div>
+                    ) : (
+                      <p>
+                        Choose the <span className="yellow-text">pool</span> you
+                        want to connect to
+                      </p>
+                    )}
+                  </ReactTooltip>
+                </div>
+              </div>
+
+              <div className="options">
+                <div className="input-group" data-tip data-for="cpu-tooltip">
+                  <p># CPU</p>
+                  <select
+                    name="cores"
+                    id="cpuUsage"
+                    className={
+                      this.state.active || this.state.stopping
+                        ? "cpuUsage disabled"
+                        : "cpuUsage"
+                    }
+                  >
+                    {cpu_options}
+                  </select>
+                </div>
+                <ReactTooltip id="cpu-tooltip">
+                  {this.state.active || this.state.stopping ? (
+                    <div>
+                      <p>
+                        Choose how much{" "}
+                        <span className="yellow-text">CPU power</span>{" "}
+                      </p>
+                      <p>you want to use for mining</p>
+                      <p>(disabled while mining)</p>
+                    </div>
+                  ) : (
+                    <div>
+                      <p>
+                        Choose how much{" "}
+                        <span className="yellow-text">CPU power</span>{" "}
+                      </p>
+                      <p>you want to use for mining</p>
+                    </div>
+                  )}
+                </ReactTooltip>
+              </div>
+              {this.state.active ? (
+                <button
+                  type="submit"
+                  className="submit button-shine active"
+                  disabled={this.state.starting ? "disabled" : ""}
+                >
+                  <span>{this.state.starting ? "Starting" : "Stop"}</span>
+                </button>
+              ) : (
+                <div>
+                  {
+                    <button
+                      type="submit"
+                      className={`submit button-shine ${
+                        this.state.stopping ? "active" : ""
+                      }`}
+                      disabled={
+                        this.state.active || this.state.stopping
+                          ? "disabled"
+                          : ""
+                      }
+                    >
+                      <span>{this.state.stopping ? "Stopping" : "Start"}</span>
+                    </button>
+                  }
+                </div>
+              )}
+              <p
+                className={`mining-info ${
+                  this.state.mining_info ? " active" : ""
+                }`}
+              >
+                {this.state.mining_info_text}
+              </p>
+            </form>
+
+            <div className="hashrate">
+              <p className="blue-text">
+                <span data-tip data-for="hashrate-tooltip">
+                  hashrate:
+                </span>
+              </p>
+              <ReactTooltip id="hashrate-tooltip">
+                <p>
+                  <span className="yellow-text">Hashrate</span> determines your
+                  mining speed.
+                </p>
+                <p>Mining will be faster with higher hashrate.</p>
+              </ReactTooltip>
+
+              <p className="white-text">{this.state.hashrate} H/s</p>
             </div>
-            {
-              this.state.active
-                ?
-                <div>
-                  {
-                    this.state.starting
-                      ?
-                      <button type="submit" className="submit button-shine active" disabled>
-                        <span>
-                          Starting
-                        </span>
-                      </button>
-                      :
-                      <button type="submit" className="submit button-shine active">
-                        <span>
-                          Stop
-                        </span>
-                      </button>
-                  }
-                </div>
-
-                :
-                <div>
-                  {
-                    this.state.stopping
-                      ?
-                      <button type="submit" className="submit button-shine active"
-                        disabled={this.state.active || this.state.stopping ? "disabled" : ""}>
-                        <span>Stopping</span>
-                      </button>
-                      :
-                      <button type="submit" className="submit button-shine"
-                        disabled={this.state.active || this.state.stopping ? "disabled" : ""}>
-                        <span>Start</span>
-                      </button>
-                  }
-                </div>
-            }
-            <p className={this.state.mining_info ? "mining-info active" : "mining-info"}>
-              {this.state.mining_info_text}
-            </p>
-          </form>
-
-          <div className="hashrate">
-            <p className="blue-text">hashrate:</p>
-            <p className="white-text">{this.state.hashrate} H/s</p>
           </div>
 
-          <footer className={this.state.exiting ? "animated fadeOut" : "animated fadeIn"}>
-            <a onClick={this.footerLink} title="Visit Safex site">
-              <img src="images/powered.png" alt="Powered by Safex" />
-            </a>
+          <footer className="animated fadeIn">
+            <button onClick={this.footerLink} data-tip data-for="safex-tooltip">
+              <img src="images/safex-logo.png" alt="Powered by Safex" />
+            </button>
+            <ReactTooltip id="safex-tooltip">
+              <p>
+                Visit <span className="yellow-text">Safex website</span>
+              </p>
+            </ReactTooltip>
           </footer>
-        </div>
 
-        <div className={this.state.balance_modal_active ? 'modal balance-modal active' : 'modal balance-modal'}>
-          <span className="close" onClick={this.closeModal} disabled={this.state.wallet_sync ? "" : "disabled"}>X</span>
-          <h3 className={this.state.wallet_loaded ? "wallet-loaded-h3" : ""}>Check Balance</h3>
-
-          {
-            this.state.wallet_loaded
-              ?
-              <div className="wallet-exists">
-                <div className="btns-wrap">
-                  <button className={this.state.wallet_connected ? "signal connected" : "signal"}
-                    title={this.state.wallet_connected ? "Connected" : "Connection failure, please refresh"}>
-                    <img src="images/connected.png" alt="connected" />
-                  </button>
-                  <button className="blockheight"
-                    title="Blockchain Height">
-                    <img src="images/blocks.png" alt="blocks" />
-                    <span>
-                      {this.state.blockchain_height}
-                    </span>
-                  </button>
-                  <button className="button-shine refresh" onClick={this.rescanBalance} title="Rescan blockchain from scratch">
-                    <img src="images/refresh.png" alt="refresh" />
-                  </button>
-                </div>
-                <label htmlFor="selected_balance_address">Safex Wallet Address</label>
-                <textarea placeholder="Safex Wallet Address" name="selected_balance_address"
-                  value={this.state.balance_wallet} rows="2" readOnly />
-
-                <div className="groups-wrap">
-                  <div className="form-group">
-                    <label htmlFor="balance">Pending Safex Cash</label>
-                    <input type="text" className="yellow-field" placeholder="Balance" name="balance"
-                      value={this.state.balance} readOnly />
-                    <label htmlFor="unlocked_balance">Available Safex Cash</label>
-                    <input type="text" className="green-field" placeholder="Unlocked balance" name="unlocked_balance"
-                      value={this.state.unlocked_balance} readOnly />
-                    <button className="button-shine" onClick={this.setOpenSendCash}>Send Cash</button>
-                  </div>
-
-                  <div className="form-group">
-                    <label htmlFor="tokens">Pending Safex Tokens</label>
-                    <input type="text" className="yellow-field" placeholder="Tokens" value={this.state.tokens} readOnly />
-                    <label htmlFor="unlocked_tokens">Available Safex Tokens</label>
-                    <input className="green-field" type="text" placeholder="Unlocked Tokens" name="unlocked_tokens"
-                      value={this.state.unlocked_tokens} readOnly />
-                    <button className="button-shine" onClick={this.setOpenSendTokens}>Send Tokens</button>
-                  </div>
-                </div>
-              </div>
-              :
-              <div className="no-wallet">
-                <h4>Please load the wallet file</h4>
-              </div>
-          }
-
-          <BalanceAlert
-            balanceAlert={this.state.balance_alert}
-            balanceAlertText={this.state.balance_alert_text}
-            closeBalanceAlert={this.setCloseBalanceAlert}
-            walletSync={this.wallet_sync}
-            balanceAlertCloseDisabled={this.state.balance_alert_close_disabled}
-          />
-
-          <SendModal
-            send_cash={this.state.send_cash}
-            send_token={this.state.send_token}
-            fromAddress={this.state.balance_wallet}
+          <Modal
+            modal={this.state.modal}
+            newWalletModal={this.state.new_wallet_modal}
+            closeModal={this.closeModal}
+            instructionsModalActive={this.state.instructions_modal_active}
+            createNewWalletModal={this.state.create_new_wallet_modal}
+            createNewWallet={this.createNewWallet}
+            browseFile={this.browseFile}
+            openFromExistingModal={this.state.open_from_existing_modal}
+            openWalletFile={this.openWalletFile}
+            filepath={this.state.filepath}
+            openCreateFromKeysModal={this.state.create_from_keys_modal}
+            createNewWalletFromKeys={this.createNewWalletFromKeys}
+            wallet={this.state.wallet}
+            balanceModalActive={this.state.balance_modal_active}
+            walletLoaded={this.state.wallet_loaded}
+            startRescanBalance={this.startRescanBalance}
+            setOpenSendPopup={this.setOpenSendPopup}
+            setCloseSendPopup={this.setCloseSendPopup}
+            sendModal={this.state.send_modal}
+            send_cash_or_token={this.state.send_cash_or_token}
+            sendCashOrToken={this.sendCashOrToken}
             closeSendPopup={this.setCloseSendPopup}
-            sendCash={this.sendCash}
-            sendToken={this.sendToken}
+            txBeingSent={this.state.tx_being_sent}
+            availableCash={this.state.wallet.unlocked_balance}
+            availableTokens={this.state.wallet.unlocked_tokens}
+            alert={this.state.alert}
+            alertText={this.state.alert_text}
+            alertCloseDisabled={this.state.alert_close_disabled}
+            sfxPrice={this.state.sfx_price}
+            sftPrice={this.state.sft_price}
+            mixin={this.state.mixin}
+            confirmModal={this.state.confirm_modal}
+            feeModal={this.state.fee_modal}
+            fee={this.state.fee}
+            setCloseMyModal={this.setCloseMyModal}
+            commitTx={this.commitTx}
           />
-        </div>
-
-        <NewWalletModal
-          newWalletModal={this.state.new_wallet_modal}
-          closeNewWalletModal={this.closeModal}
-        />
-
-        <InstructionsModal
-          instructionsModalActive={this.state.instructions_modal_active}
-          instructionsLang={this.state.instructions_lang}
-          changeInstructionLangEn={this.changeInstructionLang.bind(this, 'english')}
-          changeInstructionLangSrb={this.changeInstructionLang.bind(this, 'serbian')}
-          closeInstructionsModal={this.closeModal}
-        />
-
-        <CreateNewWalletModal
-          createNewWalletModal={this.state.create_new_wallet_modal}
-          closeNewWalletModal={this.closeModal}
-          createNewWallet={this.create_new_wallet}
-          balanceAlert={this.state.create_new_wallet_alert}
-          balanceAlertText={this.state.balance_alert_text}
-          closeBalanceAlert={this.setCloseBalanceAlert}
-        />
-
-        <OpenExistingWalletModal
-          browseFile={this.browseFile}
-          openFromExistingModal={this.state.open_from_existing_modal}
-          closeFromExistingModal={this.closeModal}
-          openFromWalletFile={this.open_from_wallet_file}
-          balanceAlert={this.state.open_file_alert}
-          balanceAlertText={this.state.balance_alert_text}
-          filepath={this.state.wallet_path}
-          closeBalanceAlert={this.setCloseBalanceAlert}
-        />
-
-        <CreateFromKeysModal
-          openCreateFromKeysModal={this.state.create_from_keys_modal}
-          closeCreateFromKeysModal={this.closeModal}
-          createNewWalletFromKeys={this.create_new_wallet_from_keys}
-          balanceAlert={this.state.create_from_keys_alert}
-          balanceAlertText={this.state.balance_alert_text}
-          closeBalanceAlert={this.setCloseBalanceAlert}
-        />
-
-        <ExitModal
-          exitModal={this.state.exit_modal}
-          closeExitModal={this.closeModal}
-          closeApp={this.closeApp}
-        />
-
-        <div
-          className={this.state.balance_modal_active ? 'backdrop active' : 'backdrop'}
-          onClick={this.closeModal}>
         </div>
       </div>
     );
   }
 }
-
-MiningApp.contextTypes = {
-  router: React.PropTypes.object.isRequired
-};

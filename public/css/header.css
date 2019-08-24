@@ -1,0 +1,98 @@
+/* Header */
+header {
+  text-align: center;
+  width: 100%;
+  padding: 30px 0 0;
+  position: relative;
+  animation-delay: 0.3s;
+}
+header .buttons-wrap {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+}
+header .buttons-wrap button {
+  animation-delay: 0.8s;
+}
+header .close {
+  display: inline-block;
+  color: #fff;
+  opacity: 1;
+  font-size: 19px;
+  font-family: "Brandon Grotesque Bold", Helvetica, Arial, sans-serif;
+  -webkit-transition: all 0.2s ease-out;
+  -moz-transition: all 0.2s ease-out;
+  transition: all 0.2s ease-out;
+}
+header .close:focus,
+header .close:hover,
+header .minimize:hover {
+  color: #dfc983;
+  opacity: 1;
+  cursor: pointer;
+}
+header .minimize {
+  background: none;
+  position: relative;
+  top: 0px;
+  border: 0px;
+  display: inline-block;
+  font-size: 28px;
+  color: #fff;
+  opacity: 1;
+  padding: 0;
+  height: 16.5px;
+  width: 13.5px;
+  margin-right: 10px;
+  line-height: 1;
+  border-bottom: 3px solid #fff;
+  -webkit-transition: all 0.2s ease-out;
+  -moz-transition: all 0.2s ease-out;
+  transition: all 0.2s ease-out;
+}
+header .minimize:hover {
+  border-bottom: 3px solid #dfc983;
+}
+header .maximize {
+  background: none;
+  position: relative;
+  top: 2px;
+  margin-right: 10px;
+  display: inline-block;
+  font-size: 25px;
+  color: #fff;
+  border: 2px solid #fff;
+  border-top: 4px solid #fff;
+  opacity: 1;
+  height: 16.5px;
+  width: 12px;
+  padding: 0;
+  line-height: 1;
+  -webkit-transition: all 0.2s ease-out;
+  -moz-transition: all 0.2s ease-out;
+  transition: all 0.2s ease-out;
+}
+header .maximize:hover {
+  border: 2px solid #dfc983;
+  border-top: 4px solid #dfc983;
+}
+
+header img.fadeIn {
+  animation-delay: 0.3s;
+}
+header p {
+  color: #fff;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  margin-bottom: 0;
+  -webkit-touch-callout: initial; /* iOS Safari */
+  -webkit-user-select: initial; /* Safari */
+  -khtml-user-select: initial; /* Konqueror HTML */
+  -moz-user-select: initial; /* Firefox */
+  -ms-user-select: initial; /* Internet Explorer/Edge */
+  user-select: initial; /* Non-prefixed version, currently supported by Chrome and Opera */
+}
+header p.fadeIn {
+  animation-delay: 0.8s;
+}
